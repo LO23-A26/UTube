@@ -1,6 +1,6 @@
 
 /**
- * Interface pour que Communication puisse appeler IHM-Share.
+ * Interface for IHM-Communication to call IHM-Share.
  *
  * @author IHM-Share 
  * @version 1.0

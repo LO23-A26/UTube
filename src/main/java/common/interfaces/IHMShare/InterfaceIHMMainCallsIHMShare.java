@@ -1,6 +1,6 @@
 
 /**
- * Interface pour que IHM-Main puisse appeler IHM-Share.
+ * Interface for IHM-Main to call IHM-Share.
  *
  * @author IHM-Share 
  * @version 1.0
