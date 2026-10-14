@@ -1,6 +1,6 @@
 package common.interfaces.IHMShare;
 /**
- * Interface for IHM-Communication to call IHM-Share.
+ * Interface for Communication to call IHM-Share.
  *
  * @author IHM-Share 
  * @version 1.0
