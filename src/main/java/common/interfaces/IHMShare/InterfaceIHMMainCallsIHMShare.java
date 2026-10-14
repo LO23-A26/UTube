@@ -8,7 +8,7 @@
 public interface InterfaceIHMMainCallsIHMShare {
 
     /**
-     * Lance la lecture de la vidéo.
+     * Launch the video in the IHM-Share
      *
      * @param video (VideoLight) données de la vidéo à lire
      */

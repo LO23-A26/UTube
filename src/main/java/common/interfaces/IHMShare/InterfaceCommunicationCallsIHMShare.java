@@ -8,13 +8,13 @@
 public interface InterfaceCommunicationCallsIHMShare {
 
     /**
-     * Informe des parametres de la video
+     * Return the parameters of the video
      *
      * @param videoDetails (VideoFull) données de la vidéo.
      */
     void displayVideoDetails(VideoFull videoDetails);
     /**
-    * Informe que la video a étée téléchargée
+    * Information that the download is done
     * @param videoPath (str)
     */
    void downloadDone(String videoPath);
