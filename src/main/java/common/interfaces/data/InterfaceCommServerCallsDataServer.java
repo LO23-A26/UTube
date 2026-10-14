@@ -1,16 +1,12 @@
 import java.util.UUID;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
 
 /**
- * Class for communication server calls to the data server.
+ * Interface for communication server calls to the data server.
  * Handles user registration, index updates, and connected client management.
- *
- * @author Assistant
- * @version 1.0
  */
-public class InterfaceCommServerCallsDataServer {
+public interface InterfaceCommServerCallsDataServer {
 
     /**
      * Registers a new user along with their videos and retrieves the updated global index.
@@ -19,37 +15,32 @@ public class InterfaceCommServerCallsDataServer {
      * @param new_videos The set of lightweight videos associated with the new user.
      * @return A RegistrationResult object containing lists of users and videos.
      */
-    public void registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
-        return null;
-    }
-
+    public void registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
     /**
      * Removes a user from the server's records based on their unique ID.
      *
      * @param user_id The UUID of the user to be removed.
      */
-    public void removeUser(UUID user_id) {}
+    public void removeUser(UUID user_id);
 
     /**
      * Deletes a specific video index from the server.
      *
      * @param video_id The UUID of the video index to delete.
      */
-    public void deleteIndex(UUID video_id) {}
+    public void deleteIndex(UUID video_id);
 
     /**
      * Updates an existing video index with new information.
      *
      * @param video_info The lightweight video object containing the updated data.
      */
-    public void updateIndex(VideoLight video_info) {}
+    public void updateIndex(VideoLight video_info);
 
     /**
      * Retrieves the list of all currently connected clients.
      *
      * @return A list of connected UserLight profiles, empty by default.
      */
-    public List<UserLight> getConnectedClients() {
-        return new ArrayList<>();
-    }
+    public List<UserLight> getConnectedClients();
 }

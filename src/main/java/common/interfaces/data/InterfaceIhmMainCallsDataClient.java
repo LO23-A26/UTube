@@ -1,49 +1,48 @@
 import java.util.UUID;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
 
 
 /**
- * Class for Main IHM calls to the data client.
+ * Interface for Main IHM calls to the data client.
  * Handles profile management, contacts, and general connections.
  */
-public class InterfaceIhmMainCallsDataClient {
+public interface InterfaceIhmMainCallsDataClient {
 
     /**
      * Exports profile data to a specified path.
      *
      * @param destination_path The string path where data should be exported.
      */
-    public void exportProfileData(String destination_path) {}
+    public void exportProfileData(String destination_path);
 
     /**
      * Imports profile data from a specified path.
      *
      * @param source_path The string path from where data should be imported.
      */
-    public void importProfileData(String source_path) {}
+    public void importProfileData(String source_path);
 
     /**
      * Saves a local user profile.
      *
      * @param profile The Data Transfer Object for the user.
      */
-    public void saveLocalProfile(UserDTO profile) {}
+    public void saveLocalProfile(UserDTO profile);
 
     /**
      * Updates an existing local user profile.
      *
      * @param profile The Data Transfer Object for the user.
      */
-    public void updateLocalProfile(UserDTO profile) {}
+    public void updateLocalProfile(UserDTO profile);
 
     /**
      * Deletes a local video.
      *
      * @param video_id The UUID of the video to delete.
      */
-    public void deleteLocalVideo(UUID video_id) {}
+    public void deleteLocalVideo(UUID video_id);
 
     /**
      * Requests a connection for a user.
@@ -53,16 +52,15 @@ public class InterfaceIhmMainCallsDataClient {
      * @param ip_address The IP address for the connection.
      * @param port The port number.
      */
-    public void requestConnection(UserLight user_profile, String password, String ip_address, int port) {}
+    public void requestConnection(UserLight user_profile, String password, String ip_address, int port);
 
     /**
      * Gets all contact lists for the user.
      *
      * @return A list of ContactList objects.
      */
-    public List<ContactList> getContactLists() {
-        return new ArrayList<>();
-    }
+    public List<ContactList> getContactLists();
+
 
     /**
      * Creates a new contact list.
@@ -71,25 +69,21 @@ public class InterfaceIhmMainCallsDataClient {
      * @param right The access right associated with this list.
      * @return The newly created ContactList object, null by default.
      */
-    public ContactList createContactList(String name, AccessRight right) {
-        return null;
-    }
+    public ContactList createContactList(String name, AccessRight right);
 
     /**
      * Deletes a specific contact list.
      *
      * @param list_id The UUID of the contact list to delete.
      */
-    public void deleteContactList(UUID list_id) {}
+    public void deleteContactList(UUID list_id);
 
     /**
      * Gets a list of currently connected users.
      *
      * @return A list of UserLight objects.
      */
-    public List<UserLight> getConnectedUsers() {
-        return new ArrayList<>();
-    }
+    public List<UserLight> getConnectedUsers();
 
     /**
      * Gets all contacts within a specific contact list.
@@ -97,9 +91,7 @@ public class InterfaceIhmMainCallsDataClient {
      * @param list_id The UUID of the contact list.
      * @return A list of Contact objects.
      */
-    public List<Contact> getContacts(UUID list_id) {
-        return new ArrayList<>();
-    }
+    public List<Contact> getContacts(UUID list_id);
 
     /**
      * Adds a contact to a specific list.
@@ -107,7 +99,7 @@ public class InterfaceIhmMainCallsDataClient {
      * @param list_id The UUID of the contact list.
      * @param user_id The UUID of the user to add as a contact.
      */
-    public void addContactToList(UUID list_id, UUID user_id) {}
+    public void addContactToList(UUID list_id, UUID user_id);
 
     /**
      * Removes a contact from a specific list.
@@ -115,7 +107,7 @@ public class InterfaceIhmMainCallsDataClient {
      * @param list_id The UUID of the contact list.
      * @param user_id The UUID of the user to remove.
      */
-    public void removeContactFromList(UUID list_id, UUID user_id) {}
+    public void removeContactFromList(UUID list_id, UUID user_id);
 
     /**
      * Sets video access rights for a specific list.
@@ -124,7 +116,7 @@ public class InterfaceIhmMainCallsDataClient {
      * @param video_id The UUID of the video.
      * @param granted Boolean indicating if access is granted.
      */
-    public void setVideoAccess(String list_name, UUID video_id, boolean granted) {}
+    public void setVideoAccess(String list_name, UUID video_id, boolean granted);
 
     /**
      * Requests the profile of a remote user.
@@ -132,7 +124,7 @@ public class InterfaceIhmMainCallsDataClient {
      * @param owner_profile The profile of the remote user.
      * @param requester_profile The profile of the user making the request.
      */
-    public void requestRemoteProfile(UserLight owner_profile, UserLight requester_profile) {}
+    public void requestRemoteProfile(UserLight owner_profile, UserLight requester_profile);
 
     /**
      * Searches for shared videos based on specific criteria.
@@ -142,7 +134,5 @@ public class InterfaceIhmMainCallsDataClient {
      * @param tags A set of tags associated with the video.
      * @return A list of matching VideoLight objects.
      */
-    public List<VideoLight> searchSharedVideos(String title, String creator, Set<String> tags) {
-        return new ArrayList<>();
-    }
+    public List<VideoLight> searchSharedVideos(String title, String creator, Set<String> tags);
 }
