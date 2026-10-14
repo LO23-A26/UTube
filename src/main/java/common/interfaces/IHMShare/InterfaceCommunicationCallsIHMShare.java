@@ -10,7 +10,7 @@ public interface InterfaceCommunicationCallsIHMShare {
     /**
      * Return the parameters of the video
      *
-     * @param videoDetails (VideoFull) données de la vidéo.
+     * @param videoDetails (VideoFull) data of the video to read
      */
     void displayVideoDetails(VideoFull videoDetails);
     /**
