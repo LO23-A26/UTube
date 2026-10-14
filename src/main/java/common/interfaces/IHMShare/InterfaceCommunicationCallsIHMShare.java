@@ -1,4 +1,4 @@
-
+package common.interfaces.IHMShare;
 /**
  * Interface for IHM-Communication to call IHM-Share.
  *
