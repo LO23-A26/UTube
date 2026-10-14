@@ -3,12 +3,29 @@ package common.dataclasses;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Lightweight representation of a video containing public metadata.
+ *
+ * @author Jean Van Gysel
+ * @version 1.0
+ */
 public class VideoLight {
     private UUID video_id;
     private UserLight owner;
     private String title;
     private String creator;
     private Set<String> tags;
+
+    public VideoLight() {
+    }
+
+    public VideoLight(UUID video_id, UserLight owner, String title, String creator, Set<String> tags) {
+        this.video_id = video_id;
+        this.owner = owner;
+        this.title = title;
+        this.creator = creator;
+        this.tags = tags;
+    }
 
     public UUID getVideoId() {
         return video_id;
