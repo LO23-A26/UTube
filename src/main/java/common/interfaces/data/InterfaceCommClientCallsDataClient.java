@@ -1,3 +1,6 @@
+package common.interfaces.data;
+
+import common.dataclasses.*;
 import java.util.UUID;
 import java.util.List;
 
@@ -14,7 +17,7 @@ public interface InterfaceCommClientCallsDataClient {
      * @param video_id The UUID of the video.
      * @return VideoHeavy object containing heavy video details, or null by default.
      */
-    public VideoHeavy giveDetailsAccess(UserLight requester_profile, UUID video_id);
+    public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id);
 
     /**
      * Adds a comment to a video.

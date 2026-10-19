@@ -1,3 +1,6 @@
+package common.interfaces.data;
+
+import common.dataclasses.*;
 import java.util.UUID;
 import java.util.List;
 import java.util.Set;
@@ -28,14 +31,14 @@ public interface InterfaceIhmMainCallsDataClient {
      *
      * @param profile The Data Transfer Object for the user.
      */
-    public void saveLocalProfile(UserDTO profile);
+    public void saveLocalProfile(UserLight profile);
 
     /**
      * Updates an existing local user profile.
      *
      * @param profile The Data Transfer Object for the user.
      */
-    public void updateLocalProfile(UserDTO profile);
+    public void updateLocalProfile(UserLight profile);
 
     /**
      * Deletes a local video.
@@ -91,7 +94,7 @@ public interface InterfaceIhmMainCallsDataClient {
      * @param list_id The UUID of the contact list.
      * @return A list of Contact objects.
      */
-    public List<Contact> getContacts(UUID list_id);
+    public Set<UserLight> getContacts(UUID list_id);
 
     /**
      * Adds a contact to a specific list.

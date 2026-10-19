@@ -1,4 +1,4 @@
-package main.common.dataclasses;
+package common.dataclasses;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.UUID;
  * @author Lucas Dompnier
  * @version 1.0
  */
-class UserFull {
+public class UserFull {
 
     private UserLight shared_info;
     private String password;

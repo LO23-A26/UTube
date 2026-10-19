@@ -1,3 +1,6 @@
+package common.interfaces.data;
+
+import common.dataclasses.*;
 import java.util.UUID;
 import java.util.Set;
 import java.nio.file.Path;
@@ -7,7 +10,7 @@ import java.nio.file.Path;
  * Interface for Share IHM calls to the data client.
  * Handles video sharing, details, and modifications.
  */
-public Interface InterfaceIhmShareCallsDataClient {
+public interface InterfaceIhmShareCallsDataClient {
 
     /**
      * Sends a request for video details.

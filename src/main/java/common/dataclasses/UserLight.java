@@ -1,4 +1,4 @@
-package main.common.dataclasses;
+package common.dataclasses;
 
 import java.util.UUID;
 import java.awt.image.BufferedImage;
@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * @author Lucas Dompnier
  * @version 1.0
  */
-class UserLight {
+public class UserLight {
 
     private UUID uuid;
     private String pseudo;

@@ -1,3 +1,6 @@
+package common.interfaces.data;
+
+import common.dataclasses.*;
 import java.util.UUID;
 import java.util.List;
 import java.util.Set;
