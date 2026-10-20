@@ -12,10 +12,11 @@ public interface InterfaceCommunicationCallsIHMShare {
      *
      * @param videoDetails (VideoFull) data of the video to read
      */
-    void displayVideoDetails(VideoFull videoDetails);
+    public void displayVideoDetails(VideoFull videoDetails);
+
     /**
     * Information that the download is done
     * @param videoPath (str)
     */
-   void downloadDone(String videoPath);
+   public void downloadDone(String videoPath);
 }

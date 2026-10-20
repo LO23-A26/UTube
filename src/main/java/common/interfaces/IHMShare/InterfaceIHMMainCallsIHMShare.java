@@ -12,5 +12,5 @@ public interface InterfaceIHMMainCallsIHMShare {
      *
      * @param video (VideoLight) data of the video to read
      */
-    void launchVideo(VideoLight video);
+    public void launchVideo(VideoLight video);
 }
