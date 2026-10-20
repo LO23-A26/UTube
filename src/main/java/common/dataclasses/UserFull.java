@@ -7,7 +7,7 @@ import java.util.UUID;
 
 /**
  * @author Lucas Dompnier
- * @version 1.0
+ * @version 2.0
  */
 class UserFull {
 
@@ -22,7 +22,7 @@ class UserFull {
     private Map<UUID, VideoFull> uploaded_videos;
     private Map<AccessRight, ContactList> contact_lists;
 
-    UserFull(String pseudo, String avatar_path, String password, String first_name, String last_name, LocalDate birth_date) {
+    public UserFull(String pseudo, String avatar_path, String password, String first_name, String last_name, LocalDate birth_date) {
         this.shared_info = new UserLight(pseudo, avatar_path);
         this.password = password;
         this.first_name = first_name;
@@ -30,7 +30,7 @@ class UserFull {
         this.birth_date = birth_date;
     }
 
-    UserFull(String pseudo, String password, String first_name, String last_name, LocalDate birth_date) {
+    public UserFull(String pseudo, String password, String first_name, String last_name, LocalDate birth_date) {
         this.shared_info = new UserLight(pseudo);
         this.password = password;
         this.first_name = first_name;

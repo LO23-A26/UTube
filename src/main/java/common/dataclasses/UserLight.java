@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 /**
  * @author Lucas Dompnier
- * @version 1.0
+ * @version 2.0
  */
 class UserLight {
 
@@ -18,13 +18,13 @@ class UserLight {
 
     Logger logger = Logger.getLogger(getClass().getName());
 
-    UserLight(String pseudo, String avatar_path) {
+    public UserLight(String pseudo, String avatar_path) {
         this.pseudo = pseudo;
         this.uuid = this.generateUuid();
         setAvatar(avatar_path);
     }
 
-    UserLight(String pseudo) {
+    public UserLight(String pseudo) {
         this.pseudo = pseudo;
         this.uuid = this.generateUuid();
     }
