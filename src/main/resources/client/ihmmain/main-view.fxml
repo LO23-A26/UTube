@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ihmmain.VueController"
+            stylesheets="@main-view.css">
+    <top>
+        <Label text="UTube" styleClass="title">
+            <padding>
+                <Insets top="12" right="16" bottom="12" left="16"/>
+            </padding>
+        </Label>
+    </top>
+    <center>
+        <Label fx:id="statusLabel"/>
+    </center>
+</BorderPane>
