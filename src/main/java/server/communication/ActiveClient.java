@@ -8,6 +8,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * An active client connected to the server.
+ */
 public class ActiveClient {
     private final String uuid;
     private final String ipAddress;
@@ -43,22 +46,35 @@ public class ActiveClient {
             .start(this::readLoop);
     }
 
+    /**
+     * Returns the UUID of the client.
+     * @return the UUID of the client.
+     */
     public String getUuid() {
         return uuid;
     }
 
+    /**
+     * Returns the IP address of the client.
+     * @return the IP address of the client.
+     */
     public String getIpAddress() {
         return ipAddress;
     }
 
+    /**
+     * Returns the port of the client.
+     * @return the port of the client.
+     */
     public int getPort() {
         return port;
     }
 
-    public boolean isConnected() {
-        return connected.get() && !socket.isClosed();
-    }
-
+    /**
+     * Sends a message to the client.
+     * @param message the message to send.
+     * @throws IOException 
+     */
     public void send(String message) throws IOException {
         if (!isConnected()) {
             throw new IOException("Client " + uuid + " is disconnected");
@@ -71,6 +87,9 @@ public class ActiveClient {
         }
     }
 
+    /**
+     * Closes the client connection and releases resources.
+     */
     public void close() {
         if (!connected.compareAndSet(true, false)) {
             return;
@@ -80,6 +99,10 @@ public class ActiveClient {
         closeQuietly(out);
         closeQuietly(socket);
         readLoopThread.interrupt();
+    }
+
+    private boolean isConnected() {
+        return connected.get() && !socket.isClosed();
     }
 
     private void readLoop() {
