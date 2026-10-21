@@ -1,5 +1,7 @@
 package client.communication;
 
+import common.interfaces.data.InterfaceCommClientCallsDataClient;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,8 +18,8 @@ public class CommClientController {
     private ServerListeningService  serverListener;
     private ServerConnection serverConnection;
     private HashMap<UUID,ActiveClient> connectedClients;
-    private InterfaceComm_calls_IHMShare;
-    private InterfaceComm_calls_Data;
+    //private InterfaceComm_calls_IHMShare;
+    public InterfaceCommClientCallsDataClient;
 
     //faire getters et setters (on peut les faire chez nous)
     public static void main(String[] args) throws IOException {
