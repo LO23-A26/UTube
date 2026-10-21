@@ -7,7 +7,14 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 
 public class Client {
-    CommServerController commServerController;
+    private CommServerController commServerController;
+    private String uuid;
+    private String ipAddress;
+    private int port;
+
+    private Socket socket;
+    private BufferedReader in;
+    private BufferedWriter out;
 
     public Client(Socket socket) {
 
