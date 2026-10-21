@@ -8,7 +8,7 @@ import common.dataclasses.VideoLight;
  * @author IHM-Share 
  * @version 1.0
  */
-public interface InterfaceIHMMainCallsIHMShare {
+public interface Interface_IHMMain_Calls_IHMShare {
 
     /**
      * Launch the video in the IHM-Share
