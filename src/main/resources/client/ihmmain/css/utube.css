@@ -1,0 +1,528 @@
+/*
+ * Charte graphique UTube (dossier de conception, section 8.1).
+ * Feuille commune aux vues IHM-Main et IHM-Share.
+ */
+
+.root {
+    -utube-yellow: #FFD100;
+    -utube-black: #141414;
+    -utube-grey: #58595B;
+    -utube-white: #FFFFFF;
+    -utube-background: #F4F4F1;
+    -utube-avatar: #E6E7E3;
+    -utube-border: #D9DBE0;
+    -utube-icon: #8A8F96;
+    -utube-online: #2E8B57;
+    -utube-badge-background: #E8F5E9;
+    -utube-badge-text: #1E7A3C;
+    -utube-error: #C62828;
+
+    -fx-font-family: "IBM Plex Sans", "Inter", "Segoe UI", sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: -utube-white;
+}
+
+.label {
+    -fx-text-fill: -utube-black;
+}
+
+/* ---------- Fonds ---------- */
+
+.offline-background {
+    -fx-background-color: -utube-background;
+}
+
+.content-area {
+    -fx-background-color: -utube-white;
+}
+
+/* ---------- Logo ---------- */
+
+.logo-u {
+    -fx-fill: transparent;
+    -fx-stroke: -utube-yellow;
+    -fx-stroke-width: 4;
+    -fx-stroke-line-cap: round;
+}
+
+.logo-play {
+    -fx-fill: -utube-black;
+}
+
+.logo-text {
+    -fx-font-family: "Inter Black", "Inter", "Segoe UI Black", sans-serif;
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+}
+
+/* ---------- Textes ---------- */
+
+.page-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.profile-name {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.card-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.group-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -utube-grey;
+}
+
+.video-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.secondary-text,
+.optional-label {
+    -fx-text-fill: -utube-grey;
+}
+
+.small-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: -utube-grey;
+}
+
+.hint-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: -utube-grey;
+}
+
+.online-text {
+    -fx-font-style: italic;
+}
+
+.italic-text {
+    -fx-font-style: italic;
+}
+
+.bold-text {
+    -fx-font-weight: bold;
+}
+
+.error-label {
+    -fx-text-fill: -utube-error;
+    -fx-font-size: 12px;
+}
+
+.chevron {
+    -fx-font-size: 20px;
+    -fx-text-fill: -utube-icon;
+}
+
+/* ---------- Boutons ---------- */
+
+.button {
+    -fx-background-color: -utube-white;
+    -fx-background-radius: 8;
+    -fx-border-color: -utube-border;
+    -fx-border-radius: 8;
+    -fx-text-fill: -utube-black;
+    -fx-font-weight: 600;
+    -fx-pref-height: 36px;
+    -fx-padding: 0 14 0 14;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: -utube-background;
+}
+
+.button:focused {
+    -fx-border-color: -utube-icon;
+}
+
+.button.large-button {
+    -fx-pref-height: 44px;
+    -fx-padding: 0 20 0 20;
+    -fx-font-size: 14px;
+}
+
+.button.primary-button {
+    -fx-background-color: -utube-yellow;
+    -fx-border-color: transparent;
+    -fx-pref-height: 44px;
+    -fx-padding: 0 20 0 20;
+    -fx-font-size: 14px;
+}
+
+.button.primary-button:hover {
+    -fx-background-color: derive(-utube-yellow, -6%);
+}
+
+.button.back-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -utube-grey;
+    -fx-font-weight: normal;
+    -fx-padding: 0;
+    -fx-pref-height: 24px;
+}
+
+.button.icon-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0 6 0 6;
+    -fx-text-fill: -utube-grey;
+    -fx-font-size: 16px;
+    -fx-pref-height: 28px;
+}
+
+.button.bordered-icon-button {
+    -fx-pref-width: 36px;
+    -fx-pref-height: 36px;
+    -fx-padding: 0;
+}
+
+.button.avatar-button {
+    -fx-background-color: -utube-avatar;
+    -fx-background-radius: 20;
+    -fx-border-color: -utube-border;
+    -fx-border-radius: 20;
+    -fx-pref-width: 40px;
+    -fx-min-width: 40px;
+    -fx-pref-height: 40px;
+    -fx-padding: 0;
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+    -fx-text-fill: -utube-grey;
+}
+
+.icon {
+    -fx-fill: transparent;
+    -fx-stroke: -utube-black;
+    -fx-stroke-width: 1.6;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+}
+
+.icon-filled {
+    -fx-fill: -utube-black;
+}
+
+.icon-secondary {
+    -fx-fill: transparent;
+    -fx-stroke: -utube-icon;
+    -fx-stroke-width: 1.6;
+    -fx-stroke-line-cap: round;
+}
+
+/* ---------- Liens texte ---------- */
+
+.hyperlink {
+    -fx-text-fill: -utube-black;
+    -fx-underline: true;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.hyperlink:visited {
+    -fx-text-fill: -utube-black;
+}
+
+.hyperlink.review-action {
+    -fx-text-fill: -utube-grey;
+    -fx-font-size: 12px;
+}
+
+.hyperlink.author-link {
+    -fx-font-weight: 600;
+}
+
+/* ---------- Champs de saisie ---------- */
+
+.text-field,
+.password-field,
+.text-area,
+.date-picker {
+    -fx-background-color: -utube-white;
+    -fx-background-radius: 8;
+    -fx-border-color: -utube-border;
+    -fx-border-radius: 8;
+    -fx-prompt-text-fill: -utube-icon;
+    -fx-highlight-fill: -utube-yellow;
+    -fx-highlight-text-fill: -utube-black;
+}
+
+.text-field,
+.password-field {
+    -fx-pref-height: 44px;
+    -fx-padding: 0 12 0 12;
+}
+
+.text-field:focused,
+.password-field:focused,
+.text-area:focused,
+.date-picker:focused {
+    -fx-border-color: -utube-icon;
+}
+
+.text-area .content {
+    -fx-background-color: -utube-white;
+    -fx-background-radius: 8;
+}
+
+.date-picker {
+    -fx-pref-height: 44px;
+}
+
+.date-picker > .text-field {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.date-picker > .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.text-field.search-field {
+    -fx-background-color: -utube-background;
+    -fx-pref-height: 40px;
+    -fx-padding: 0 12 0 38;
+}
+
+/* ---------- Cartes ---------- */
+
+.card {
+    -fx-background-color: -utube-white;
+    -fx-background-radius: 12;
+    -fx-border-color: -utube-border;
+    -fx-border-radius: 12;
+}
+
+.video-card {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+}
+
+.video-card:hover,
+.clickable-row:hover {
+    -fx-border-color: -utube-icon;
+}
+
+.clickable-row {
+    -fx-cursor: hand;
+}
+
+.list-row {
+    -fx-border-color: transparent transparent -utube-border transparent;
+}
+
+.file-drop-zone {
+    -fx-border-color: -utube-border;
+    -fx-border-style: dashed;
+    -fx-border-radius: 8;
+}
+
+.info-box {
+    -fx-background-color: -utube-background;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12 10 12;
+    -fx-font-size: 12px;
+    -fx-text-fill: -utube-grey;
+}
+
+.status-box {
+    -fx-background-color: -utube-white;
+    -fx-background-radius: 8;
+    -fx-border-color: -utube-border;
+    -fx-border-radius: 8;
+}
+
+.separator .line {
+    -fx-border-color: -utube-border;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ---------- Avatars et indicateurs ---------- */
+
+.avatar {
+    -fx-fill: -utube-avatar;
+    -fx-stroke: -utube-border;
+    -fx-stroke-width: 1;
+}
+
+.status-dot-online {
+    -fx-fill: -utube-online;
+}
+
+.badge {
+    -fx-background-color: -utube-badge-background;
+    -fx-background-radius: 12;
+    -fx-text-fill: -utube-badge-text;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 10 4 10;
+}
+
+/* ---------- Cases à cocher ---------- */
+
+.check-box > .box {
+    -fx-background-color: -utube-white;
+    -fx-background-radius: 4;
+    -fx-border-color: -utube-border;
+    -fx-border-radius: 4;
+}
+
+.check-box:selected > .box {
+    -fx-background-color: -utube-yellow;
+    -fx-border-color: -utube-yellow;
+}
+
+.check-box:selected > .box > .mark {
+    -fx-background-color: -utube-black;
+}
+
+/* ---------- Notes (étoiles) : « ★ » + star-filled pour une étoile pleine, « ☆ » pour une étoile vide ---------- */
+
+.star {
+    -fx-text-fill: -utube-icon;
+    -fx-font-size: 16px;
+}
+
+.star.small-star {
+    -fx-font-size: 12px;
+}
+
+.star.star-filled {
+    -fx-text-fill: -utube-yellow;
+}
+
+.button.star-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0 2 0 2;
+    -fx-font-size: 22px;
+    -fx-font-weight: normal;
+    -fx-text-fill: -utube-icon;
+}
+
+.button.star-button.star-filled {
+    -fx-text-fill: -utube-yellow;
+}
+
+/* ---------- Header ---------- */
+
+.header {
+    -fx-background-color: -utube-white;
+    -fx-border-color: transparent transparent -utube-border transparent;
+}
+
+.button.nav-tab {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -utube-grey;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+.button.nav-tab:hover {
+    -fx-text-fill: -utube-black;
+}
+
+.button.nav-tab.nav-tab-active {
+    -fx-background-color: -utube-yellow;
+    -fx-text-fill: -utube-black;
+}
+
+/* ---------- Panneau utilisateur·rice·s ---------- */
+
+.users-panel {
+    -fx-background-color: -utube-white;
+    -fx-border-color: transparent transparent transparent -utube-border;
+}
+
+.user-entry {
+    -fx-cursor: hand;
+}
+
+/* ---------- Fenêtres modales et menus ---------- */
+
+.modal-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+}
+
+.modal-card {
+    -fx-background-color: -utube-white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 24, 0, 0, 6);
+}
+
+.modal-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.dropdown-menu {
+    -fx-background-color: -utube-white;
+    -fx-background-radius: 8;
+    -fx-border-color: -utube-border;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 12, 0, 0, 3);
+}
+
+/* ---------- Visionneuse ---------- */
+
+.player-area {
+    -fx-background-color: -utube-black;
+    -fx-background-radius: 12;
+}
+
+.player-overlay-icon {
+    -fx-fill: transparent;
+    -fx-stroke: #D9DBE0;
+    -fx-stroke-width: 3;
+    -fx-stroke-line-join: round;
+}
+
+.button.player-overlay-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -utube-yellow;
+    -fx-background-radius: 3;
+    -fx-background-insets: 0;
+    -fx-padding: 3;
+}
+
+.progress-bar > .track {
+    -fx-background-color: -utube-border;
+    -fx-background-radius: 3;
+    -fx-background-insets: 0;
+}
+
+/* ---------- Défilement ---------- */
+
+.scroll-pane,
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}

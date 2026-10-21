@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Avis d'un·e utilisateur·rice (écran 05). Trois cas : commentaire avec note,
+    commentaire sans note (no_rating_label), note sans commentaire (comment_label en italique).
+    edit_link / delete_link : visibles sur « Mon avis » ; delete_link sur tous les avis en 05c (propriétaire).
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<HBox spacing="12.0" styleClass="list-row" stylesheets="@../../../ihmmain/css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="12.0" top="12.0"/>
+    </padding>
+
+    <Circle fx:id="avatar_circle" radius="16.0" styleClass="avatar"/>
+
+    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <!-- « Pseudo » ou « Mon avis » ; un clic ouvre le Détail utilisateur·rice (11) -->
+            <Hyperlink fx:id="author_link" styleClass="author-link" text="Pseudo"/>
+            <HBox fx:id="rating_stars_container" alignment="CENTER_LEFT" spacing="1.0"/>
+            <Label fx:id="no_rating_label" managed="false" styleClass="small-text" text="Sans note"
+                   visible="false"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Hyperlink fx:id="edit_link" managed="false" styleClass="review-action" text="Modifier"
+                       visible="false"/>
+            <Hyperlink fx:id="delete_link" managed="false" styleClass="review-action" text="Supprimer"
+                       visible="false"/>
+        </HBox>
+        <Label fx:id="comment_label" text="Commentaire" wrapText="true"/>
+    </VBox>
+</HBox>

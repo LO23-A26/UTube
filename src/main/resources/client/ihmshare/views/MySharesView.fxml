@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 08 Mes partages : vidéos partagées par l'utilisateur·rice (un clic ouvre 05c) -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0" styleClass="content-area" stylesheets="@../../ihmmain/css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="28.0" left="40.0" right="40.0" top="28.0"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <Label styleClass="page-title" text="Mes partages"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <!-- Ouvre l'écran 09 -->
+        <Button fx:id="add_share_button" styleClass="primary-button" text="Ajouter un partage"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+        <!-- Rempli par le contrôleur avec des SharedVideoRow -->
+        <VBox fx:id="shares_container" spacing="20.0"/>
+    </ScrollPane>
+
+    <Label fx:id="empty_label" managed="false" styleClass="hint-text"
+           text="Vous ne partagez aucune vidéo pour le moment." visible="false"/>
+</VBox>
