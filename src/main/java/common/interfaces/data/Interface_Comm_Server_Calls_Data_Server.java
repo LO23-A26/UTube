@@ -11,7 +11,7 @@ import java.util.Set;
  * Interface for communication server calls to the data server.
  * Handles user registration, index updates, and connected client management.
  */
-public interface Interface_Comm_Server_Calls_Data_Server {
+public interface InterfaceCommServerCallsDataServer {
 
     /**
      * Registers a new user along with their videos and retrieves the updated global index.
