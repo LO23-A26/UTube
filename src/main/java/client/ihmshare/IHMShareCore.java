@@ -10,9 +10,9 @@ package client.ihmshare;
  */
 public class IHMShareCore {
 
-    private InterfaceIHMShareCallsCommunication interface_from_communication;
-    private InterfaceIHMShareCallsIHMMain interface_from_ihm_main;
-    private InterfaceIHMShareCallsData interface_from_data;
+    private Interface_IHMShare_Calls_Communication interface_from_communication;
+    private Interface_IHMShare_Calls_IHMMain interface_from_ihm_main;
+    private Interface_IHMShare_Calls_Data interface_from_data;
 
     private CommunicationCallsIHMShareImpl impl_interface_for_communication;
     private IHMMainCallsIHMShareImpl impl_interface_for_ihm_main;
@@ -33,7 +33,7 @@ public class IHMShareCore {
      *
      * @param I (InterfaceIHMShareCallsCommunication) interface to the Communication component
      */
-    public void setInterfaceFromCommunication(InterfaceIHMShareCallsCommunication I) {
+    public void setInterfaceFromCommunication(Interface_IHMShare_Calls_Communication I) {
         this.interface_from_communication = I;
     }
 
@@ -42,7 +42,7 @@ public class IHMShareCore {
      *
      * @param I (InterfaceIHMShareCallsIHMMain) interface to the IHM Main component
      */
-    public void setInterfaceFromIHMMain(InterfaceIHMShareCallsIHMMain I) {
+    public void setInterfaceFromIHMMain(Interface_IHMShare_Calls_IHMMain I) {
         this.interface_from_ihm_main = I;
     }
 
@@ -51,7 +51,7 @@ public class IHMShareCore {
      *
      * @param I (InterfaceIHMShareCallsData) interface to the Data component
      */
-    public void setInterfaceFromData(InterfaceIHMShareCallsData I) {
+    public void setInterfaceFromData(Interface_IHMShare_Calls_Data I) {
         this.interface_from_data = I;
     }
 
@@ -60,7 +60,7 @@ public class IHMShareCore {
      *
      * @return (InterfaceIHMShareCallsCommunication) interface to the Communication component
      */
-    public InterfaceIHMShareCallsCommunication getInterfaceFromCommunication() {
+    public Interface_IHMShare_Calls_Communication getInterfaceFromCommunication() {
         return this.interface_from_communication;
     }
 
@@ -69,7 +69,7 @@ public class IHMShareCore {
      *
      * @return (InterfaceIHMShareCallsIHMMain) interface to the IHM Main component
      */
-    public InterfaceIHMShareCallsIHMMain getInterfaceFromIHMMain() {
+    public Interface_IHMShare_Calls_IHMMain getInterfaceFromIHMMain() {
         return this.interface_from_ihm_main;
     }
 
@@ -78,7 +78,7 @@ public class IHMShareCore {
      *
      * @return (InterfaceIHMShareCallsData) interface to the Data component
      */
-    public InterfaceIHMShareCallsData getInterfaceFromData() {
+    public Interface_IHMShare_Calls_Data getInterfaceFromData() {
         return this.interface_from_data;
     }
 
