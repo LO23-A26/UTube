@@ -1,4 +1,7 @@
 package common.interfaces.IHMShare;
+
+import common.dataclasses.VideoFull;
+
 /**
  * Interface for Communication to call IHM-Share.
  *
