@@ -3,11 +3,10 @@ package client.ihmmain;
 import client.main.UTubeApplication;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-
 /**
  * Contrôleur de la vue principale du client.
  */
-public class MainController {
+public class VueController {
 
     @FXML
     private Label statusLabel;
