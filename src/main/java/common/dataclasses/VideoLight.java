@@ -6,8 +6,8 @@ import java.util.UUID;
 /**
  * Lightweight representation of a video containing public metadata.
  *
- * @author Jean Van Gysel
- * @version 1.0
+ * @author Jean Van Gysel, Kilian Lagrevol
+ * @version 2.0
  */
 public class VideoLight {
     private UUID video_id;
@@ -25,6 +25,21 @@ public class VideoLight {
         this.title = title;
         this.creator = creator;
         this.tags = tags;
+    }
+
+    public VideoLight(UserLight owner, String title, String creator, Set<String> tags) {
+        this.video_id = UUID.randomUUID();
+        this.owner = owner;
+        this.title = title;
+        this.creator = creator;
+        this.tags = tags;
+    }
+
+    public VideoLight(UserLight owner, String title, String creator) {
+        this.video_id = UUID.randomUUID();
+        this.owner = owner;
+        this.title = title;
+        this.creator = creator;
     }
 
     public UUID getVideoId() {
