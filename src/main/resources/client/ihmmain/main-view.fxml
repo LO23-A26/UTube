@@ -3,9 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="client.ihmmain.MainController"
+            fx:controller="client.ihmmain.VueController"
             stylesheets="@main-view.css">
     <top>
         <Label text="UTube" styleClass="title">
