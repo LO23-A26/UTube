@@ -1,5 +1,6 @@
 package common.dataclasses;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -12,12 +13,12 @@ import java.util.UUID;
 public abstract class Review {
     private UserLight author;
     private UUID video_id;
-    private Date date;
+    private LocalDate date;
 
     protected Review() {
     }
 
-    protected Review(UserLight author, UUID video_id, Date date) {
+    protected Review(UserLight author, UUID video_id, LocalDate date) {
         this.author = author;
         this.video_id = video_id;
         this.date = date;
@@ -39,11 +40,11 @@ public abstract class Review {
         this.video_id = video_id;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 }

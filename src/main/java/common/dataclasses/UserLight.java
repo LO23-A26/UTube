@@ -4,23 +4,23 @@ import java.util.UUID;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
-import java.util.logging.Logger;
 
 /**
- * @author Lucas Dompnier
- * @version 1.0
+ * @author Lucas Dompnier, Kilian Lagrevol
+ * @version 2.0
  */
 public class UserLight {
 
     private UUID uuid;
     private String pseudo;
     private BufferedImage avatar;
+    private String image_path;
 
-    Logger logger = Logger.getLogger(getClass().getName());
 
     UserLight(String pseudo, String avatar_path) {
         this.pseudo = pseudo;
         this.uuid = this.generateUuid();
+        this.image_path = avatar_path;
         setAvatar(avatar_path);
     }
 
@@ -43,7 +43,7 @@ public class UserLight {
             // Load the image from the specified file path
             this.avatar = ImageIO.read(new File(avatar_path));
         } catch (Exception e) {
-            logger.warning("Error loading image: " + e.getMessage());
+            System.err.print("Error loading image: " + e.getMessage());
         }
     }
 
@@ -69,5 +69,11 @@ public class UserLight {
 
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
+    }
+
+    public String getImage_path(){return image_path;}
+
+    public void setImage_path(String image_path){
+        this.image_path = image_path;
     }
 }

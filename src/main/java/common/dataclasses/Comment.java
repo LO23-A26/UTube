@@ -1,5 +1,6 @@
 package common.dataclasses;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ public class Comment extends Review {
         super();
     }
 
-    public Comment(UserLight author, UUID video_id, Date date, String text) {
+    public Comment(UserLight author, UUID video_id, LocalDate date, String text) {
         super(author, video_id, date);
         this.text = text;
     }

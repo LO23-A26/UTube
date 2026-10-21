@@ -1,6 +1,8 @@
 package common.interfaces.data;
 
 import common.dataclasses.*;
+
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.List;
 import java.util.Set;
@@ -16,9 +18,9 @@ public interface InterfaceCommServerCallsDataServer {
      *
      * @param new_user The lightweight profile of the new user to register.
      * @param new_videos The set of lightweight videos associated with the new user.
-     * @return A RegistrationResult object containing lists of users and videos.
+     * @return An object containing lists of users and videos.
      */
-    public void registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
+    public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
     /**
      * Removes a user from the server's records based on their unique ID.
      *

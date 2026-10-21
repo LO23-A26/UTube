@@ -1,5 +1,6 @@
 package common.dataclasses;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ public class Rating extends Review {
         super();
     }
 
-    public Rating(UserLight author, UUID video_id, Date date, int value) {
+    public Rating(UserLight author, UUID video_id, LocalDate date, int value) {
         super(author, video_id, date);
         this.value = value;
     }
