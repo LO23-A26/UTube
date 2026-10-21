@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<!-- Maquette v2 · 12 Mon profil (affiché dans le layout de HomeController) -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ihmmain.ProfileController" fitToWidth="true"
+            style="-fx-background-color: transparent; -fx-background: transparent;">
+    <VBox spacing="20" style="-fx-padding: 28px 40px;">
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Mon profil" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Exporter le profil" onAction="#handleExportProfile"/>
+        </HBox>
+
+        <HBox styleClass="card,large" spacing="28">
+            <VBox spacing="12" alignment="TOP_CENTER" minWidth="130">
+                <Circle fx:id="avatar_circle" radius="61" fill="#E6E7E3" stroke="#D9DBE0"/>
+                <Button text="Changer l'avatar" styleClass="small" onAction="#changeAvatar"/>
+            </VBox>
+            <GridPane hgap="16" vgap="14" HBox.hgrow="ALWAYS">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+                <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label text="Pseudo" styleClass="field-label" labelFor="$pseudo_field"/>
+                    <TextField fx:id="pseudo_field"/>
+                </VBox>
+                <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Label text="Mot de passe" styleClass="field-label" labelFor="$pwd_field"/>
+                    <PasswordField fx:id="pwd_field"/>
+                </VBox>
+                <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Label text="Nom" styleClass="field-label" labelFor="$last_name_field"/>
+                    <Label text="(optionnel)" styleClass="text-small"/>
+                    <TextField fx:id="last_name_field"/>
+                </VBox>
+                <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Label text="Prénom" styleClass="field-label" labelFor="$first_name_field"/>
+                    <Label text="(optionnel)" styleClass="text-small"/>
+                    <TextField fx:id="first_name_field"/>
+                </VBox>
+                <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                    <Label text="Date de naissance" styleClass="field-label" labelFor="$birth_date_picker"/>
+                    <Label text="(optionnel)" styleClass="text-small"/>
+                    <DatePicker fx:id="birth_date_picker" promptText="jj/mm/aaaa" maxWidth="Infinity"/>
+                </VBox>
+            </GridPane>
+        </HBox>
+
+        <HBox alignment="CENTER_RIGHT" spacing="16">
+            <Label fx:id="feedback_label" styleClass="text-secondary" wrapText="true"
+                   visible="false" managed="${feedback_label.visible}"/>
+            <Button text="Enregistrer les modifications" styleClass="primary" defaultButton="true"
+                    onAction="#editProfile"/>
+        </HBox>
+    </VBox>
+</ScrollPane>
