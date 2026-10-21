@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Ligne de l'écran 07 : « Re-partager » ouvre l'écran 09, « Supprimer » retire la copie locale -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card,clickable-row"
+      stylesheets="@../../../ihmmain/css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="22.0" left="16.0" right="18.0" top="22.0"/>
+    </padding>
+    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+        <Label fx:id="title_label" styleClass="video-title" text="Titre de la vidéo"/>
+        <Label fx:id="uploader_label" styleClass="small-text" text="Pseudo uploader"/>
+    </VBox>
+    <Button fx:id="reshare_button" text="Re-partager"/>
+    <Button fx:id="delete_button" text="Supprimer"/>
+    <Label styleClass="chevron" text="›"/>
+</HBox>
