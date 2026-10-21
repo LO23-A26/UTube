@@ -11,7 +11,7 @@ import java.util.concurrent.Semaphore;
 
 public class NewConnectionListeningThread extends Thread {
 
-    private ConnectionsManager connectionsManager;
+    private final ConnectionsManager connectionsManager;
 
 
     private static final int PORT = 9000;
@@ -19,7 +19,12 @@ public class NewConnectionListeningThread extends Thread {
     private static final int MAX_CONNECTIONS = 10_000;
     private static final int READ_TIMEOUT_MS = (int) Duration.ofSeconds(30).toMillis();
 
-    public void run(String[] args) throws IOException {
+    public NewConnectionListeningThread(ConnectionsManager connectionsManager) {
+        this.connectionsManager = connectionsManager;
+    }
+
+    @Override
+    public void run() {
         Semaphore connectionLimit = new Semaphore(MAX_CONNECTIONS);
 
         try (ServerSocket serverSocket = new ServerSocket()) {
@@ -52,6 +57,8 @@ public class NewConnectionListeningThread extends Thread {
                     }
                 }
             }
+        } catch (IOException e) {
+            System.err.println("Unable to start listening thread: " + e.getMessage());
         }
     }
 
@@ -65,7 +72,7 @@ public class NewConnectionListeningThread extends Thread {
     // et crée un nouveau client avec
     private void handle(Socket socket) {
         // crée le nouveau client
-        var client = new Client(socket); // faudra y ajouter les autres infos
+        var client = new ActiveClient(socket); // faudra y ajouter les autres infos
 
         connectionsManager.connectNewClient(client);
     }
