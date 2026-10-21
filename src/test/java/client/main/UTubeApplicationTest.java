@@ -7,7 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class UTubeApplicationTest {
 
     @Test
-    void mainViewIsOnClasspath() {
+    void viewsAreOnClasspath() {
         assertNotNull(UTubeApplication.class.getResource(UTubeApplication.MAIN_VIEW));
+        assertNotNull(UTubeApplication.class.getResource(UTubeApplication.LOGIN_VIEW));
+        assertNotNull(UTubeApplication.class.getResource(UTubeApplication.STYLESHEET));
     }
 }
