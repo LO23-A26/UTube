@@ -38,6 +38,14 @@ public class UserFull {
         this.birth_date = birth_date;
     }
 
+    UserFull(UserFull userfull) {
+        this.shared_info = new UserLight(userfull.getSharedInfo());
+        this.password = userfull.getPassword();
+        this.first_name = userfull.getFirstName();
+        this.last_name = userfull.getLastName();
+        this.birth_date = userfull.getBirthDate();
+    }
+
     /**
      * Add video to the list of shared ones
      *
