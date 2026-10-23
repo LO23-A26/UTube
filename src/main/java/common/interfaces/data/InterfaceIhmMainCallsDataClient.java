@@ -55,7 +55,7 @@ public interface InterfaceIhmMainCallsDataClient {
      * @param ip_address The IP address for the connection.
      * @param port The port number.
      */
-    public void requestConnection(String pseudo, String password, String ip_address, int port);
+    public void requestConnection(UserLight user_profile, String password, String ip_address, int port);
 
     /**
      * Gets all contact lists for the user.

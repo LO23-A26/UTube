@@ -42,14 +42,6 @@ public class VideoLight {
         this.creator = creator;
     }
 
-    public VideoLight(VideoLight v){
-        this.video_id = v.video_id;
-        this.owner = v.owner;
-        this.title = v.title;
-        this.creator = v.creator;
-        this.tags = v. tags;
-    }
-
     public UUID getVideoId() {
         return video_id;
     }

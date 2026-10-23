@@ -29,11 +29,6 @@ public class UserLight {
         this.uuid = this.generateUuid();
     }
 
-    UserLight(UserLight userlight) {
-        this.peudo = userlight.getPseudo();
-        this.uuid = userlight.getUuid();
-    }
-
     public BufferedImage getAvatar() {
         return avatar;
     }
