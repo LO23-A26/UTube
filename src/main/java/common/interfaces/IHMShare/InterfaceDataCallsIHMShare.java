@@ -5,6 +5,6 @@ package common.interfaces.IHMShare;
  * @author IHM-Share.
  * @version 1.0
  */
-public interface Interface_Data_Calls_IHMShare {
+public interface InterfaceDataCallsIHMShare {
 
 }

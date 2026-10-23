@@ -8,7 +8,7 @@ import common.dataclasses.VideoFull;
  * @author IHM-Share 
  * @version 1.0
  */
-public interface Interface_Communication_Calls_IHMShare {
+public interface InterfaceCommunicationCallsIHMShare {
 
     /**
      * Return the parameters of the video
