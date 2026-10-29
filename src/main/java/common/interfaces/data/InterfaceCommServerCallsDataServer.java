@@ -18,7 +18,8 @@ public interface InterfaceCommServerCallsDataServer {
      *
      * @param new_user The lightweight profile of the new user to register.
      * @param new_videos The set of lightweight videos associated with the new user.
-     * @return An object containing lists of users and videos.
+     * @return An ArrayList containing at index 0 the List<UserLight> (user index)
+     *         and at index 1 the List<VideoLight> (video index).
      */
     public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
     /**
