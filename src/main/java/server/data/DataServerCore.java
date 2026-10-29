@@ -9,6 +9,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Core business logic and in-memory data store for the Data Server.
+ *
+ * @author Jean Van Gysel
+ * @version 1.0
+ */
 public class DataServerCore {
 
     private List<UserLight> user_list;
@@ -53,6 +59,33 @@ public class DataServerCore {
         index.add(video_list);
         return index;
     }
+
+    public void removeUser(UUID user_id) {
+        if (user_id == null) {
+            return;
+        }
+
+        for (int i = 0; i < user_list.size(); i++) {
+            if (user_id.equals(user_list.get(i).getUuid())) {
+                user_list.remove(i);
+                break;
+            }
+        }
+
+        for (int i = video_list.size() - 1; i >= 0; i--) {
+            VideoLight v = video_list.get(i);
+            if (v.getOwner() != null && user_id.equals(v.getOwner().getUuid())) {
+                video_list.remove(i);
+            }
+        }
+    }
+
+    public void removeUser(UserLight user_profile, List<VideoLight> video_list) {
+        if (user_profile != null && user_profile.getUuid() != null) {
+            removeUser(user_profile.getUuid());
+        }
+    }
+
 
     public List<UserLight> getUserList() {
         return user_list;

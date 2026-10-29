@@ -9,6 +9,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Implementation of the communication server calls to the Data Server interface.
+ *
+ * @author Jean Van Gysel
+ * @version 1.0
+ */
 public class CommServerCallsDataServerImpl implements InterfaceCommServerCallsDataServer {
 
     private DataServerCore data_server_core;
@@ -38,6 +44,16 @@ public class CommServerCallsDataServerImpl implements InterfaceCommServerCallsDa
 
     @Override
     public void removeUser(UUID user_id) {
+        if (data_server_core != null) {
+            data_server_core.removeUser(user_id);
+        }
+    }
+
+    @Override
+    public void removeUser(UserLight user_profile, List<VideoLight> video_list) {
+        if (data_server_core != null) {
+            data_server_core.removeUser(user_profile, video_list);
+        }
     }
 
     @Override

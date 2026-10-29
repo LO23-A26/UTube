@@ -30,6 +30,18 @@ public interface InterfaceCommServerCallsDataServer {
     public void removeUser(UUID user_id);
 
     /**
+     * Removes a user and purges their videos (convenience overload matching sequence diagram).
+     *
+     * @param user_profile The profile of the user to disconnect.
+     * @param video_list Ignored as videos are managed internally by the Data Server.
+     */
+    default void removeUser(UserLight user_profile, List<VideoLight> video_list) {
+        if (user_profile != null && user_profile.getUuid() != null) {
+            removeUser(user_profile.getUuid());
+        }
+    }
+
+    /**
      * Deletes a specific video index from the server.
      *
      * @param video_id The UUID of the video index to delete.
