@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Maquette v2 · 03 Serveur (carte centrée, sans header ni panneau) -->
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="client.ihmmain.ServerController">
+    <VBox styleClass="card,large" spacing="18" maxWidth="580" maxHeight="-Infinity" style="-fx-padding: 36px;">
+        <ImageView fitHeight="28" preserveRatio="true">
+            <Image url="@../../assets/logo/utube.png"/>
+        </ImageView>
+
+        <Hyperlink text="Retour" styleClass="back" onAction="#back">
+            <graphic>
+                <ImageView>
+                    <Image url="@../../assets/icons/retour.png"/>
+                </ImageView>
+            </graphic>
+        </Hyperlink>
+
+        <Label text="Serveur" styleClass="page-title"/>
+
+        <HBox styleClass="card" spacing="12" alignment="CENTER_LEFT" style="-fx-padding: 10px 14px;">
+            <Region styleClass="status-dot"/>
+            <Label fx:id="current_server_label"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Connecté" styleClass="text-secondary"/>
+            <Region prefWidth="40"/>
+            <Button text="Se déconnecter du serveur" styleClass="small" onAction="#disconnectServer"/>
+        </HBox>
+
+        <Label text="Une seule connexion serveur à la fois : se connecter à un autre serveur ferme la connexion actuelle."
+               styleClass="text-small" wrapText="true"/>
+
+        <Label text="Changer de serveur" styleClass="label-strong"/>
+        <HBox spacing="12" alignment="BOTTOM_LEFT">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Adresse IP" styleClass="field-label" labelFor="$server_ip_field"/>
+                <TextField fx:id="server_ip_field"/>
+            </VBox>
+            <VBox spacing="6" prefWidth="104" minWidth="104">
+                <Label text="Port" styleClass="field-label" labelFor="$server_port_field"/>
+                <TextField fx:id="server_port_field"/>
+            </VBox>
+            <Button text="Se connecter" styleClass="primary" defaultButton="true" onAction="#changeServer"/>
+        </HBox>
+
+        <Label fx:id="error_label" styleClass="text-secondary" wrapText="true"
+               visible="false" managed="${error_label.visible}"/>
+    </VBox>
+</StackPane>

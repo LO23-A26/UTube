@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+    Maquette v2 · 04 Accueil et structure des écrans connectés (charte 8.1, « Mise en page ») :
+    header en haut, contenu au centre (content_pane), panneau utilisateur·rice·s à droite.
+    Les écrans 10, 11 et 12 sont affichés dans content_pane à la place de l'Accueil.
+-->
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ihmmain.HomeController">
+    <fx:define>
+        <ToggleGroup fx:id="nav_group"/>
+    </fx:define>
+
+    <top>
+        <HBox styleClass="header">
+            <ImageView fitHeight="28" preserveRatio="true">
+                <Image url="@../../assets/logo/utube.png"/>
+            </ImageView>
+
+            <HBox styleClass="search-field" HBox.hgrow="ALWAYS">
+                <ImageView>
+                    <Image url="@../../assets/icons/recherche.png"/>
+                </ImageView>
+                <TextField fx:id="research_field" promptText="Rechercher (titre, créateur, tags)"
+                           HBox.hgrow="ALWAYS" onAction="#handleResearch"/>
+            </HBox>
+
+            <HBox styleClass="nav">
+                <ToggleButton fx:id="home_tab" text="Accueil" styleClass="nav-link" toggleGroup="$nav_group"
+                              selected="true" onAction="#showHomeScreen"/>
+                <ToggleButton text="Téléchargements" styleClass="nav-link" toggleGroup="$nav_group"
+                              onAction="#openDownloads"/>
+                <ToggleButton text="Partages" styleClass="nav-link" toggleGroup="$nav_group"
+                              onAction="#openShares"/>
+                <ToggleButton fx:id="friends_tab" text="Amis" styleClass="nav-link" toggleGroup="$nav_group"
+                              onAction="#openContactLists"/>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button styleClass="icon-button" onAction="#toggleUsersPanel">
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../../assets/icons/utilisateurs.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Label fx:id="avatar_label" text="Me" styleClass="avatar" minWidth="38" minHeight="38"
+                       prefWidth="38" prefHeight="38" style="-fx-cursor: hand;" onMouseClicked="#openMyProfile"/>
+                <Button text="Se déconnecter" styleClass="small" onAction="#disconnect"/>
+            </HBox>
+        </HBox>
+    </top>
+
+    <center>
+        <StackPane fx:id="content_pane">
+            <ScrollPane fx:id="home_content" fitToWidth="true"
+                        style="-fx-background-color: transparent; -fx-background: transparent;">
+                <VBox spacing="20" style="-fx-padding: 28px 40px;">
+                    <HBox alignment="BOTTOM_LEFT">
+                        <Label text="Vidéos disponibles au téléchargement" styleClass="page-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="filters_label" text="Filtres : titre · créateur · tags" styleClass="text-small"/>
+                    </HBox>
+                    <TilePane fx:id="videos_container" hgap="16" vgap="16" prefColumns="4" prefTileWidth="222"/>
+                    <Label fx:id="empty_label" text="Aucune vidéo disponible pour le moment."
+                           styleClass="text-secondary" visible="false" managed="${empty_label.visible}"/>
+                </VBox>
+            </ScrollPane>
+        </StackPane>
+    </center>
+
+    <right>
+        <VBox fx:id="users_panel" styleClass="users-panel">
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 0 0 12px 0;">
+                <Label text="Utilisateur·rice·s" styleClass="panel-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button styleClass="icon-button,flat" onAction="#toggleUsersPanel">
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../../assets/icons/fermer.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </HBox>
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background-color: transparent; -fx-background: transparent;">
+                <VBox fx:id="users_container" spacing="4"/>
+            </ScrollPane>
+            <Hyperlink text="Gérer les serveurs" style="-fx-font-size: 13px;" onAction="#openServerSettings"/>
+        </VBox>
+    </right>
+</BorderPane>

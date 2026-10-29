@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<!-- Maquette v2 · 11 Détail utilisateur·rice (affiché dans le layout de HomeController) -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ihmmain.UserDetailController" fitToWidth="true"
+            style="-fx-background-color: transparent; -fx-background: transparent;">
+    <VBox spacing="20" style="-fx-padding: 28px 40px;">
+        <Hyperlink text="Retour" styleClass="back" onAction="#back">
+            <graphic>
+                <ImageView>
+                    <Image url="@../../assets/icons/retour.png"/>
+                </ImageView>
+            </graphic>
+        </Hyperlink>
+
+        <HBox styleClass="card,large" spacing="24" alignment="CENTER_LEFT">
+            <Circle fx:id="avatar_circle" radius="49" fill="#E6E7E3" stroke="#D9DBE0"/>
+            <VBox spacing="6" alignment="CENTER_LEFT">
+                <Label fx:id="pseudo_label" styleClass="page-title"/>
+                <Label fx:id="identity_label" styleClass="text-secondary"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <!-- Ouvre le menu 11a (une case à cocher par liste de contacts) -->
+            <Button fx:id="add_to_list_button" text="Ajouter à une liste" styleClass="primary" contentDisplay="RIGHT"
+                    onAction="#openAddToListMenu">
+                <graphic>
+                    <ImageView rotate="90">
+                        <Image url="@../../assets/icons/chevron.png"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+        </HBox>
+
+        <Label text="Vidéos partagées" styleClass="section-title"/>
+        <TilePane fx:id="shared_videos_container" hgap="16" vgap="16" prefColumns="4" prefTileWidth="222"/>
+        <Label fx:id="empty_label" styleClass="text-secondary" visible="false" managed="${empty_label.visible}"/>
+    </VBox>
+</ScrollPane>
