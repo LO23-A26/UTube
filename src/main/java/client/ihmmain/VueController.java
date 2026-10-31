@@ -1,0 +1,29 @@
+package client.ihmmain;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+/**
+ * Contrôleur de la vue principale du client.
+ */
+public class VueController extends Controller {
+
+    @FXML
+    private Label statusLabel;
+
+    @FXML
+    private void initialize() {
+        refreshView();
+    }
+
+    @Override
+    public void refreshView() {
+        statusLabel.setText("Bienvenue sur UTube");
+    }
+
+    /** "Se déconnecter" du header : retour à l'écran de connexion (maquette 01). */
+    @FXML
+    private void logout() {
+        // pas de déconnexion serveur, brancher l'interface comm ici
+        viewManager.changeView(IHMMainManager.LOGIN_VIEW);
+    }
+}
