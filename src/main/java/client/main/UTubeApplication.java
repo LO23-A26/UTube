@@ -1,9 +1,8 @@
 package client.main;
 
+import client.data.IhmMainCallsDataClientImpl;
+import client.ihmmain.IHMMainManager;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -12,27 +11,17 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 
 /**
- * Point d'entrée JavaFX du client UTube.
+ * Point d'entrée JavaFX du client UTube : démarre l'application, construit les
+ * managers des différents modules et laisse l'{@link IHMMainManager} gérer
+ * l'affichage des vues FXML.
  */
 public class UTubeApplication extends Application {
-
-    public static final String MAIN_VIEW = "/client/ihmmain/main-view.fxml";
-    public static final String LOGIN_VIEW = "/client/ihmmain/login-view.fxml";
-    public static final String STYLESHEET = "/assets/styles/utube.css";
 
     @Override
     public void start(Stage stage) {
         loadFonts();
-        Scene scene = new Scene(load(LOGIN_VIEW), 1280, 800);
-        scene.getStylesheets().add(UTubeApplication.class.getResource(STYLESHEET).toExternalForm());
-        stage.setTitle("UTube");
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    /** Remplace le contenu de la fenêtre par la vue FXML donnée. */
-    public static void show(Scene scene, String view) {
-        scene.setRoot(load(view));
+        IHMMainManager viewManager = new IHMMainManager(new IhmMainCallsDataClientImpl());
+        viewManager.start(stage);
     }
 
     /** Les @font-face du CSS échouent si le chemin du projet contient un espace : on charge les polices ici. */
@@ -43,14 +32,6 @@ public class UTubeApplication extends Application {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-        }
-    }
-
-    private static Parent load(String view) {
-        try {
-            return FXMLLoader.load(UTubeApplication.class.getResource(view));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
     }
 

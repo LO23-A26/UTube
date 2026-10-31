@@ -2,6 +2,9 @@ package common.interfaces.IHMMain;
 
 import java.util.List;
 import java.util.Set;
+import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
 
 /**
  * Interface for Data to call IHM Main.

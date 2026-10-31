@@ -1,6 +1,5 @@
 package client.ihmmain;
 
-import client.main.UTubeApplication;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -9,7 +8,7 @@ import javafx.scene.control.TextField;
 /**
  * Contrôleur de l'écran de connexion (maquette 01).
  */
-public class LoginController {
+public class LoginController extends Controller {
 
     @FXML
     private TextField pseudoField;
@@ -22,6 +21,11 @@ public class LoginController {
     @FXML
     private Label errorLabel;
 
+    @Override
+    public void refreshView() {
+        errorLabel.setVisible(false);
+    }
+
     @FXML
     private void connect() {
         String error = validate(pseudoField.getText(), passwordField.getText(),
@@ -31,8 +35,8 @@ public class LoginController {
         if (error != null) {
             return;
         }
-        // ponytail: aucune authentification ni connexion serveur, brancher les interfaces data/comm ici
-        UTubeApplication.show(pseudoField.getScene(), UTubeApplication.MAIN_VIEW);
+        // aucune authentification ni connexion serveur, brancher les interfaces data/comm ici une fois qu'on saura comment se connecter
+        viewManager.changeView(IHMMainManager.MAIN_VIEW);
     }
 
     /** Renvoie le message d'erreur à afficher, ou null si la saisie est valide. */
