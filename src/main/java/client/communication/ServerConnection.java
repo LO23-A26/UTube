@@ -1,11 +1,33 @@
 package client.communication;
-import java.net.ServerSocket;
-import java.lang.Thread;
+
+import java.net.Socket;
 
 public class ServerConnection extends Thread {
     private ServerConfig config;
-    private ServerSocket socketServer;
-    //mettre getters et setters
-    //méthode de run() du thead
-    public void run(){}
+    private Socket serverSocket; // connection socket between client and server
+
+    // getters and setters
+
+    public ServerConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(ServerConfig config) {
+            this.config = config;
+        }
+
+    public Socket getServerSocket() {
+        return serverSocket;
+    }
+
+    public void setServerSocket(Socket serverSocket) {
+        this.serverSocket = serverSocket;
+    }
+
+
+    // independent thread execution
+    @Override
+    public void run() {
+    }
+
 }

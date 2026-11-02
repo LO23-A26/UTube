@@ -1,10 +1,30 @@
 package client.communication;
-import java.lang.Thread;
+
+import java.net.ServerSocket;
 
 public class ClientListeningService extends Thread {
-    private CommClientController ClientController;
+    private CommClientController clientController;
+    private ServerSocket listeningSocket;
 
-    //ajouter les getters et les setters
-    //méthode de run() du thead
+    // getters and setters
+
+    public CommClientController getClientController() {
+        return clientController;
+    }
+
+    public void setClientController(CommClientController clientController) {
+        this.clientController = clientController;
+    }
+
+    public ServerSocket getListeningSocket() {
+        return listeningSocket;
+    }
+
+    public void setListeningSocket(ServerSocket listeningSocket) {
+        this.listeningSocket = listeningSocket;
+    }
+
+    // thread execution
+    @Override
     public void run(){}
 }
