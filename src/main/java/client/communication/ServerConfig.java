@@ -3,16 +3,16 @@ package client.communication;
 import java.net.InetAddress;
 
 public class ServerConfig {
-    private InetAddress IP;
+    private InetAddress ip;
     private int port;
 
     // getters and setters
     public InetAddress getIP() {
-        return IP;
+        return ip;
     }
 
-    public void setIP(InetAddress IP) {
-        this.IP = IP;
+    public void setIP(InetAddress ip) {
+        this.ip = ip;
     }
 
     public int getPort() {
