@@ -7,6 +7,7 @@ public class ServerConfig {
     private int port;
 
     // getters and setters
+
     public InetAddress getIP() {
         return ip;
     }
