@@ -2,7 +2,7 @@ package common.interfaces;
 
 import java.util.UUID;
 
-public interface InterfaceIHMShare_calls_Comm {
+public interface InterfaceIHMShareCallsComm {
     void addComment(Comment comment, UserLight owner);
 
     void editComment(Comment comment, UserLight owner);

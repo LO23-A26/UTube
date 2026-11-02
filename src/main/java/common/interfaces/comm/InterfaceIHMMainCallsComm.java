@@ -2,7 +2,7 @@ package common.interfaces;
 
 import java.util.UUID;
 
-public interface InterfaceIHMMain_calls_Comm {
+public interface InterfaceIHMMainCallsComm {
     void closeSession();
 
     void requestConnection(user_profile UserLight, ip_address String, port int);
