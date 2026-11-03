@@ -1,7 +1,7 @@
 package client.communication;
 
 import common.interfaces.data.InterfaceCommClientCallsDataClient;
-// faut faire le import de l'interface IHMShare
+import common.interfaces.IHMShare.InterfaceCommunicationCallsIHMShare;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,7 +20,7 @@ public class CommClientController {
     private ServerConnection serverConnection;
     private HashMap<UUID,ActiveClient> connectedClients;
 
-    private InterfaceCommunication_calls_IHMShare interfaceCommIHMShare;
+    private InterfaceCommunicationCallsIHMShare interfaceCommIHMShare;
     public InterfaceCommClientCallsDataClient interfaceCommDataClient;
 
     // getters and setters
@@ -57,11 +57,11 @@ public class CommClientController {
         this.connectedClients = connectedClients;
     }
 
-    public InterfaceCommunication_calls_IHMShare getInterfaceCommIHMShare() {
+    public InterfaceCommunicationCallsIHMShare getInterfaceCommIHMShare() {
         return interfaceCommIHMShare;
     }
 
-    public void setInterfaceCommIHMShare(InterfaceCommunication_calls_IHMShare interfaceCommIHMShare) {
+    public void setInterfaceCommIHMShare(InterfaceCommunicationCallsIHMShare interfaceCommIHMShare) {
         this.interfaceCommIHMShare = interfaceCommIHMShare;
     }
 
