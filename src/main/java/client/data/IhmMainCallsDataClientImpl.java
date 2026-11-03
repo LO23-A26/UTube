@@ -96,7 +96,7 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
             }
         }
         if (profile) {
-            InterfaceDataClientCallsCommClient.sendProfileInfo(ip_address, port, video_list, pseudo);
+            data_client_core.interface_from_Comm.sendProfileInfo(ip_address, port, video_list, pseudo);
         }
         else {
             System.out.println("requestConnection - Information don't match.");
