@@ -75,6 +75,11 @@ public class NewConnectionListeningThread extends Thread {
         var client = new ActiveClient(socket); // faudra y ajouter les autres infos
 
         connectionsManager.connectNewClient(client);
+        try {
+            client.readLoop(); // blocks until the client leaves
+        } finally {
+            connectionsManager.disconnectClient(client); // remove it from the list and close it
+        }
     }
 
     private static void reject(Socket socket) {

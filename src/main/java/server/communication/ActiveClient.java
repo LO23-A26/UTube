@@ -20,7 +20,6 @@ public class ActiveClient {
     private final BufferedReader in;
     private final BufferedWriter out;
     private final AtomicBoolean connected;
-    private final Thread readLoopThread;
 
     public ActiveClient(Socket socket) {
         this.socket = Objects.requireNonNull(socket, "socket cannot be null");
@@ -41,9 +40,6 @@ public class ActiveClient {
         }
 
         this.connected = new AtomicBoolean(true);
-        this.readLoopThread = Thread.ofVirtual()
-            .name("active-client-read-" + this.uuid.substring(0, 8))
-            .start(this::readLoop);
     }
 
     /**
@@ -95,17 +91,19 @@ public class ActiveClient {
             return;
         }
 
+        closeQuietly(socket); // unblocks the read loop
         closeQuietly(in);
         closeQuietly(out);
-        closeQuietly(socket);
-        readLoopThread.interrupt();
     }
 
     private boolean isConnected() {
         return connected.get() && !socket.isClosed();
     }
 
-    private void readLoop() {
+    /**
+     * Read loop of this client: blocks until the client leaves (or an error occurs).
+     */
+    public void readLoop() {
         try {
             while (connected.get()) {
                 try {
