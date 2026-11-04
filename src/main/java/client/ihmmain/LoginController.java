@@ -34,7 +34,7 @@ public class LoginController extends Controller {
         errorLabel.setVisible(error != null);
         if (error == null) {
             // aucune authentification ni connexion serveur, brancher les interfaces data/comm ici une fois qu'on saura comment se connecter
-            viewManager.changeView(IHMMainManager.MAIN_VIEW);
+            viewManager.showContent(IHMMainManager.HOME_VIEW);
         }
     }
 

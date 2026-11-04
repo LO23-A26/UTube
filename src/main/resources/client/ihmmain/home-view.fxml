@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Mockup v2 · 04 Accueil (home), displayed in the content area of main-view.fxml -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ihmmain.HomeController" fitToWidth="true"
+            style="-fx-background-color: transparent; -fx-background: transparent;">
+    <VBox spacing="20" style="-fx-padding: 28px 40px;">
+        <HBox alignment="BOTTOM_LEFT">
+            <Label text="Vidéos disponibles au téléchargement" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Filtres : titre · créateur · tags" styleClass="text-small"/>
+        </HBox>
+        <TilePane fx:id="videos_container" hgap="16" vgap="16" prefColumns="4" prefTileWidth="222"/>
+        <Label fx:id="empty_label" text="Aucune vidéo disponible pour le moment." styleClass="text-secondary"
+               visible="false" managed="${empty_label.visible}"/>
+    </VBox>
+</ScrollPane>

@@ -3,6 +3,7 @@ package client.ihmmain;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -16,6 +17,8 @@ import java.util.List;
  */
 public class MainController extends Controller {
 
+    @FXML
+    private ToggleButton home_tab;
     @FXML
     private StackPane content_pane;
     @FXML
@@ -32,6 +35,14 @@ public class MainController extends Controller {
     /** Replaces the screen displayed in the content area. */
     void setContent(Parent content) {
         content_pane.getChildren().setAll(content);
+    }
+
+    /** "Accueil" (home) tab of the header. */
+    @FXML
+    private void showHome() {
+        viewManager.showContent(IHMMainManager.HOME_VIEW);
+        // A ToggleButton is deselected when it is clicked again
+        home_tab.setSelected(true);
     }
 
     /** Users icon of the header and close button of the panel: shows or hides the panel. */

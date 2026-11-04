@@ -41,7 +41,9 @@
             </HBox>
 
             <HBox styleClass="nav">
-                <ToggleButton text="Accueil" styleClass="nav-link" toggleGroup="$navGroup" selected="true"/>
+                <ToggleButton fx:id="home_tab" text="Accueil" styleClass="nav-link" toggleGroup="$navGroup"
+                              selected="true" onAction="#showHome"/>
+                <!-- Téléchargements and Partages tabs (IHM-Share), Amis tab (10): not implemented yet -->
                 <ToggleButton text="Téléchargements" styleClass="nav-link" toggleGroup="$navGroup"/>
                 <ToggleButton text="Partages" styleClass="nav-link" toggleGroup="$navGroup"/>
                 <ToggleButton text="Amis" styleClass="nav-link" toggleGroup="$navGroup"/>
