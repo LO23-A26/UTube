@@ -27,9 +27,23 @@ public class DataClientCore {
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
     }
+    public InterfaceDataCallsIHMMain getInterfaceFromICM() {
+        return interface_from_ICM;
+    }
+    public InterfaceData_calls_Comm getInterfaceFromComm() {
+        return interface_from_Comm;
+    }
 
     public void setImplInterfaceForICM(IhmMainCallsDataClientImpl impl_interface_for_ICM) {
         this.impl_interface_for_ICM = impl_interface_for_ICM;
+    }
+
+    public void setInterfaceFromICM(InterfaceDataCallsIHMMain interface_from_ICM) {
+        this.interface_from_ICM = interface_from_ICM;
+    }
+
+    public void setInterfaceFromComm(InterfaceData_calls_Comm interface_from_Comm) {
+        this.interface_from_Comm = interface_from_Comm;
     }
 
     public UserFull getUser() {
