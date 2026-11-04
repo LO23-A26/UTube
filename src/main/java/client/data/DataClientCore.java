@@ -5,7 +5,7 @@ import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
-import common.interfaces.IHMMain.InterfaceData_calls_Comm;
+import common.interfaces.comm.InterfaceData_calls_Comm;
 
 import java.util.Set;
 
@@ -21,8 +21,8 @@ public class DataClientCore {
     private ProfileSaver profileSaver;
     private ContactList contact_lists;
     private IhmMainCallsDataClientImpl impl_interface_for_ICM;
-    public InterfaceDataCallsIHMMain interface_from_ICM;
-    public InterfaceData_calls_Comm interface_from_Comm;
+    private InterfaceDataCallsIHMMain interface_from_ICM;
+    private InterfaceData_calls_Comm interface_from_Comm;
 
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
