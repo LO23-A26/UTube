@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * Class that save client data on user's computer
  *
  * @author Lucas Dompnier
- * @version 1.0
+ * @version 2.0
  */
 public class ProfileSaver {
 
@@ -196,6 +196,9 @@ public class ProfileSaver {
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
+
+            // set manually the avatar image
+            user_parsed.getSharedInfo().setAvatar(user_parsed.getSharedInfo().getAvatarPath());
 
             // Closing stream
             try {
