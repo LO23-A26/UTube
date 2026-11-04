@@ -1,11 +1,10 @@
-package client.main;
+package client.ihmmain;
 
-import client.ihmmain.IHMMainManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class UTubeApplicationTest {
+class IHMMainManagerTest {
 
     @Test
     void viewsAreOnClasspath() {
