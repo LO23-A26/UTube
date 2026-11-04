@@ -15,24 +15,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Gestionnaire de vues de l'IHM Main : charge les écrans FXML, bascule l'écran
- * affiché et donne à chaque {@link Controller} accès aux interfaces vers les
- * autres modules (Data pour l'instant ; Comm et IHM-Share suivront quand leurs
- * interfaces seront fusionnées dans cette branche).
+ * View manager of IHM Main: loads the FXML screens, switches the displayed screen
+ * and gives each {@link Controller} access to the interfaces of the other modules
+ * (Data for now; Comm and IHM-Share will follow when their interfaces are merged
+ * into this branch).
  */
 public class IHMMainManager {
 
     public static final String LOGIN_VIEW = "/client/ihmmain/login-view.fxml";
     public static final String MAIN_VIEW = "/client/ihmmain/main-view.fxml";
+    public static final String HOME_VIEW = "/client/ihmmain/home-view.fxml";
     public static final String STYLESHEET = "/assets/styles/utube.css";
 
 
-    /** Pour les instances de controller, on va utiliser un map qui utilisera
-     * le TYPE de la classe enfant comme CLE pour récupérer l'instance. 
-     * ainsi, si on veut récupérer le login controller on aura juste à utiliser 
-     * l'objet récupérer via cette opération : 
+    /** Controller instances are stored in a map whose KEY is the TYPE of the
+     * subclass. So, to get the login controller, the key to use is:
      * key = LoginController.class
-     * et donc, pour récupérer l'instance de LoginController, y a juste à faire :
+     * and to get the LoginController instance, just call:
      * controllers.get(LoginController.class)
      */
     private final Map<Class<? extends Controller>, Controller> controllers = new HashMap<>();
@@ -40,6 +39,8 @@ public class IHMMainManager {
     private InterfaceIHMMain_calls_Comm commCalls;
     private InterfaceIHMMainCallsIHMShare shareCalls;
     private Scene primaryScene;
+    /** Controller of the main view (header and users panel) while it is displayed, null otherwise. */
+    private MainController main_controller;
 
     public void setIData(InterfaceIhmMainCallsDataClient dataCalls) {
         this.dataCalls = dataCalls;
@@ -65,7 +66,7 @@ public class IHMMainManager {
         return shareCalls;
     }
 
-    /** Construit la fenêtre principale et affiche l'écran de connexion. */
+    /** Builds the main window and displays the login screen. */
     public void start(Stage stage) {
         LoadedView view = loadView(LOGIN_VIEW);
         primaryScene = new Scene(view.root(), 1280, 800);
@@ -76,19 +77,34 @@ public class IHMMainManager {
         view.controller().refreshView();
     }
 
-    /** Remplace l'écran affiché par celui désigné par {@code fxmlPath}. */
+    /** Replaces the displayed screen with the one given by {@code fxmlPath}. */
     public void changeView(String fxmlPath) {
         LoadedView view = loadView(fxmlPath);
         primaryScene.setRoot(view.root());
+        main_controller = view.controller() instanceof MainController main ? main : null;
         view.controller().refreshView();
     }
 
-    /** Donne accès au contrôleur déjà instancié d'un écran, pour communiquer entre écrans. */
-    public <C extends Controller> C getController(Class<C> type) { //pour un type C qui est un sous-type de Controller, cette méthode prend un Class<C> en paramètre et renvoie un C
-        return type.cast(controllers.get(type)); //cast vérifié à l'exécution par Class.cast, pas de warning unchecked
+    /**
+     * Displays the {@code fxml_path} screen in the content area of the main view:
+     * the header and the users panel stay in place. Loads the main view first if
+     * it is not displayed (for example right after login).
+     */
+    public void showContent(String fxml_path) {
+        if (main_controller == null) {
+            changeView(MAIN_VIEW);
+        }
+        LoadedView view = loadView(fxml_path);
+        main_controller.setContent(view.root());
+        view.controller().refreshView();
     }
 
-    /** Vue chargée et son contrôleur, pour appeler refreshView() sans dépendre d'un champ partagé. */
+    /** Gives access to the already created controller of a screen, to communicate between screens. */
+    public <C extends Controller> C getController(Class<C> type) { //for a type C that is a subtype of Controller, this method takes a Class<C> as parameter and returns a C
+        return type.cast(controllers.get(type)); //cast checked at runtime by Class.cast, no unchecked warning
+    }
+
+    /** Loaded view and its controller, to call refreshView() without depending on a shared field. */
     private record LoadedView(Parent root, Controller controller) {
     }
 
@@ -106,11 +122,11 @@ public class IHMMainManager {
             throw new UncheckedIOException(e);
         }
         Controller controller = loader.getController();
-        controllers.put(controller.getClass(), controller); //Pour l'instant, on va écraser l'ancienne view par la nouvelle view qu'on crée dans les controllers.
+        controllers.put(controller.getClass(), controller); //For now, the controller of the new view replaces the previous one of the same type in controllers.
         return new LoadedView(root, controller);
     }
 
-    /** Crée le contrôleur déclaré dans le FXML en lui donnant le manager avant son initialize(). */
+    /** Creates the controller declared in the FXML and gives it the manager before its initialize(). */
     private Object createController(Class<?> type) {
         try {
             Object controller = type.getDeclaredConstructor().newInstance();
