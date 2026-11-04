@@ -21,6 +21,8 @@ public class IHMShareCore {
     private IHMMainCallsIHMShareImpl impl_interface_for_ihm_main;
     private DataCallsIHMShareImpl impl_interface_for_data;
 
+    private CheckDetailsController check_details_controller;
+
     /**
      * Class constructor. Creates the implementations of the interfaces exposed
      * to the other components, each one keeping a pointer to this object
@@ -137,5 +139,23 @@ public class IHMShareCore {
      */
     public DataCallsIHMShareImpl getInterfaceForData() {
         return this.impl_interface_for_data;
+    }
+
+    /**
+     * Set controller for checking details
+     * 
+     * @param controller (CheckDetailsController) controller for checking details
+     */
+    public void setCheckDetailsController(CheckDetailsController controller) {
+        this.check_details_controller = controller;
+    }
+
+    /**
+     * Get controller for checking details
+     * 
+     * @return (CheckDetailsController) controller for checking details
+     */
+    public CheckDetailsController getCheckDetailsController() {
+        return this.check_details_controller;
     }
 }

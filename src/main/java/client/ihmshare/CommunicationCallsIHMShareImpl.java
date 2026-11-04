@@ -28,7 +28,7 @@ public class CommunicationCallsIHMShareImpl implements InterfaceCommunicationCal
      * @param video_details (VideoFull) data of the video to read
      */
     public void displayVideoDetails(VideoFull video_details){
-        // TODO
+        this.core.getCheckDetailsController().displayVideoDetails(video_details);
     }
 
     /**
