@@ -3,11 +3,12 @@ package server.communication;
 import java.util.List;
 import java.util.UUID;
 
-import common.interfaces.comm.InterfaceData_calls_Comm;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
+import common.interfaces.comm.InterfaceDataCallsComm;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
-import common.dataclasses.*;
 
-public class CommServerController implements InterfaceData_calls_Comm {
+public class CommServerController implements InterfaceDataCallsComm {
     private ConnectionsManager connectionsManager;
     private InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer;
     private NewConnectionListeningThread newConnectionListeningThread;
