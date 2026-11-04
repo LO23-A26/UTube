@@ -10,10 +10,15 @@ import common.dataclasses.*;
 public class CommServerController implements InterfaceData_calls_Comm {
     private ConnectionsManager connectionsManager;
     private InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer;
+    private NewConnectionListeningThread newConnectionListeningThread;
 
     public CommServerController(ConnectionsManager connectionsManager, InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer) {
         this.connectionsManager = connectionsManager;
         this.interfaceCommServerCallsDataServer = interfaceCommServerCallsDataServer;
+        this.newConnectionListeningThread = new NewConnectionListeningThread(connectionsManager);
+
+        // start thread
+        this.newConnectionListeningThread.start();
     }
 
     public void registerUserAndGetIndex(UserLight new_user, List<VideoLight> new_videos) {}
