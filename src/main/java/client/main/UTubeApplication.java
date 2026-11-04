@@ -20,7 +20,8 @@ public class UTubeApplication extends Application {
     @Override
     public void start(Stage stage) {
         loadFonts();
-        IHMMainManager viewManager = new IHMMainManager(new IhmMainCallsDataClientImpl());
+        // commCalls et shareCalls restent à null tant que Comm et IHM-Share n'exposent pas de client concret.
+        IHMMainManager viewManager = new IHMMainManager(new IhmMainCallsDataClientImpl(), null, null);
         viewManager.start(stage);
     }
 
