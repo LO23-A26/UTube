@@ -3,7 +3,11 @@ package client.data;
 import common.dataclasses.AccessRight;
 import common.dataclasses.ContactList;
 import common.dataclasses.UserLight;
+import common.dataclasses.UserFull;
 import common.dataclasses.VideoLight;
+import common.dataclasses.VideoFull;
+import common.dataclasses.Comment;
+import common.dataclasses.Rating;
 import common.interfaces.data.InterfaceCommClientCallsDataClient;
 import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
 
@@ -100,7 +104,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @return UUID representing the requester.
      */
-    public UUID askRequesterId(){}
+    public UUID askRequesterId(){
+        return null;
+    }
 
     /**
      * Requests a video's data.
@@ -131,7 +137,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param new_video The lightweight video information.
      */
     public void saveNewUser(UserLight new_user, VideoLight new_video){
-        data_client_core.interface_from_ICM.notifyNewUser(new_user,new_video);
+        data_client_core.getInterfaceFromICM().notifyNewUser(new_user,new_video);
     }
 
     /**
@@ -141,7 +147,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_list The list of videos.
      */
     public void saveFullIndex(List<UserLight> user_list, List<VideoLight> video_list){
-        data_client_core.interface_from_ICM.refreshFullDisplay(user_list,video_list);
+        data_client_core.getInterfaceFromICM().refreshFullDisplay(user_list,video_list);
     }
 
     /**
