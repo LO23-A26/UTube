@@ -32,11 +32,10 @@ public class LoginController extends Controller {
                 ipField.getText(), portField.getText());
         errorLabel.setText(error);
         errorLabel.setVisible(error != null);
-        if (error != null) {
-            return;
+        if (error == null) {
+            // aucune authentification ni connexion serveur, brancher les interfaces data/comm ici une fois qu'on saura comment se connecter
+            viewManager.changeView(IHMMainManager.MAIN_VIEW);
         }
-        // aucune authentification ni connexion serveur, brancher les interfaces data/comm ici une fois qu'on saura comment se connecter
-        viewManager.changeView(IHMMainManager.MAIN_VIEW);
     }
 
     /** Renvoie le message d'erreur à afficher, ou null si la saisie est valide. */
