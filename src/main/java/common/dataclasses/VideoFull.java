@@ -1,5 +1,6 @@
 package common.dataclasses;
 
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
@@ -8,10 +9,10 @@ import java.util.UUID;
 /**
  * Full video data including file path, format, ratings and comments.
  *
- * @author Jean Van Gysel, Kilian Lagrevol
- * @version 2.0
+ * @author Jean Van Gysel, Kilian Lagrevol, Lucas Dompnier
+ * @version 3.0
  */
-public class VideoFull {
+public class VideoFull implements Serializable {
     private VideoLight shared_info;
     private String file_path;
     private VideoFormat video_format;
@@ -41,6 +42,17 @@ public class VideoFull {
         this.shared_info = new VideoLight(owner, title, creator, tags);
         this.file_path = file_path;
         this.video_format = video_format;
+    }
+
+    @Override
+    public String toString() {
+        return "VideoFull{" +
+                "shared_info=" + shared_info +
+                ", file_path='" + file_path + '\'' +
+                ", video_format=" + video_format +
+                ", ratings=" + ratings +
+                ", comments=" + comments +
+                '}';
     }
 
     public VideoLight getSharedInfo() {
