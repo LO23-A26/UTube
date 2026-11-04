@@ -1,5 +1,7 @@
 package client.ihmmain;
 
+import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
+import common.interfaces.comm.InterfaceIHMMain_calls_Comm;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -33,15 +35,31 @@ public class IHMMainManager {
      * controllers.get(LoginController.class)
      */
     private final Map<Class<? extends Controller>, Controller> controllers = new HashMap<>();
-    private final InterfaceIhmMainCallsDataClient interfaceCallsData;
+    private final InterfaceIhmMainCallsDataClient dataCalls;
+    private final InterfaceIHMMain_calls_Comm commCalls;
+    private final InterfaceIHMMainCallsIHMShare shareCalls;
     private Scene primaryScene;
+    /** Contrôleur de l'écran actuellement affiché, pour lui notifier refreshView() une fois la vue visible. */
+    private Controller currentController;
 
-    public IHMMainManager(InterfaceIhmMainCallsDataClient interfaceCallsData) {
-        this.interfaceCallsData = interfaceCallsData;
+    public IHMMainManager(InterfaceIhmMainCallsDataClient dataCalls,
+                           InterfaceIHMMain_calls_Comm commCalls,
+                           InterfaceIHMMainCallsIHMShare shareCalls) {
+        this.dataCalls = dataCalls;
+        this.commCalls = commCalls;
+        this.shareCalls = shareCalls;
     }
 
-    public InterfaceIhmMainCallsDataClient getInterfaceCallsData() {
-        return interfaceCallsData;
+    public InterfaceIhmMainCallsDataClient getIData() {
+        return dataCalls;
+    }
+
+    public InterfaceIHMMain_calls_Comm getIComm() {
+        return commCalls;
+    }
+
+    public InterfaceIHMMainCallsIHMShare getIShare() {
+        return shareCalls;
     }
 
     /** Construit la fenêtre principale et affiche l'écran de connexion. */
@@ -51,17 +69,18 @@ public class IHMMainManager {
         stage.setTitle("UTube");
         stage.setScene(primaryScene);
         stage.show();
+        currentController.refreshView();
     }
 
     /** Remplace l'écran affiché par celui désigné par {@code fxmlPath}. */
     public void changeView(String fxmlPath) {
         primaryScene.setRoot(loadView(fxmlPath));
+        currentController.refreshView();
     }
 
     /** Donne accès au contrôleur déjà instancié d'un écran, pour communiquer entre écrans. */
-    @SuppressWarnings("unchecked") // Parce que sinon y a des warnings a cause du template
     public <C extends Controller> C getController(Class<C> type) { //pour un type C qui est un sous-type de Controller, cette méthode prend un Class<C> en paramètre et renvoie un C
-        return (C) controllers.get(type); //Voir comment du controllers pour comprendre ça
+        return type.cast(controllers.get(type)); //cast vérifié à l'exécution par Class.cast, pas de warning unchecked
     }
 
     private Parent loadView(String fxmlPath) {
@@ -75,7 +94,7 @@ public class IHMMainManager {
         Controller controller = loader.getController();
         controller.setViewManager(this);
         controllers.put(controller.getClass(), controller); //Pour l'instant, on va écraser l'ancienne view par la nouvelle view qu'on crée dans les controllers.
-        controller.refreshView();
+        currentController = controller;
         return root;
     }
 }
