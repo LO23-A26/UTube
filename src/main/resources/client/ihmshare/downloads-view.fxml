@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- 07 Mes téléchargements (§8.3) -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ihmshare.DownloadsController"
+            fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" style="-fx-background-color: white;">
+    <VBox spacing="20" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="28" right="40" bottom="28" left="40"/>
+        </padding>
+        <Label text="Mes téléchargements" styleClass="page-title"/>
+        <VBox fx:id="videos_box" spacing="20"/>
+        <Label fx:id="empty_label" text="Aucune vidéo téléchargée pour le moment." styleClass="text-secondary"/>
+    </VBox>
+</ScrollPane>
