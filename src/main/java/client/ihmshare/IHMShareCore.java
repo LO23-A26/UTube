@@ -114,6 +114,12 @@ public class IHMShareCore {
 
     // ---------- Getters and setters ----------
 
+    /**
+     * Set the view manager shared with IHM-Main, used to display the IHM-Share screens
+     * in the central area of the connected layout and to go back to the previous screen
+     *
+     * @param view_manager (IHMMainManager) view manager of the application
+     */
     public void setViewManager(IHMMainManager view_manager) {
         this.view_manager = view_manager;
     }
@@ -212,6 +218,13 @@ public class IHMShareCore {
         return this.impl_interface_for_data;
     }
 
+    /**
+     * Set the controller of the video detail view currently displayed (screens 05, 05b and 05c),
+     * so that the answers of the Communication component (video details, download done)
+     * can be displayed in it
+     *
+     * @param ctrl (DisplayVideoController) controller of the video detail view
+     */
     public void setControllerDisplayVideo(DisplayVideoController ctrl) {
         this.ptr_display_video_controller = ctrl;
     }
