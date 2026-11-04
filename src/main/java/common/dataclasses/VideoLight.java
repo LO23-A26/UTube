@@ -1,16 +1,15 @@
 package common.dataclasses;
 
-import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
 
 /**
  * Lightweight representation of a video containing public metadata.
  *
- * @author Jean Van Gysel, Kilian Lagrevol, Lucas Dompnier
- * @version 3.0
+ * @author Jean Van Gysel, Kilian Lagrevol
+ * @version 2.0
  */
-public class VideoLight implements Serializable {
+public class VideoLight {
     private UUID video_id;
     private UserLight owner;
     private String title;
@@ -43,15 +42,12 @@ public class VideoLight implements Serializable {
         this.creator = creator;
     }
 
-    @Override
-    public String toString() {
-        return "VideoLight{" +
-                "video_id=" + video_id +
-                ", owner=" + owner +
-                ", title='" + title + '\'' +
-                ", creator='" + creator + '\'' +
-                ", tags=" + tags +
-                '}';
+    public VideoLight(VideoLight v){
+        this.video_id = v.video_id;
+        this.owner = v.owner;
+        this.title = v.title;
+        this.creator = v.creator;
+        this.tags = v. tags;
     }
 
     public UUID getVideoId() {
