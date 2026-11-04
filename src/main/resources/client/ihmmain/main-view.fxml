@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Region?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="client.ihmmain.MainController">
+            fx:controller="client.ihmmain.VueController">
     <fx:define>
         <ToggleGroup fx:id="navGroup"/>
     </fx:define>
