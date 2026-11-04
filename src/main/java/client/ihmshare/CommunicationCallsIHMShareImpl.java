@@ -6,7 +6,7 @@ package client.ihmshare;
  * @author IHM-Share 
  * @version 1.0
  */
-public class CommunicationCallsIHMShareImpl implements Interface_Communication_Calls_IHMShare {
+public class CommunicationCallsIHMShareImpl implements InterfaceCommunicationCallsIHMShare {
 
     private IHMShareCore core;
 
