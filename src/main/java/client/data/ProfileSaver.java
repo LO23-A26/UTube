@@ -5,6 +5,7 @@ import common.dataclasses.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,14 +54,34 @@ public class ProfileSaver {
             System.out.println("Failed to create profile directory. It may already exist at: " + profile_directory);
         }
 
-        // Saving the user into a file
-        FileOutputStream fos = null;
+        // Creating the user profile directory if not exists
+        String user_profile_directory = profile_dir + "\\" + user.getSharedInfo().getUuid();
+        if (createDirectory(user_profile_directory)) {
+            System.out.println("Profile directory created successfully at: " + user_profile_directory);
+        } else {
+            System.out.println("Failed to create profile directory. It may already exist at: " + user_profile_directory);
+        }
+
+        // Copy the avatar to the directory
+        File avatar_file = new File(user.getSharedInfo().getAvatarPath());
+        String new_avatar_path = user_profile_directory + "\\" + avatar_file.getName();
         try {
-            fos = new FileOutputStream(profile_dir + "\\" + user.getSharedInfo().getUuid() + ".ser");
+            Files.copy(Path.of(user.getSharedInfo().getAvatarPath()),
+                    Path.of(new_avatar_path),
+                    StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        user.getSharedInfo().setAvatarPath(new_avatar_path);
+
+        // Saving the user into a file
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(user_profile_directory + "\\user.ser");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        ObjectOutputStream oos = null;
+        ObjectOutputStream oos;
         try {
             oos = new ObjectOutputStream(fos);
         } catch (IOException e) {
@@ -81,18 +102,41 @@ public class ProfileSaver {
 
     }
 
+    public static void deleteDirectory(File file)
+    {
+        File[] files = file.listFiles();
+
+        // Check whether the directory can be accessed
+        if (files == null) {
+            return;
+        }
+
+        // Traverse all files and subdirectories
+        for (File subfile : files) {
+
+            // If it is a subdirectory, recursively delete
+            // its contents
+            if (subfile.isDirectory()) {
+                deleteDirectory(subfile);
+            }
+
+            // Delete the file or empty directory
+            if(subfile.delete()){
+                System.out.println(subfile.getName() + "successfully deleted");
+            }
+        }
+        if(file.delete()){
+            System.out.println(file.getName() + "successfully deleted");
+        }
+    }
+
     /**
      * Delete file profile with the user
      * @param user: the user to delete
      */
-    public void deleteProfile(UserLight user){
-        // Delete the File
-        try {
-            Files.delete(Path.of(profile_dir + "\\" + user.getUuid() + ".ser"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("File deleted successfully");
+    public void deleteProfile(UserLight user) {
+        // Delete the user's directory
+        deleteDirectory(new File(profile_dir + "\\" + user.getUuid()));
     }
 
     /**
@@ -100,10 +144,10 @@ public class ProfileSaver {
      * @param dir : directory where we want to list the files
      * @return set of the name of the files
      */
-    public Set<String> listFiles(String dir) {
+    public Set<String> listDirectory(String dir) {
         return Stream.of(Objects.requireNonNull(new File(dir).listFiles()))
-                .filter(file -> !file.isDirectory())
-                .map(File::getName)
+                .filter(File::isDirectory)
+                .map(File::getAbsolutePath)
                 .collect(Collectors.toSet());
     }
 
@@ -127,19 +171,18 @@ public class ProfileSaver {
             System.out.println("Failed to create profile directory. It may already exist at: " + profile_directory);
         }
 
-        Set<UserFull> users = new HashSet<UserFull>();
+        Set<UserFull> users = new HashSet<>();
 
         // List all the profile files
-        for(String file_name : listFiles(profile_directory)){
-
+        for(String dir_name : listDirectory(profile_directory)){
             // Open the file
-            FileInputStream fis = null;
+            FileInputStream fis;
             try {
-                fis = new FileInputStream(profile_directory + "\\" + file_name);
+                fis = new FileInputStream(dir_name + "\\user.ser");
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            ObjectInputStream ois = null;
+            ObjectInputStream ois;
             try {
                 ois = new ObjectInputStream(fis);
             } catch (IOException e) {
@@ -147,7 +190,7 @@ public class ProfileSaver {
             }
 
             // Convert the file into usable UserFull object
-            UserFull user_parsed = null;
+            UserFull user_parsed;
             try {
                 user_parsed = (UserFull)ois.readObject(); // down-casting object
             } catch (IOException | ClassNotFoundException e) {

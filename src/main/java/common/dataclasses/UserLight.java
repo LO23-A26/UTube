@@ -13,18 +13,24 @@ public class UserLight {
 
     private UUID uuid;
     private String pseudo;
-    private BufferedImage avatar;
-    private String image_path;
+    private transient BufferedImage avatar;
+    private String avatar_path;
 
-
-    UserLight(String pseudo, String avatar_path) {
+    public UserLight(UUID uuid, String pseudo, String avatar_path) {
         this.pseudo = pseudo;
-        this.uuid = this.generateUuid();
-        this.image_path = avatar_path;
+        this.uuid = uuid;
+        this.avatar_path = avatar_path;
         setAvatar(avatar_path);
     }
 
-    UserLight(String pseudo) {
+    public UserLight(String pseudo, String avatar_path) {
+        this.pseudo = pseudo;
+        this.uuid = this.generateUuid();
+        this.avatar_path = avatar_path;
+        setAvatar(avatar_path);
+    }
+
+    public UserLight(String pseudo) {
         this.pseudo = pseudo;
         this.uuid = this.generateUuid();
     }
@@ -76,9 +82,9 @@ public class UserLight {
         this.pseudo = pseudo;
     }
 
-    public String getImage_path(){return image_path;}
+    public String getAvatarPath(){return avatar_path;}
 
-    public void setImage_path(String image_path){
-        this.image_path = image_path;
+    public void setAvatarPath(String avatar_path){
+        this.avatar_path = avatar_path;
     }
 }
