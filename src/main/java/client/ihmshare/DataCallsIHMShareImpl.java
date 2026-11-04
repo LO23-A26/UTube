@@ -1,5 +1,7 @@
 package client.ihmshare;
 
+import common.interfaces.IHMShare.InterfaceDataCallsIHMShare;
+
 /**
  * Implementation of the Data calls IHM Share Interface
  *

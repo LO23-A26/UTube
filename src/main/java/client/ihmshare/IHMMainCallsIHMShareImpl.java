@@ -1,5 +1,8 @@
 package client.ihmshare;
 
+import common.dataclasses.VideoLight;
+import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
+
 /**
  * Implementation of the IHM Main calls IHM Share Interface
  *

@@ -1,5 +1,8 @@
 package client.ihmshare;
 
+import common.interfaces.comm.InterfaceIHMShare_calls_Comm;
+import common.interfaces.data.InterfaceIhmShareCallsDataClient;
+
 /**
  * Core of the IHM Share component. Keeps the interfaces used to call the other
  * components (Communication, IHM Main, Data) and the implementations of the
@@ -10,9 +13,9 @@ package client.ihmshare;
  */
 public class IHMShareCore {
 
-    private InterfaceIHMShareCallsCommunication interface_from_communication;
+    private InterfaceIHMShare_calls_Comm interface_from_communication;
     private InterfaceIHMShareCallsIHMMain interface_from_ihm_main;
-    private InterfaceIHMShareCallsData interface_from_data;
+    private InterfaceIhmShareCallsDataClient interface_from_data;
 
     private CommunicationCallsIHMShareImpl impl_interface_for_communication;
     private IHMMainCallsIHMShareImpl impl_interface_for_ihm_main;
@@ -33,7 +36,7 @@ public class IHMShareCore {
      *
      * @param I (InterfaceIHMShareCallsCommunication) interface to the Communication component
      */
-    public void setInterfaceFromCommunication(InterfaceIHMShareCallsCommunication I) {
+    public void setInterfaceFromCommunication(InterfaceIHMShare_calls_Comm I) {
         this.interface_from_communication = I;
     }
 
@@ -51,7 +54,7 @@ public class IHMShareCore {
      *
      * @param I (InterfaceIHMShareCallsData) interface to the Data component
      */
-    public void setInterfaceFromData(InterfaceIHMShareCallsData I) {
+    public void setInterfaceFromData(InterfaceIhmShareCallsDataClient I) {
         this.interface_from_data = I;
     }
 
@@ -60,7 +63,7 @@ public class IHMShareCore {
      *
      * @return (InterfaceIHMShareCallsCommunication) interface to the Communication component
      */
-    public InterfaceIHMShareCallsCommunication getInterfaceFromCommunication() {
+    public InterfaceIHMShare_calls_Comm getInterfaceFromCommunication() {
         return this.interface_from_communication;
     }
 
@@ -78,7 +81,7 @@ public class IHMShareCore {
      *
      * @return (InterfaceIHMShareCallsData) interface to the Data component
      */
-    public InterfaceIHMShareCallsData getInterfaceFromData() {
+    public InterfaceIhmShareCallsDataClient getInterfaceFromData() {
         return this.interface_from_data;
     }
 
