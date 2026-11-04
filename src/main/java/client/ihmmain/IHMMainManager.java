@@ -40,6 +40,8 @@ public class IHMMainManager {
     private InterfaceIHMMain_calls_Comm commCalls;
     private InterfaceIHMMainCallsIHMShare shareCalls;
     private Scene primaryScene;
+    /** Controller of the main view (header and users panel) while it is displayed, null otherwise. */
+    private MainController main_controller;
 
     public void setIData(InterfaceIhmMainCallsDataClient dataCalls) {
         this.dataCalls = dataCalls;
@@ -80,6 +82,21 @@ public class IHMMainManager {
     public void changeView(String fxmlPath) {
         LoadedView view = loadView(fxmlPath);
         primaryScene.setRoot(view.root());
+        main_controller = view.controller() instanceof MainController main ? main : null;
+        view.controller().refreshView();
+    }
+
+    /**
+     * Displays the {@code fxml_path} screen in the content area of the main view:
+     * the header and the users panel stay in place. Loads the main view first if
+     * it is not displayed (for example right after login).
+     */
+    public void showContent(String fxml_path) {
+        if (main_controller == null) {
+            changeView(MAIN_VIEW);
+        }
+        LoadedView view = loadView(fxml_path);
+        main_controller.setContent(view.root());
         view.controller().refreshView();
     }
 
