@@ -16,9 +16,10 @@ public class CommServerController implements InterfaceData_calls_Comm {
         this.connectionsManager = connectionsManager;
         this.interfaceCommServerCallsDataServer = interfaceCommServerCallsDataServer;
         this.newConnectionListeningThread = new NewConnectionListeningThread(connectionsManager);
+    }
 
-        // start thread
-        this.newConnectionListeningThread.start();
+    public void start() {
+        newConnectionListeningThread.start();
     }
 
     public void registerUserAndGetIndex(UserLight new_user, List<VideoLight> new_videos) {}
