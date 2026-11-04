@@ -127,8 +127,16 @@ public class ActiveClient {
 
     private void handleMessage(String message) {
         // Il faudra call le handler dans le message une fois qu'on a une classe message
+        // v1 avec du texte pr l'instant : on affiche la ligne recue et on repond "OK ..." pour verifier que la connexion marche.
+        System.out.println("received from " + uuid + " : " + message);
+        try {
+            out.write("OK " + message);
+            out.newLine();
+            out.flush();
+        } catch (IOException e) {
+            close();
+        }
     }
-
     private static void closeQuietly(Socket socket) {
         try {
             socket.close();
