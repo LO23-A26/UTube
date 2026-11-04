@@ -1,5 +1,6 @@
 package common.dataclasses;
 
+import java.io.Serializable;
 import java.util.UUID;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -7,9 +8,9 @@ import java.io.File;
 
 /**
  * @author Lucas Dompnier, Kilian Lagrevol
- * @version 2.0
+ * @version 3.0
  */
-public class UserLight {
+public class UserLight implements Serializable {
 
     private UUID uuid;
     private String pseudo;
@@ -29,9 +30,13 @@ public class UserLight {
         this.uuid = this.generateUuid();
     }
 
-    UserLight(UserLight userlight) {
-        this.peudo = userlight.getPseudo();
-        this.uuid = userlight.getUuid();
+    @Override
+    public String toString() {
+        return "UserLight{" +
+                "uuid=" + uuid +
+                ", pseudo='" + pseudo + '\'' +
+                ", image_path='" + image_path + '\'' +
+                '}';
     }
 
     public BufferedImage getAvatar() {
