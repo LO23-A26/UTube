@@ -40,6 +40,20 @@ public abstract class ShareController extends Controller {
     }
 
     /**
+     * Give the core to a controller freshly loaded by the view manager (JavaFX creates the
+     * controllers, so they cannot receive it in their constructor), then refresh it
+     *
+     * @param controller (C) controller returned by the view manager
+     * @param core       (IHMShareCore) core of the module
+     * @return (C) the same controller, ready to receive its data
+     */
+    public static <C extends ShareController> C attach(C controller, IHMShareCore core) {
+        controller.setCore(core);
+        controller.refreshView();
+        return controller;
+    }
+
+    /**
      * Show an error message to the user
      *
      * @param message (String) message to display

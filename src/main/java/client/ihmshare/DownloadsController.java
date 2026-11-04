@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class DownloadsController extends ShareController {
 
+    public static final String VIEW = "/client/ihmshare/downloads-view.fxml";
+
     @FXML
     private VBox videos_box;
     @FXML
@@ -49,7 +51,7 @@ public class DownloadsController extends ShareController {
             delete_button.setOnAction(event -> deleteVideo(video));
             String uploader = video.getOwner() != null ? video.getOwner().getPseudo() : "";
             videos_box.getChildren().add(videoRow(video.getTitle(), uploader,
-                    () -> core.openVideoDetails(video), share_button, delete_button));
+                    () -> core.getInterfaceForIHMMain().launchVideo(video), share_button, delete_button));
         }
         empty_label.setVisible(videos.isEmpty());
         empty_label.setManaged(videos.isEmpty());
@@ -63,7 +65,9 @@ public class DownloadsController extends ShareController {
             showError("Le fichier de cette vidéo est introuvable.");
             return;
         }
-        core.openAddVideo(local_video);
+        AddVideoController add_video = attach(view_manager.changeContent(AddVideoController.VIEW), core);
+        core.setControllerAddVideo(add_video);
+        add_video.prefill(local_video);
     }
 
     /** "Supprimer": removes the local copy, the video stays available at its owner. */

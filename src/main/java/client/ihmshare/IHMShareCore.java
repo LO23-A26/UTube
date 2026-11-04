@@ -1,29 +1,22 @@
 package client.ihmshare;
 
 import client.ihmmain.IHMMainManager;
-import common.dataclasses.VideoFull;
-import common.dataclasses.VideoLight;
 import common.interfaces.comm.InterfaceIHMShare_calls_Comm;
 import common.interfaces.data.InterfaceIhmShareCallsDataClient;
 
 /**
- * Core of the IHM Share component. Keeps the interfaces used to call the other
- * components (Communication, Data), the implementations of the interfaces exposed
- * to these components, and the navigation between the IHM-Share screens.
+ * Core of the IHM Share component. Only references the elements of the module so that
+ * they can call each other: the interfaces used to call the other components
+ * (Communication, Data), the implementations of the interfaces exposed to these
+ * components, the controllers and the view manager shared with IHM-Main.
  * <p>
- * The screens are displayed by the view manager shared with IHM-Main, in the central
- * area of the connected layout, so the header and the users panel stay visible.
+ * From an interface implementation: {@code core.getControllerDisplayVideo().displayVideoDetails(...)}.
+ * From a controller: {@code core.getInterfaceFromData().getVideo(...)}.
  *
  * @author IHM-Share
  * @version 2.0
  */
 public class IHMShareCore {
-
-    public static final String VIDEO_DETAIL_VIEW = "/client/ihmshare/video-detail-view.fxml";
-    public static final String VIDEO_PLAYER_VIEW = "/client/ihmshare/video-player-view.fxml";
-    public static final String DOWNLOADS_VIEW = "/client/ihmshare/downloads-view.fxml";
-    public static final String MY_SHARES_VIEW = "/client/ihmshare/my-shares-view.fxml";
-    public static final String ADD_VIDEO_VIEW = "/client/ihmshare/add-video-view.fxml";
 
     private InterfaceIHMShare_calls_Comm interface_from_communication;
     private InterfaceIhmShareCallsDataClient interface_from_data;
@@ -48,70 +41,6 @@ public class IHMShareCore {
         this.impl_interface_for_data = new DataCallsIHMShareImpl(this);
     }
 
-    // ---------- Navigation ----------
-
-    /**
-     * Open the detail of a video (05, 05b or 05c depending on the video)
-     *
-     * @param video (VideoLight) video to display
-     */
-    public void openVideoDetails(VideoLight video) {
-        DisplayVideoController controller = show(view_manager.changeContent(VIDEO_DETAIL_VIEW));
-        setControllerDisplayVideo(controller);
-        controller.displayVideo(video);
-    }
-
-    /**
-     * Open the video player (06)
-     *
-     * @param video (VideoFull) local video to play
-     */
-    public void openVideoPlayer(VideoFull video) {
-        VideoPlayerController controller = show(view_manager.changeContent(VIDEO_PLAYER_VIEW));
-        controller.loadVideo(video);
-    }
-
-    /**
-     * Open the "Mes téléchargements" screen (07), header tab
-     */
-    public void openDownloads() {
-        show(view_manager.openTab(DOWNLOADS_VIEW));
-    }
-
-    /**
-     * Open the "Mes partages" screen (08), header tab
-     */
-    public void openMyShares() {
-        show(view_manager.openTab(MY_SHARES_VIEW));
-    }
-
-    /**
-     * Open the "Ajouter un partage" screen (09)
-     *
-     * @param source (VideoFull) downloaded video to share again, or null for a new video
-     */
-    public void openAddVideo(VideoFull source) {
-        AddVideoController controller = show(view_manager.changeContent(ADD_VIDEO_VIEW));
-        setControllerAddVideo(controller);
-        controller.prefill(source);
-    }
-
-    /**
-     * Back to "Mes partages" (08), from the screen 09 ("Partager", "Annuler" or "Retour")
-     */
-    public void backToMyShares() {
-        show(view_manager.backTo(MY_SHARES_VIEW));
-    }
-
-    /**
-     * Give the core to a freshly loaded controller and refresh it with its data
-     */
-    private <C extends ShareController> C show(C controller) {
-        controller.setCore(this);
-        controller.refreshView();
-        return controller;
-    }
-
     // ---------- Getters and setters ----------
 
     /**
@@ -124,6 +53,11 @@ public class IHMShareCore {
         this.view_manager = view_manager;
     }
 
+    /**
+     * Get the view manager shared with IHM-Main
+     *
+     * @return (IHMMainManager) view manager of the application
+     */
     public IHMMainManager getViewManager() {
         return this.view_manager;
     }

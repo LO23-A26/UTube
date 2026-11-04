@@ -19,6 +19,8 @@ import javafx.scene.layout.StackPane;
  */
 public class VideoPlayerController extends ShareController {
 
+    public static final String VIEW = "/client/ihmshare/video-player-view.fxml";
+
     @FXML
     private StackPane screen_pane;
     @FXML

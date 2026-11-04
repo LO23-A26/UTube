@@ -17,6 +17,8 @@ import java.util.List;
  */
 public class ManageVideosController extends ShareController {
 
+    public static final String VIEW = "/client/ihmshare/my-shares-view.fxml";
+
     @FXML
     private VBox videos_box;
     @FXML
@@ -44,7 +46,7 @@ public class ManageVideosController extends ShareController {
             Button delete_button = new Button("Supprimer");
             delete_button.setOnAction(event -> deleteVideo(video));
             videos_box.getChildren().add(videoRow(video.getTitle(), subtitle(video),
-                    () -> core.openVideoDetails(video), delete_button));
+                    () -> core.getInterfaceForIHMMain().launchVideo(video), delete_button));
         }
         empty_label.setVisible(videos.isEmpty());
         empty_label.setManaged(videos.isEmpty());
@@ -53,7 +55,8 @@ public class ManageVideosController extends ShareController {
     /** "Ajouter un partage": opens the screen 09. */
     @FXML
     private void addVideo() {
-        core.openAddVideo(null);
+        AddVideoController add_video = attach(view_manager.changeContent(AddVideoController.VIEW), core);
+        core.setControllerAddVideo(add_video);
     }
 
     /** "Supprimer": the video is no longer available for the other users. */

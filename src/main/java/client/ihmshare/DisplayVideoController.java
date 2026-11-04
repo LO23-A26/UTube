@@ -45,6 +45,8 @@ public class DisplayVideoController extends ShareController {
         NOT_DOWNLOADED, DOWNLOADED, OWNER
     }
 
+    public static final String VIEW = "/client/ihmshare/video-detail-view.fxml";
+
     private static final int MAX_RATING = 5;
 
     @FXML
@@ -293,7 +295,8 @@ public class DisplayVideoController extends ShareController {
             showError("La vidéo n'est pas disponible sur cette machine.");
             return;
         }
-        core.openVideoPlayer(video_full);
+        VideoPlayerController player = attach(view_manager.changeContent(VideoPlayerController.VIEW), core);
+        player.loadVideo(video_full);
     }
 
     /** "Gérer les accès" (05c): window 08a, provided by IHM-Main. */

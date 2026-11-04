@@ -29,7 +29,10 @@ public class IHMMainCallsIHMShareImpl implements InterfaceIHMMainCallsIHMShare {
      */
     @Override
     public void launchVideo(VideoLight video) {
-        core.openVideoDetails(video);
+        DisplayVideoController controller = ShareController.attach(
+                core.getViewManager().changeContent(DisplayVideoController.VIEW), core);
+        core.setControllerDisplayVideo(controller);
+        controller.displayVideo(video);
     }
 
     /**
@@ -37,7 +40,7 @@ public class IHMMainCallsIHMShareImpl implements InterfaceIHMMainCallsIHMShare {
      */
     @Override
     public void openDownloads() {
-        core.openDownloads();
+        ShareController.attach(core.getViewManager().openTab(DownloadsController.VIEW), core);
     }
 
     /**
@@ -45,6 +48,6 @@ public class IHMMainCallsIHMShareImpl implements InterfaceIHMMainCallsIHMShare {
      */
     @Override
     public void openMyShares() {
-        core.openMyShares();
+        ShareController.attach(core.getViewManager().openTab(ManageVideosController.VIEW), core);
     }
 }

@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
  */
 public class AddVideoController extends ShareController {
 
+    public static final String VIEW = "/client/ihmshare/add-video-view.fxml";
+
     /** Accepted video formats (§8.3). */
     static final List<String> ACCEPTED_EXTENSIONS = List.of("mp4", "avi");
 
@@ -128,13 +130,18 @@ public class AddVideoController extends ShareController {
         }
         // TODO: the description and the access rights are not sent, addVideo has no parameter for them
         data.addVideo(chosen_file, title_field.getText().strip(), creator_field.getText().strip(), parseTags(tags_field.getText()));
-        core.backToMyShares();
+        backToMyShares();
     }
 
     /** "Annuler" and "Retour": back to "Mes partages" (08). */
     @FXML
     private void cancel() {
-        core.backToMyShares();
+        backToMyShares();
+    }
+
+    /** Back to "Mes partages" (08), restored from the history if it was the previous screen. */
+    private void backToMyShares() {
+        attach(view_manager.backTo(ManageVideosController.VIEW), core);
     }
 
     /**
