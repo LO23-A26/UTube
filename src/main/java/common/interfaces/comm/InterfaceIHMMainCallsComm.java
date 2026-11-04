@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import common.dataclasses.UserLight;
 
-public interface InterfaceIHMMain_calls_Comm {
+public interface InterfaceIHMMainCallsComm {
     void closeSession();
 
     void requestConnection(UserLight user_profile , String ip_address, int port);
