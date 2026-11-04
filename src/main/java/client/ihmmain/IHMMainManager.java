@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,7 +85,12 @@ public class IHMMainManager {
     }
 
     private Parent loadView(String fxmlPath) {
-        FXMLLoader loader = new FXMLLoader(IHMMainManager.class.getResource(fxmlPath)); //getResource est un truc générique utilisable par n'importe quel objet class, on utilise IHMMainManager par défaut
+        URL location = IHMMainManager.class.getResource(fxmlPath);
+        if (location == null) {
+            throw new IllegalArgumentException("Vue introuvable : " + fxmlPath);
+        }
+        FXMLLoader loader = new FXMLLoader(location);
+        loader.setControllerFactory(this::createController);
         Parent root;
         try {
             root = loader.load();
@@ -92,9 +98,21 @@ public class IHMMainManager {
             throw new UncheckedIOException(e);
         }
         Controller controller = loader.getController();
-        controller.setViewManager(this);
         controllers.put(controller.getClass(), controller); //Pour l'instant, on va écraser l'ancienne view par la nouvelle view qu'on crée dans les controllers.
         currentController = controller;
         return root;
+    }
+
+    /** Crée le contrôleur déclaré dans le FXML en lui donnant le manager avant son initialize(). */
+    private Object createController(Class<?> type) {
+        try {
+            Object controller = type.getDeclaredConstructor().newInstance();
+            if (controller instanceof Controller c) {
+                c.setViewManager(this);
+            }
+            return controller;
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Impossible de créer le contrôleur " + type.getName(), e);
+        }
     }
 }

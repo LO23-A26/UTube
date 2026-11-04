@@ -10,11 +10,6 @@ public class VueController extends Controller {
     @FXML
     private Label statusLabel;
 
-    @FXML
-    private void initialize() {
-        refreshView();
-    }
-
     @Override
     public void refreshView() {
         statusLabel.setText("Bienvenue sur UTube");
