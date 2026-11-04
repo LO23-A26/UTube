@@ -6,7 +6,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 /**
- * Contrôleur de l'écran de connexion (maquette 01).
+ * Controller of the login screen (mockup 01).
  */
 public class LoginController extends Controller {
 
@@ -33,12 +33,12 @@ public class LoginController extends Controller {
         errorLabel.setText(error);
         errorLabel.setVisible(error != null);
         if (error == null) {
-            // aucune authentification ni connexion serveur, brancher les interfaces data/comm ici une fois qu'on saura comment se connecter
+            // no authentication or server connection yet, call the Data/Comm interfaces here once the connection process is defined
             viewManager.showContent(IHMMainManager.HOME_VIEW);
         }
     }
 
-    /** Renvoie le message d'erreur à afficher, ou null si la saisie est valide. */
+    /** Returns the error message to display, or null if the input is valid. */
     static String validate(String pseudo, String password, String ip, String port) {
         if (pseudo.isBlank() || password.isEmpty() || ip.isBlank() || port.isBlank()) {
             return "Tous les champs sont obligatoires.";

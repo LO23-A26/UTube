@@ -1,7 +1,7 @@
 package client.ihmmain;
 
 /**
- * Base commune de tous les contrôleurs de l'IHM Main.
+ * Common base class of all the IHM Main controllers.
  */
 public abstract class Controller {
 
@@ -11,6 +11,6 @@ public abstract class Controller {
         this.viewManager = viewManager;
     }
 
-    /** Appelée par l'{@link IHMMainManager} juste après que la vue a été affichée. */
+    /** Called by the {@link IHMMainManager} right after the view is displayed. */
     public abstract void refreshView();
 }

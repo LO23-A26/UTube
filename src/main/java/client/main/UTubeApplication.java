@@ -11,9 +11,9 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 
 /**
- * Point d'entrée JavaFX du client UTube : démarre l'application, construit les
- * managers des différents modules et laisse l'{@link IHMMainManager} gérer
- * l'affichage des vues FXML.
+ * JavaFX entry point of the UTube client: starts the application, builds the
+ * managers of the modules and lets the {@link IHMMainManager} handle the
+ * display of the FXML views.
  */
 public class UTubeApplication extends Application {
 
@@ -22,11 +22,11 @@ public class UTubeApplication extends Application {
         loadFonts();
         IHMMainManager viewManager = new IHMMainManager();
         viewManager.setIData(new IhmMainCallsDataClientImpl());
-        // setIComm/setIShare restent à appeler une fois que Comm et IHM-Share exposeront un client concret.
+        // setIComm/setIShare still have to be called once Comm and IHM-Share provide a concrete implementation.
         viewManager.start(stage);
     }
 
-    /** Les @font-face du CSS échouent si le chemin du projet contient un espace : on charge les polices ici. */
+    /** The CSS @font-face rules fail if the project path contains a space, so the fonts are loaded here. */
     private static void loadFonts() {
         for (String font : new String[]{"Regular", "Italic", "Medium", "SemiBold"}) {
             try (InputStream in = UTubeApplication.class.getResourceAsStream("/assets/fonts/IBMPlexSans-" + font + ".ttf")) {

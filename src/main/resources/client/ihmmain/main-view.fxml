@@ -26,7 +26,7 @@
         <ToggleGroup fx:id="navGroup"/>
     </fx:define>
 
-    <!-- Maquette v2 · Header UTube -->
+    <!-- Mockup v2 · UTube header -->
     <top>
         <HBox styleClass="header">
             <ImageView fitHeight="28" preserveRatio="true">
