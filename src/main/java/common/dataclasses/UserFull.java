@@ -1,5 +1,6 @@
 package common.dataclasses;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
@@ -7,9 +8,9 @@ import java.util.UUID;
 
 /**
  * @author Lucas Dompnier, Kilian Lagrevol
- * @version 2.0
+ * @version 3.0
  */
-public class UserFull {
+public class UserFull implements Serializable {
 
     private UserLight shared_info;
     private String password;
@@ -36,6 +37,20 @@ public class UserFull {
         this.first_name = first_name;
         this.last_name = last_name;
         this.birth_date = birth_date;
+    }
+
+    @Override
+    public String toString() {
+        return "UserFull{" +
+                "shared_info=" + shared_info +
+                ", password='" + password + '\'' +
+                ", first_name='" + first_name + '\'' +
+                ", last_name='" + last_name + '\'' +
+                ", birth_date=" + birth_date +
+                ", shared_videos=" + shared_videos +
+                ", uploaded_videos=" + uploaded_videos +
+                ", contact_lists=" + contact_lists +
+                '}';
     }
 
     /**

@@ -1,12 +1,13 @@
 package common.dataclasses;
+import java.io.Serializable;
 import java.util.UUID;
 import java.util.Set;
 
 /**
  * @author Lucas Dompnier
- * @version 1.0
+ * @version 2.0
  */
-public class ContactList {
+public class ContactList implements Serializable {
 
     private String list_name;
     private Set<UserLight> contacts;
@@ -21,6 +22,16 @@ public class ContactList {
     public ContactList(String list_name, Set<UserLight> contacts) {
         this.list_name = list_name;
         this.contacts = contacts;
+    }
+
+    @Override
+    public String toString() {
+        return "ContactList{" +
+                "list_name='" + list_name + '\'' +
+                ", contacts=" + contacts +
+                ", list_id=" + list_id +
+                ", right=" + right +
+                '}';
     }
 
     /**
