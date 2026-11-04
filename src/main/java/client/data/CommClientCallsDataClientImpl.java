@@ -1,7 +1,5 @@
 package client.data;
 
-import common.dataclasses.AccessRight;
-import common.dataclasses.ContactList;
 import common.dataclasses.UserLight;
 import common.dataclasses.UserFull;
 import common.dataclasses.VideoLight;
@@ -9,10 +7,8 @@ import common.dataclasses.VideoFull;
 import common.dataclasses.Comment;
 import common.dataclasses.Rating;
 import common.interfaces.data.InterfaceCommClientCallsDataClient;
-import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -32,7 +28,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_id The UUID of the video.
      * @return VideoHeavy object containing heavy video details, or null by default.
      */
-    public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id){}
+    public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id){
+        return new VideoFull();
+    }
 
     /**
      * Adds a comment to a video.
@@ -136,7 +134,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param new_user The lightweight user profile.
      * @param new_video The lightweight video information.
      */
-    public void saveNewUser(UserLight new_user, VideoLight new_video){
+    public void saveNewUser(UserLight new_user, List<VideoLight> new_video){
         data_client_core.getInterfaceFromICM().notifyNewUser(new_user,new_video);
     }
 

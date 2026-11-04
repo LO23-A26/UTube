@@ -114,7 +114,7 @@ public interface InterfaceCommClientCallsDataClient {
      * @param new_user The lightweight user profile.
      * @param new_video The lightweight video information.
      */
-    public void saveNewUser(UserLight new_user, VideoLight new_video);
+    public void saveNewUser(UserLight new_user, List<VideoLight> new_video);
 
     /**
      * Saves a full index of users and videos.
