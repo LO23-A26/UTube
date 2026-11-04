@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- 05 / 05b / 05c Video detail: one view whose state depends on the video (§8.3) -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ihmshare.DisplayVideoController"
+            fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" style="-fx-background-color: white;">
+    <HBox spacing="28" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="28" right="40" bottom="28" left="40"/>
+        </padding>
+
+        <!-- Left column: video information -->
+        <VBox spacing="16" HBox.hgrow="ALWAYS" minWidth="360">
+            <Hyperlink text="Retour" styleClass="back" onAction="#goBack">
+                <graphic>
+                    <ImageView><Image url="@../../assets/icons/retour.png"/></ImageView>
+                </graphic>
+            </Hyperlink>
+
+            <Label fx:id="title_label" styleClass="page-title" wrapText="true"/>
+            <Label fx:id="info_label" styleClass="text-secondary" wrapText="true"/>
+
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label styleClass="avatar" minWidth="34" minHeight="34" prefWidth="34" prefHeight="34"/>
+                <Label text="Partagée par" styleClass="text-secondary"/>
+                <Hyperlink fx:id="owner_link" styleClass="strong"/>
+            </HBox>
+
+            <HBox fx:id="average_box" spacing="8" alignment="CENTER_LEFT">
+                <HBox fx:id="average_stars" spacing="2" alignment="CENTER_LEFT"/>
+                <Label fx:id="average_label" styleClass="label-strong"/>
+                <Label fx:id="count_label" styleClass="text-small"/>
+            </HBox>
+
+            <VBox fx:id="description_box" styleClass="card" spacing="8">
+                <Label text="Description" styleClass="section-title"/>
+                <Label fx:id="description_label" wrapText="true" styleClass="text-secondary"/>
+            </VBox>
+
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button fx:id="download_button" text="Télécharger" styleClass="primary" onAction="#downloadVideo">
+                    <graphic>
+                        <ImageView><Image url="@../../assets/icons/telecharger.png"/></ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="play_button" text="Jouer" styleClass="primary" onAction="#playVideo">
+                    <graphic>
+                        <ImageView><Image url="@../../assets/icons/jouer.png"/></ImageView>
+                    </graphic>
+                </Button>
+                <Label fx:id="state_badge" styleClass="badge">
+                    <graphic>
+                        <ImageView><Image url="@../../assets/icons/check.png"/></ImageView>
+                    </graphic>
+                </Label>
+                <Button fx:id="access_button" text="Gérer les accès" onAction="#manageAccess"/>
+            </HBox>
+            <Label fx:id="state_label" styleClass="text-small" wrapText="true"/>
+        </VBox>
+
+        <!-- Right column: ratings and comments -->
+        <VBox styleClass="card,large" spacing="12" prefWidth="430" minWidth="380">
+            <Label text="Notes et commentaires" styleClass="section-title"/>
+
+            <Label text="Ma note" styleClass="label-strong"/>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <HBox fx:id="my_rating_stars" spacing="4" alignment="CENTER_LEFT"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Noter" styleClass="small" onAction="#rateVideo"/>
+            </HBox>
+
+            <Label text="Mon commentaire" styleClass="label-strong"/>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <TextField fx:id="comment_field" styleClass="small" promptText="Ajouter un commentaire"
+                           HBox.hgrow="ALWAYS" onAction="#commentVideo"/>
+                <Button text="Publier" styleClass="small" onAction="#commentVideo"/>
+            </HBox>
+
+            <VBox styleClass="help-box">
+                <Label wrapText="true"
+                       text="Note et commentaire sont indépendants : on peut noter sans commenter, et commenter sans noter."/>
+            </VBox>
+
+            <Separator/>
+            <Label text="Avis des utilisateurs" styleClass="label-strong"/>
+            <VBox fx:id="reviews_box"/>
+            <Label fx:id="no_review_label" text="Aucun avis pour le moment." styleClass="text-small"/>
+        </VBox>
+    </HBox>
+</ScrollPane>
