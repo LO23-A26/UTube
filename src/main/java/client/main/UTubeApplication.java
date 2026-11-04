@@ -2,6 +2,7 @@ package client.main;
 
 import client.data.IhmMainCallsDataClientImpl;
 import client.ihmmain.IHMMainManager;
+import client.ihmshare.IHMShareCore;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -20,8 +21,15 @@ public class UTubeApplication extends Application {
     @Override
     public void start(Stage stage) {
         loadFonts();
-        IHMMainManager viewManager = new IHMMainManager(new IhmMainCallsDataClientImpl());
-        viewManager.start(stage);
+        IHMMainManager view_manager = new IHMMainManager(new IhmMainCallsDataClientImpl());
+
+        // IHM-Share displays its screens through the same view manager
+        IHMShareCore ihm_share_core = new IHMShareCore();
+        ihm_share_core.setViewManager(view_manager);
+        view_manager.setInterfaceCallsShare(ihm_share_core.getInterfaceForIHMMain());
+        // TODO: ihm_share_core.setInterfaceFromData(...) / setInterfaceFromCommunication(...) once implemented
+
+        view_manager.start(stage);
     }
 
     /** Les @font-face du CSS échouent si le chemin du projet contient un espace : on charge les polices ici. */
