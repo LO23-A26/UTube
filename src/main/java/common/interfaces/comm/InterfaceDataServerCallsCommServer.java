@@ -4,6 +4,6 @@ import java.util.List;
 
 import common.dataclasses.UserLight;
 
-public interface InterfaceDataServer_calls_CommServer {
+public interface InterfaceDataServerCallsCommServer {
     void sendListVideo(List<UserLight> list_user);
 }
