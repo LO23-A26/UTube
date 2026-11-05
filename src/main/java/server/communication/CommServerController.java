@@ -1,6 +1,8 @@
 package server.communication;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import common.dataclasses.UserLight;
@@ -10,7 +12,7 @@ import common.interfaces.data.InterfaceCommServerCallsDataServer;
 
 public class CommServerController implements InterfaceDataCallsComm {
     private ConnectionsManager connectionsManager;
-    private InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer;
+    public InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer;
     private NewConnectionListeningThread newConnectionListeningThread;
 
     public CommServerController(ConnectionsManager connectionsManager, InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer) {
@@ -49,5 +51,23 @@ public class CommServerController implements InterfaceDataCallsComm {
 
     public void giveDetailsRequest(UserLight requester_profile, UserLight owner_profile, UUID video) {
 
+    }
+
+    /* 
+     * Broadcasts a notification (NewUserNotificationMessage) to all connected clients about a new user.
+     * @param new_user The new user.
+     * @param new_user_videos The videos of the new user.
+     */
+    public void broadcastNewUserNotification(UserLight new_user, Set<VideoLight> new_user_videos) {
+        throw new UnsupportedOperationException("Unimplemented method 'broadcastNewUserNotification'");
+    }
+
+    /*
+     * Sends the full index to a new user (SendFullIndexMessage).
+     * @param new_user The new user.
+     * @param index The full index.
+     */
+    public void sendFullIndex(UserLight new_user, ArrayList<Object> index) {
+        throw new UnsupportedOperationException("Unimplemented method 'sendFullIndex'");
     }
 }
