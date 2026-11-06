@@ -1,8 +1,5 @@
 package client.communication;
 
-import common.interfaces.data.InterfaceCommClientCallsDataClient;
-import common.interfaces.IHMShare.InterfaceCommunicationCallsIHMShare;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,6 +10,9 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.UUID;
+
+import common.interfaces.IHMShare.InterfaceCommunicationCallsIHMShare;
+import common.interfaces.data.InterfaceCommClientCallsDataClient;
 
 public class CommClientController {
     private ClientListeningService clientListener;
@@ -84,7 +84,10 @@ public class CommClientController {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 
-            out.write("hello");
+            // Envoi de l'UUID dès l'établissement de la connexion
+            UUID clientUuid = UUID.randomUUID(); //!!! Mock UUID for testing purposes
+
+            out.write(clientUuid.toString());
             out.newLine();
             out.flush();
 
