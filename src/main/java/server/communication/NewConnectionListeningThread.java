@@ -103,6 +103,7 @@ public class NewConnectionListeningThread extends Thread {
         // Création du ActiveClient avec son UUID
         // et les flux déjà initialisés
         var client = new ActiveClient(socket, uuid, reader, writer);
+        client.send("UUID received: " + client.getUuid()); //!!! Test purpose - Confirmation de réception de l'UUID
         connectionsManager.connectNewClient(client);
 
         try {
