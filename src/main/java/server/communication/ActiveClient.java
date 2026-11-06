@@ -1,11 +1,12 @@
 package server.communication;
 
-import java.io.*;
-import java.net.SocketTimeoutException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
+import java.net.SocketTimeoutException;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -21,23 +22,23 @@ public class ActiveClient {
     private final BufferedWriter out;
     private final AtomicBoolean connected;
 
-    public ActiveClient(Socket socket) {
+    public ActiveClient(
+        Socket socket,
+        String uuid,
+        BufferedReader reader,
+        BufferedWriter writer
+    ) {
         this.socket = Objects.requireNonNull(socket, "socket cannot be null");
-        this.uuid = UUID.randomUUID().toString();
+        this.uuid = Objects.requireNonNull(uuid, "uuid cannot be null");
+
         this.ipAddress = this.socket.getInetAddress() != null
                 ? this.socket.getInetAddress().getHostAddress()
                 : "unknown";
+
         this.port = this.socket.getPort();
 
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream(), StandardCharsets.UTF_8));
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream(), StandardCharsets.UTF_8));
-            this.in = reader;
-            this.out = writer;
-        } catch (IOException e) {
-            closeQuietly(this.socket);
-            throw new UncheckedIOException("Unable to create I/O streams for client socket", e);
-        }
+        this.in = Objects.requireNonNull(reader);
+        this.out = Objects.requireNonNull(writer);
 
         this.connected = new AtomicBoolean(true);
     }

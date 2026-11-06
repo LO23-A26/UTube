@@ -1,7 +1,14 @@
 package server.communication;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
@@ -68,19 +75,47 @@ public class NewConnectionListeningThread extends Thread {
         socket.setKeepAlive(true);            // OS-level dead peer detection; not a heartbeat substitute
     }
 
-    // Un nouveau client vient de se connecter, on prend le socket
-    // et crée un nouveau client avec
     private void handle(Socket socket) {
-        // crée le nouveau client
-        var client = new ActiveClient(socket); // faudra y ajouter les autres infos
+    try {
+        // Création des flux de communication
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        socket.getInputStream(),
+                        StandardCharsets.UTF_8
+                )
+        );
 
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(
+                        socket.getOutputStream(),
+                        StandardCharsets.UTF_8
+                )
+        );
+
+        // Lecture du premier message := l'UUID du client
+        String uuid = reader.readLine();
+
+        if (uuid == null || uuid.isBlank()) {
+            socket.close();
+            return;
+        }
+
+        // Création du ActiveClient avec son UUID
+        // et les flux déjà initialisés
+        var client = new ActiveClient(socket, uuid, reader, writer);
         connectionsManager.connectNewClient(client);
+
         try {
             client.readLoop(); // blocks until the client leaves
         } finally {
-            connectionsManager.disconnectClient(client); // remove it from the list and close it
+            connectionsManager.disconnectClient(client);
         }
+
+    } catch (IOException e) {
+        System.err.println("Unable to initialize client: " + e.getMessage());
+        closeQuietly(socket);
     }
+}
 
     private static void reject(Socket socket) {
         try (socket;
