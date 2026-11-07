@@ -23,7 +23,17 @@ public class CommClientController {
     private InterfaceCommunicationCallsIHMShare interfaceCommIHMShare;
     public InterfaceCommClientCallsDataClient interfaceCommDataClient;
 
-    public static void main(String[] args) throws IOException {
+    // Full contructor, must be used when integration is done
+    public CommClientController(InterfaceCommunicationCallsIHMShare interfaceCommIHMShare, InterfaceCommClientCallsDataClient interfaceCommDataClient) {
+        this.interfaceCommIHMShare = interfaceCommIHMShare;
+        this.interfaceCommDataClient = interfaceCommDataClient;
+
+        this.connectedClients = new HashMap<>();
+        this.clientListener = new ClientListeningService(this);
+        this.serverListener = new ServerListeningService(this);
+    }
+
+    public void run() {
         try (Socket socket = new Socket()) {
             socket.connect(new InetSocketAddress("localhost", 9000), 2_000);
             socket.setSoTimeout(5_000);
@@ -42,6 +52,8 @@ public class CommClientController {
 
             String response = in.readLine();
             System.out.println(response);
+        } catch (IOException e) {
+            System.err.println("Error during communication with server: " + e.getMessage());
         }
     }
 }
