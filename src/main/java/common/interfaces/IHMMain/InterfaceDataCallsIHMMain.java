@@ -1,5 +1,8 @@
 package common.interfaces.IHMMain;
 
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
+import common.dataclasses.UserFull;
 import java.util.List;
 import java.util.Set;
 import common.dataclasses.UserFull;
@@ -26,7 +29,7 @@ public interface InterfaceDataCallsIHMMain {
      * Notifies IHM Main that a new user is connected.
      *
      * @param new_user the new connected user
-     * @param new_video videos of the new connected user
+     * @param new_videos videos of the new connected user
      */
     public void notifyNewUser(UserLight new_user, List<VideoLight> new_videos);
 

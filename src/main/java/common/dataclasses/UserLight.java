@@ -1,5 +1,7 @@
 package common.dataclasses;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.UUID;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -7,31 +9,53 @@ import java.io.File;
 
 /**
  * @author Lucas Dompnier, Kilian Lagrevol
- * @version 2.0
+ * @version 4.0
  */
-public class UserLight {
+public class UserLight implements Serializable {
+    // Explicit serialVersion of the class for serialization
+    @Serial
+    private static final long serialVersionUID = 2367352796630647666L;
 
     private UUID uuid;
     private String pseudo;
-    private BufferedImage avatar;
-    private String image_path;
+    private transient BufferedImage avatar;
+    private String avatar_path;
 
-
-    UserLight(String pseudo, String avatar_path) {
+    public UserLight(UUID uuid, String pseudo, String avatar_path) {
         this.pseudo = pseudo;
-        this.uuid = this.generateUuid();
-        this.image_path = avatar_path;
+        this.uuid = uuid;
+        this.avatar_path = avatar_path;
         setAvatar(avatar_path);
     }
 
-    UserLight(String pseudo) {
+    public UserLight(String pseudo, String avatar_path) {
+        this.pseudo = pseudo;
+        this.uuid = this.generateUuid();
+        this.avatar_path = avatar_path;
+        setAvatar(avatar_path);
+    }
+
+    public UserLight(String pseudo) {
         this.pseudo = pseudo;
         this.uuid = this.generateUuid();
     }
 
-    UserLight(UserLight userlight) {
-        this.peudo = userlight.getPseudo();
-        this.uuid = userlight.getUuid();
+    @Override
+    public String toString() {
+        return "UserLight{" +
+                "uuid=" + uuid +
+                ", pseudo='" + pseudo + '\'' +
+                ", avatar_path='" + avatar_path + '\'' +
+                '}';
+    }
+
+    @Override
+    public String toString() {
+        return "UserLight{" +
+                "uuid=" + uuid +
+                ", pseudo='" + pseudo + '\'' +
+                ", image_path='" + image_path + '\'' +
+                '}';
     }
 
     public BufferedImage getAvatar() {
@@ -76,9 +100,9 @@ public class UserLight {
         this.pseudo = pseudo;
     }
 
-    public String getImage_path(){return image_path;}
+    public String getAvatarPath(){return avatar_path;}
 
-    public void setImage_path(String image_path){
-        this.image_path = image_path;
+    public void setAvatarPath(String avatar_path){
+        this.avatar_path = avatar_path;
     }
 }
