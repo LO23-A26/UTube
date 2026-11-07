@@ -23,58 +23,17 @@ public class CommClientController {
     private InterfaceCommunicationCallsIHMShare interfaceCommIHMShare;
     public InterfaceCommClientCallsDataClient interfaceCommDataClient;
 
-    // getters and setters
-
-    public ClientListeningService getClientListener() {
-        return clientListener;
-    }
-
-    public void setClientListener(ClientListeningService clientListener) {
-        this.clientListener = clientListener;
-    }
-
-    public ServerListeningService getServerListener() {
-        return serverListener;
-    }
-
-    public void setServerListener(ServerListeningService serverListener) {
-        this.serverListener = serverListener;
-    }
-
-    public ServerConnection getServerConnection() {
-        return serverConnection;
-    }
-
-    public void setServerConnection(ServerConnection serverConnection) {
-        this.serverConnection = serverConnection;
-    }
-
-    public HashMap<UUID, ActiveClient> getConnectedClients() {
-        return connectedClients;
-    }
-
-    public void setConnectedClients(HashMap<UUID, ActiveClient> connectedClients) {
-        this.connectedClients = connectedClients;
-    }
-
-    public InterfaceCommunicationCallsIHMShare getInterfaceCommIHMShare() {
-        return interfaceCommIHMShare;
-    }
-
-    public void setInterfaceCommIHMShare(InterfaceCommunicationCallsIHMShare interfaceCommIHMShare) {
+    // Full contructor, must be used when integration is done
+    public CommClientController(InterfaceCommunicationCallsIHMShare interfaceCommIHMShare, InterfaceCommClientCallsDataClient interfaceCommDataClient) {
         this.interfaceCommIHMShare = interfaceCommIHMShare;
-    }
-
-    public InterfaceCommClientCallsDataClient getInterfaceCommDataClient() {
-        return interfaceCommDataClient;
-    }
-
-    public void setInterfaceCommDataClient(InterfaceCommClientCallsDataClient interfaceCommDataClient) {
         this.interfaceCommDataClient = interfaceCommDataClient;
+
+        this.connectedClients = new HashMap<>();
+        this.clientListener = new ClientListeningService(this);
+        this.serverListener = new ServerListeningService(this);
     }
 
-
-    public static void main(String[] args) throws IOException {
+    public void run() {
         try (Socket socket = new Socket()) {
             socket.connect(new InetSocketAddress("localhost", 9000), 2_000);
             socket.setSoTimeout(5_000);
@@ -93,6 +52,8 @@ public class CommClientController {
 
             String response = in.readLine();
             System.out.println(response);
+        } catch (IOException e) {
+            System.err.println("Error during communication with server: " + e.getMessage());
         }
     }
 }

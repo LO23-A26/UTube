@@ -6,13 +6,8 @@ public class ClientListeningService extends Thread {
     private CommClientController clientController;
     private ServerSocket listeningSocket;
 
-    // getters and setters
-
-    public CommClientController getClientController() {
-        return clientController;
-    }
-
-    public void setClientController(CommClientController clientController) {
+    // Constructor
+    public ClientListeningService(CommClientController clientController) {
         this.clientController = clientController;
     }
 
