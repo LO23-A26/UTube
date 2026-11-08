@@ -6,6 +6,11 @@ public class ServerConfig {
     private InetAddress ip;
     private int port;
 
+    public ServerConfig(InetAddress ip, int port) {
+        this.ip = ip;
+        this.port = port;
+    }
+
     // getters and setters
 
     public InetAddress getIP() {
