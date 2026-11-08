@@ -5,6 +5,9 @@ import java.util.Set;
 
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
+import common.dataclasses.communication.ClientMessage;
+import common.dataclasses.communication.messages.NewUserNotificationMessage;
+import common.dataclasses.communication.messages.SendFullIndexMessage;
 import common.interfaces.comm.InterfaceDataServerCallsCommServer;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
 import server.communication.implementations.DataServerCallsCommServer;
@@ -66,8 +69,15 @@ public class CommServerController {
      * @param new_user The new user.
      * @param new_user_videos The videos of the new user.
      */
-    public void broadcastNewUserNotification(UserLight new_user, Set<VideoLight> new_user_videos) {
-        throw new UnsupportedOperationException("Unimplemented method 'broadcastNewUserNotification'");
+    public void broadcastNewUserNotification(UserLight new_user, String new_user_ip, int new_user_port, Set<VideoLight> new_user_videos) {
+        ClientMessage message = new NewUserNotificationMessage(
+            new_user, 
+            new_user_ip, 
+            new_user_port, 
+            new_user_videos
+        );
+        
+        connectionsManager.broadcastMessage(message);
     }
 
     /*
@@ -76,6 +86,10 @@ public class CommServerController {
      * @param index The full index.
      */
     public void sendFullIndex(UserLight new_user, ArrayList<Object> index) {
+        SendFullIndexMessage message = new SendFullIndexMessage(
+            index
+        );
+        connectionsManager.sendMessageToClient(new_user.getUuid(), message);
         throw new UnsupportedOperationException("Unimplemented method 'sendFullIndex'");
     }
 }
