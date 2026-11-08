@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Droits d'une liste de contacts sur une vidéo (fenêtre 08a) -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+
+<HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="list-row" stylesheets="@../../css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="14.0" top="14.0"/>
+    </padding>
+    <Label fx:id="list_name_label" text="[Nom de la liste]"/>
+    <Region HBox.hgrow="ALWAYS"/>
+    <CheckBox fx:id="download_checkbox" selected="true" text="Télécharger"/>
+    <CheckBox fx:id="rate_checkbox" selected="true" text="Noter"/>
+    <CheckBox fx:id="comment_checkbox" selected="true" text="Commenter"/>
+</HBox>
