@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Structure des écrans connectés (charte 8.1, « Mise en page ») :
+    header en haut, contenu au centre, panneau utilisateur·rice·s à droite.
+    Les vues de contenu (IHM-Main et IHM-Share) sont placées dans content_pane.
+    Les fenêtres modales (08a, 10a, 10b, confirmations) sont placées dans modal_layer,
+    qui pose un voile noir à 45 % sur l'écran d'origine.
+-->
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="root_pane" prefHeight="800.0" prefWidth="1280.0" stylesheets="@../css/utube.css"
+           xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <BorderPane fx:id="main_layout">
+        <top>
+            <fx:include fx:id="header" source="components/Header.fxml"/>
+        </top>
+        <center>
+            <StackPane fx:id="content_pane" styleClass="content-area"/>
+        </center>
+        <right>
+            <fx:include fx:id="users_panel" source="components/UsersPanel.fxml"/>
+        </right>
+    </BorderPane>
+
+    <StackPane fx:id="modal_layer" styleClass="modal-overlay" visible="false"/>
+</StackPane>

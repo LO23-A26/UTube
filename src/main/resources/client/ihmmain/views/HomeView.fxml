@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    04 Accueil : vidéos partagées par les utilisateur·rice·s connecté·e·s.
+    Un clic sur une carte ouvre le détail de la vidéo (05, 05b ou 05c), géré par IHM-Share.
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0" styleClass="content-area" stylesheets="@../css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="28.0" left="40.0" right="40.0" top="28.0"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <Label styleClass="page-title" text="Vidéos disponibles au téléchargement"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="filters_label" styleClass="secondary-text" text="Filtres : titre · créateur · tags"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+        <!-- Rempli par le contrôleur avec des VideoCard -->
+        <FlowPane fx:id="videos_container" hgap="16.0" vgap="16.0"/>
+    </ScrollPane>
+
+    <Label fx:id="empty_label" managed="false" styleClass="hint-text"
+           text="Aucune vidéo ne correspond à la recherche." visible="false"/>
+</VBox>

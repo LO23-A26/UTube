@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Carte vidéo (Accueil 04, Détail utilisateur·rice 11) : entièrement cliquable, sans miniature -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox alignment="CENTER_LEFT" prefWidth="228.0" spacing="8.0" styleClass="card,video-card"
+      stylesheets="@../../css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+    </padding>
+    <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+        <Label fx:id="title_label" styleClass="video-title" text="Titre de la vidéo" wrapText="true"/>
+        <Label fx:id="uploader_label" styleClass="secondary-text" text="Pseudo uploader"/>
+        <Label fx:id="tags_label" styleClass="small-text" text="Tags : [tag] [tag]" wrapText="true"/>
+        <Label fx:id="rating_label" styleClass="small-text" text="★ [x/5]"/>
+    </VBox>
+    <Label fx:id="chevron_label" styleClass="chevron" text="›"/>
+</HBox>
