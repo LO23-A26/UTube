@@ -1,4 +1,4 @@
-package client.data;
+package common.dataclasses;
 
 /**
  * Class that saves client data on user's computer.

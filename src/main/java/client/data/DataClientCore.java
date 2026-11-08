@@ -1,9 +1,6 @@
 package client.data;
 
-import common.dataclasses.ContactList;
-import common.dataclasses.UserFull;
-import common.dataclasses.UserLight;
-import common.dataclasses.VideoLight;
+import common.dataclasses.*;
 
 import java.util.Set;
 
