@@ -32,7 +32,7 @@ public class ConnectionRequestMessage implements ServerMessage {
     public void handle(CommServerController controller) {  
         ArrayList<Object> index = controller.interfaceCommServerCallsDataServer.registerUserAndGetIndex(this.new_user, this.new_user_videos);
         // send the new infos to all (not implemented yet)
-        controller.broadcastNewUserNotification(this.new_user, this.new_user_videos);
+        controller.broadcastNewUserNotification(this.new_user, new_user_ip, new_user_port, this.new_user_videos);
 
         // send the index to the new user
         controller.sendFullIndex(new_user, index);
