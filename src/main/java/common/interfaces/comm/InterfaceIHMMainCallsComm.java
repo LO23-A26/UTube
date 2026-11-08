@@ -7,6 +7,10 @@ import common.dataclasses.UserLight;
 public interface InterfaceIHMMainCallsComm {
     void closeSession();
 
+    /*  
+        DEPRECATED
+        Should not exist according to sequence diagrams
+    */
     void requestConnection(UserLight user_profile , String ip_address, int port);
     
     void askDelete(UUID video_id);
