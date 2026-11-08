@@ -59,6 +59,19 @@ public class CommClientController {
         return ihmMainCallsComm;
     }
 
+    /**
+     * Creates the server connexion object 
+     * - Creates the socket
+     * - Sends the UUID to the server as an initial message
+     */
+    public void initialize_server_connexion(ServerConfig config) {
+        this.serverConnection = new ServerConnection(config, this);
+    }
+
+    public void addClient(InetAddress ip_adress, int port, UUID uuid) {
+        connectedClients.put(uuid, new ActiveClient(ip_adress, port, uuid));
+    }
+
     /*
      * Constructor for the CommClientController class.
      * Requires no interface, but they must be set later.

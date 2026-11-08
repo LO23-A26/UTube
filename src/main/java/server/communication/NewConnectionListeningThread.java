@@ -1,9 +1,9 @@
 package server.communication;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
@@ -19,6 +20,7 @@ import java.util.concurrent.Semaphore;
 public class NewConnectionListeningThread extends Thread {
 
     private final ConnectionsManager connectionsManager;
+    private final CommServerController serverController;
 
 
     private static final int PORT = 9000;
@@ -26,8 +28,12 @@ public class NewConnectionListeningThread extends Thread {
     private static final int MAX_CONNECTIONS = 10_000;
     private static final int READ_TIMEOUT_MS = (int) Duration.ofSeconds(30).toMillis();
 
-    public NewConnectionListeningThread(ConnectionsManager connectionsManager) {
+    /**
+     * Constructor
+     */
+    public NewConnectionListeningThread(ConnectionsManager connectionsManager, CommServerController serverController) {
         this.connectionsManager = connectionsManager;
+        this.serverController = serverController;
     }
 
     @Override
@@ -77,37 +83,30 @@ public class NewConnectionListeningThread extends Thread {
 
     private void handle_new_connection(Socket socket) {
     try {
-        // Création des flux de communication
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        socket.getInputStream(),
-                        StandardCharsets.UTF_8
-                )
-        );
-
-        BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(
-                        socket.getOutputStream(),
-                        StandardCharsets.UTF_8
-                )
-        );
-
+        var reader = new ObjectInputStream(socket.getInputStream());
+        var writer = new ObjectOutputStream(socket.getOutputStream());
         // Lecture du premier message := l'UUID du client
-        String uuid = reader.readLine();
-
-        if (uuid == null || uuid.isBlank()) {
+        
+        UUID uuid;
+        try {
+            uuid = (UUID) reader.readObject(); // Est ce qu'on reçoit l'UUID comme ça ou dans un autre message ?
+            if (uuid == null) {
+                socket.close();
+                return;
+            }
+        } catch (ClassNotFoundException ex) {
+            System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) "Object sent at initialization was not a UUID", ex);
             socket.close();
             return;
         }
 
         // Création du ActiveClient avec son UUID
         // et les flux déjà initialisés
-        var client = new ActiveClient(socket, uuid, reader, writer);
-        client.send("UUID received: " + client.getUuid()); //!!! Test purpose - Confirmation de réception de l'UUID
+        var client = new ActiveClient(socket, uuid, reader, writer, serverController);
         connectionsManager.connectNewClient(client);
 
-        try {
-            client.readLoop(); // blocks until the client leaves
+        try { // Ici on lance la boucle de handle
+            client.readLoop(); // blocks until the client leaves 
         } finally {
             connectionsManager.disconnectClient(client);
         }
@@ -118,7 +117,7 @@ public class NewConnectionListeningThread extends Thread {
     }
 }
 
-    private static void reject(Socket socket) {
+    private static void reject(Socket socket) { // Trouver mieux pour envoyer un objet message. 
         try (socket;
              BufferedWriter out = new BufferedWriter(
                      new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8))) {
