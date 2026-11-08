@@ -21,7 +21,7 @@ public class NewConnectionListeningThread extends Thread {
 
     private final ConnectionsManager connectionsManager;
     private final CommServerController serverController;
-
+    private Semaphore connectionLimit;
 
     private static final int PORT = 9000;
     private static final int BACKLOG = 1024;
@@ -34,11 +34,11 @@ public class NewConnectionListeningThread extends Thread {
     public NewConnectionListeningThread(ConnectionsManager connectionsManager, CommServerController serverController) {
         this.connectionsManager = connectionsManager;
         this.serverController = serverController;
+        this.connectionLimit = new Semaphore(MAX_CONNECTIONS);
     }
 
     @Override
     public void run() {
-        Semaphore connectionLimit = new Semaphore(MAX_CONNECTIONS);
 
         try (ServerSocket serverSocket = new ServerSocket()) {
             serverSocket.setReuseAddress(true);
@@ -49,25 +49,7 @@ public class NewConnectionListeningThread extends Thread {
 
                 while (true) {
                     Socket socket = serverSocket.accept();
-
-                    if (!connectionLimit.tryAcquire()) {
-                        reject(socket);
-                        continue;
-                    }
-
-                    try {
-                        configure(socket);
-                        executor.execute(() -> {
-                            try {
-                                handle_new_connection(socket);
-                            } finally {
-                                connectionLimit.release();
-                            }
-                        });
-                    } catch (IOException | RejectedExecutionException startupFailure) {
-                        connectionLimit.release();
-                        closeQuietly(socket);
-                    }
+                    create_and_start_connection_thread(socket, executor);
                 }
             }
         } catch (IOException e) {
@@ -81,22 +63,60 @@ public class NewConnectionListeningThread extends Thread {
         socket.setKeepAlive(true);            // OS-level dead peer detection; not a heartbeat substitute
     }
 
+    private void create_and_start_connection_thread(Socket socket, ExecutorService executor) {
+        if (!connectionLimit.tryAcquire()) {
+            reject(socket);
+            return;
+        }
+
+        try {
+            configure(socket);
+            executor.execute(() -> {
+                try {
+                    handle_new_connection(socket);
+                } finally {
+                    connectionLimit.release();
+                }
+            });
+        } catch (IOException | RejectedExecutionException startupFailure) {
+            connectionLimit.release();
+            closeQuietly(socket);
+        }
+    }
+
+    /**
+     * Recieves the first message (the UUID of the client) and starts the
+     * handeling loop for this client
+     */
     private void handle_new_connection(Socket socket) {
-    try {
-        var reader = new ObjectInputStream(socket.getInputStream());
-        var writer = new ObjectOutputStream(socket.getOutputStream());
+            
+        ObjectInputStream reader; 
+        ObjectOutputStream writer;
+        try {
+            reader = new ObjectInputStream(socket.getInputStream());
+            writer = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            closeQuietly(socket);
+            return;
+        }
+
         // Lecture du premier message := l'UUID du client
-        
         UUID uuid;
         try {
             uuid = (UUID) reader.readObject(); // Est ce qu'on reçoit l'UUID comme ça ou dans un autre message ?
             if (uuid == null) {
+                System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) "UUID sent is null. Closing connection");
                 socket.close();
                 return;
             }
         } catch (ClassNotFoundException ex) {
             System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) "Object sent at initialization was not a UUID", ex);
-            socket.close();
+            closeQuietly(socket);
+            return;
+        } catch (IOException ex) {
+            System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            closeQuietly(socket);
             return;
         }
 
@@ -111,16 +131,12 @@ public class NewConnectionListeningThread extends Thread {
             connectionsManager.disconnectClient(client);
         }
 
-    } catch (IOException e) {
-        System.err.println("Unable to initialize client: " + e.getMessage());
-        closeQuietly(socket);
     }
-}
 
     private static void reject(Socket socket) { // Trouver mieux pour envoyer un objet message. 
         try (socket;
-             BufferedWriter out = new BufferedWriter(
-                     new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8))) {
+                BufferedWriter out = new BufferedWriter(
+                        new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8))) {
             out.write("ERROR: server busy");
             out.newLine();
             out.flush();
