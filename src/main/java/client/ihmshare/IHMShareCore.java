@@ -30,6 +30,9 @@ public class IHMShareCore {
     private IHMMainManager view_manager;
     private DisplayVideoController ptr_display_video_controller;
     private AddVideoController ptr_add_video_controller;
+    private DownloadsController ptr_downloads_controller;
+
+    private final DownloadVideo download_video;
 
     /**
      * Class constructor. Creates the implementations of the interfaces exposed
@@ -39,6 +42,16 @@ public class IHMShareCore {
         this.impl_interface_for_communication = new CommunicationCallsIHMShareImpl(this);
         this.impl_interface_for_ihm_main = new IHMMainCallsIHMShareImpl(this);
         this.impl_interface_for_data = new DataCallsIHMShareImpl(this);
+        this.download_video = new DownloadVideo(this);
+    }
+
+    /**
+     * Get the manager of the downloads (requests in progress and downloaded videos)
+     *
+     * @return (DownloadVideo) manager of the downloads
+     */
+    public DownloadVideo getDownloadVideo() {
+        return this.download_video;
     }
 
     // ---------- Getters and setters ----------
@@ -173,5 +186,19 @@ public class IHMShareCore {
 
     public AddVideoController getControllerAddVideo() {
         return this.ptr_add_video_controller;
+    }
+
+    /**
+     * Set the controller of the "Mes téléchargements" screen (07) currently displayed,
+     * so that it is refreshed when a download is done
+     *
+     * @param ctrl (DownloadsController) controller of the screen 07
+     */
+    public void setControllerDownloads(DownloadsController ctrl) {
+        this.ptr_downloads_controller = ctrl;
+    }
+
+    public DownloadsController getControllerDownloads() {
+        return this.ptr_downloads_controller;
     }
 }

@@ -8,7 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -26,23 +28,14 @@ public class DownloadsController extends ShareController {
     @FXML
     private Label empty_label;
 
-    private List<VideoLight> videos = new ArrayList<>();
-
-    /**
-     * Set the downloaded videos to display
-     * <p>
-     * TODO: InterfaceIhmShareCallsDataClient has no method to list the downloaded videos yet,
-     * this method must be called with its result once Data provides it.
-     *
-     * @param videos (List of VideoLight) downloaded videos
-     */
-    public void setVideos(List<VideoLight> videos) {
-        this.videos = new ArrayList<>(videos);
-        refreshView();
-    }
-
     @Override
     public void refreshView() {
+        if (core == null) {
+            return;
+        }
+        // TODO: InterfaceIhmShareCallsDataClient has no method to list the downloaded videos yet:
+        // only the videos downloaded during the session are displayed
+        List<VideoLight> videos = core.getDownloadVideo().getDownloadedVideos();
         videos_box.getChildren().clear();
         for (VideoLight video : videos) {
             Button share_button = new Button("Re-partager");
@@ -62,6 +55,10 @@ public class DownloadsController extends ShareController {
         InterfaceIhmShareCallsDataClient data = core.getInterfaceFromData();
         VideoFull local_video = data == null ? null : data.getVideo(video);
         if (local_video == null) {
+            local_video = core.getDownloadVideo().getDownloaded(video.getVideoId());
+        }
+        if (local_video == null || local_video.getFilePath() == null
+                || !Files.exists(Path.of(local_video.getFilePath()))) {
             showError("Le fichier de cette vidéo est introuvable.");
             return;
         }
@@ -75,8 +72,16 @@ public class DownloadsController extends ShareController {
         if (!confirm("Supprimer cette vidéo ?", "La copie locale sera supprimée. La vidéo reste disponible chez son propriétaire.", "Supprimer")) {
             return;
         }
-        // TODO: no method in InterfaceIhmShareCallsDataClient to delete a downloaded video yet
-        videos.remove(video);
+        // TODO: no method in InterfaceIhmShareCallsDataClient to delete a downloaded video yet,
+        // the local file is deleted here until Data provides one
+        VideoFull removed = core.getDownloadVideo().removeDownloaded(video.getVideoId());
+        if (removed != null && removed.getFilePath() != null) {
+            try {
+                Files.deleteIfExists(Path.of(removed.getFilePath()));
+            } catch (IOException e) {
+                showError("Le fichier local n'a pas pu être supprimé : " + removed.getFilePath());
+            }
+        }
         refreshView();
     }
 }

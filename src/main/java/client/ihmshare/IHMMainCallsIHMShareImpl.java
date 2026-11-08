@@ -40,7 +40,8 @@ public class IHMMainCallsIHMShareImpl implements InterfaceIHMMainCallsIHMShare {
      */
     @Override
     public void openDownloads() {
-        ShareController.attach(core.getViewManager().openTab(DownloadsController.VIEW), core);
+        core.setControllerDownloads(
+                ShareController.attach(core.getViewManager().openTab(DownloadsController.VIEW), core));
     }
 
     /**

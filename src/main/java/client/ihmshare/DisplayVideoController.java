@@ -89,7 +89,6 @@ public class DisplayVideoController extends ShareController {
     private VideoLight video;
     /** Full data of the video, null until Data (local video) or Comm (remote video) gives it. */
     private VideoFull video_full;
-    private boolean download_pending;
     /** Number of stars selected in "Ma note" (0 = none). */
     private int selected_rating;
 
@@ -104,7 +103,6 @@ public class DisplayVideoController extends ShareController {
     public void displayVideo(VideoLight video) {
         this.video = video;
         this.video_full = null;
-        this.download_pending = false;
         InterfaceIhmShareCallsDataClient data = core.getInterfaceFromData();
         if (data != null) {
             VideoFull local_video = data.getVideo(video);
@@ -113,6 +111,10 @@ public class DisplayVideoController extends ShareController {
             } else {
                 data.sendDetailsRequest(video.getVideoId());
             }
+        }
+        if (video_full == null) {
+            // downloaded during the session but not known by Data (yet)
+            video_full = core.getDownloadVideo().getDownloaded(video.getVideoId());
         }
         initMyReview();
         refreshView();
@@ -128,18 +130,26 @@ public class DisplayVideoController extends ShareController {
                 || !video.getVideoId().equals(video_details.getSharedInfo().getVideoId())) {
             return; // details of another video, the user has already left
         }
+        VideoFull downloaded = core.getDownloadVideo().getDownloaded(video.getVideoId());
+        if (video_details.getFilePath() == null && downloaded != null) {
+            video_details.setFilePath(downloaded.getFilePath()); // keep the local copy
+        }
         video_full = video_details;
         initMyReview();
         refreshView();
     }
 
     /**
-     * The download is done: the view goes to the downloaded state (05b)
+     * The download of a video is done: if it is the displayed video, the view goes
+     * to the downloaded state (05b)
      *
+     * @param video_id   (UUID) id of the downloaded video
      * @param video_path (String) local path of the downloaded video
      */
-    public void downloadDone(String video_path) {
-        download_pending = false;
+    public void downloadDone(UUID video_id, String video_path) {
+        if (video == null || !video.getVideoId().equals(video_id)) {
+            return; // the user is looking at another video
+        }
         if (video_full == null) {
             video_full = new VideoFull(video, video_path, null, new HashMap<>(), new HashMap<>());
         } else {
@@ -176,6 +186,7 @@ public class DisplayVideoController extends ShareController {
         show(play_button, state != State.NOT_DOWNLOADED);
         show(state_badge, state != State.NOT_DOWNLOADED);
         show(access_button, state == State.OWNER);
+        boolean download_pending = core.getDownloadVideo().isPending(video.getVideoId());
         download_button.setDisable(download_pending);
         switch (state) {
             case NOT_DOWNLOADED -> state_label.setText(download_pending
@@ -278,13 +289,9 @@ public class DisplayVideoController extends ShareController {
     /** "Télécharger" (sequence "Télécharger vidéo"): asked to Comm, answer in {@link #downloadDone}. */
     @FXML
     private void downloadVideo() {
-        InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
-        if (comm == null || video.getOwner() == null) {
+        if (core.getDownloadVideo().download(video) == DownloadVideo.Request.UNAVAILABLE) {
             showError("Le téléchargement n'est pas disponible pour le moment.");
-            return;
         }
-        download_pending = true;
-        comm.askVideo(video.getVideoId(), video.getOwner().getUuid());
         refreshView();
     }
 
