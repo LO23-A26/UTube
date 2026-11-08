@@ -1,33 +1,39 @@
 package server.communication;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import common.dataclasses.communication.ClientMessage;
+import common.dataclasses.communication.ServerMessage;
 
 /**
  * An active client connected to the server.
  */
 public class ActiveClient {
-    private final String uuid;
+    private final UUID uuid;
     private final String ipAddress;
     private final int port;
 
     private final Socket socket;
-    private final BufferedReader in;
-    private final BufferedWriter out;
+    private final ObjectInputStream in; // Ici mettre des ObjectStreams ? 
+    private final ObjectOutputStream out;
     private final AtomicBoolean connected;
+    private final CommServerController serverController;
 
     public ActiveClient(
-        Socket socket,
-        String uuid,
-        BufferedReader reader,
-        BufferedWriter writer
-    ) {
+            Socket socket, 
+            UUID uuid, 
+            ObjectInputStream reader, 
+            ObjectOutputStream writer, 
+            CommServerController serverController
+        ) {
         this.socket = Objects.requireNonNull(socket, "socket cannot be null");
         this.uuid = Objects.requireNonNull(uuid, "uuid cannot be null");
 
@@ -39,15 +45,16 @@ public class ActiveClient {
 
         this.in = Objects.requireNonNull(reader);
         this.out = Objects.requireNonNull(writer);
-
+        
         this.connected = new AtomicBoolean(true);
+        this.serverController = serverController;
     }
 
     /**
      * Returns the UUID of the client.
      * @return the UUID of the client.
      */
-    public String getUuid() {
+    public UUID getUuid() {
         return uuid;
     }
 
@@ -72,15 +79,13 @@ public class ActiveClient {
      * @param message the message to send.
      * @throws IOException 
      */
-    public void send(String message) throws IOException {
+    public void send(ClientMessage message) throws IOException {
         if (!isConnected()) {
             throw new IOException("Client " + uuid + " is disconnected");
         }
 
         synchronized (out) {
-            out.write(message);
-            out.newLine();
-            out.flush();
+            out.writeObject(message);
         }
     }
 
@@ -107,15 +112,15 @@ public class ActiveClient {
     public void readLoop() {
         try {
             while (connected.get()) {
+                ServerMessage message;
                 try {
-                    String line = in.readLine();
-                    if (line == null) {
-                        break;
-                    }
-                    handleMessage(line);
+                        message = (ServerMessage) in.readObject();
+                        handleMessage(message); // ça il faut que ça handle les objets
                 } catch (SocketTimeoutException timeout) {
                     // Socket timeout is expected when no client data arrives; keep waiting.
-                }
+                } catch (ClassNotFoundException ex) {
+                    System.getLogger(ActiveClient.class.getName()).log(System.Logger.Level.ERROR, (String) "Recieved object is not of class ServerMessage", ex);
+                } 
             }
         } catch (IOException e) {
             if (connected.get()) {
@@ -126,18 +131,14 @@ public class ActiveClient {
         }
     }
 
-    private void handleMessage(String message) {
+    private void handleMessage(ServerMessage message) {
         // Il faudra call le handler dans le message une fois qu'on a une classe message
         // v1 avec du texte pr l'instant : on affiche la ligne recue et on repond "OK ..." pour verifier que la connexion marche.
         System.out.println("received from " + uuid + " : " + message);
-        try {
-            out.write("OK " + message);
-            out.newLine();
-            out.flush();
-        } catch (IOException e) {
-            close();
-        }
+        message.handle(this.serverController);
+        
     }
+    
     private static void closeQuietly(Socket socket) {
         try {
             socket.close();
