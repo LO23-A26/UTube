@@ -1,56 +1,64 @@
 package server.communication;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
-import common.interfaces.comm.InterfaceDataCallsComm;
+import common.interfaces.comm.InterfaceDataServerCallsCommServer;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
+import server.communication.implementations.DataServerCallsCommServer;
 
-public class CommServerController implements InterfaceDataCallsComm {
+/*
+ * Controller for the communication server, entry point for the communication module on the server side.
+ * How to use :
+ * 1. Create an instance of CommServerController, the constructor requires no interface
+ * 2. Set the external interface with setInterfaceCommServerCallsDataServer()
+ * 3. Call start()
+ */
+public class CommServerController {
     private ConnectionsManager connectionsManager;
-    public InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer;
     private NewConnectionListeningThread newConnectionListeningThread;
 
-    public CommServerController(ConnectionsManager connectionsManager, InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer) {
-        this.connectionsManager = connectionsManager;
-        this.interfaceCommServerCallsDataServer = interfaceCommServerCallsDataServer;
+    // External interface, called by this controller
+    public InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer; // public: the messages call it through the controller
+
+    // Exposed interface, called by the Data server
+    private DataServerCallsCommServer dataServerCallsCommServer;
+
+    /*
+     * Constructor for the CommServerController class.
+     * Requires no interface, but the external one must be set before start().
+     */
+    public CommServerController() {
+        // sets the external interface to null, it must be set later
+        this.interfaceCommServerCallsDataServer = null;
+
+        this.connectionsManager = new ConnectionsManager();
         this.newConnectionListeningThread = new NewConnectionListeningThread(connectionsManager);
+
+        // Properly initialize the exposed interface, passing this controller
+        this.dataServerCallsCommServer = new DataServerCallsCommServer(this);
     }
 
+    // Setter for the external interface, must be called before start()
+    public void setInterfaceCommServerCallsDataServer(InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer) {
+        this.interfaceCommServerCallsDataServer = interfaceCommServerCallsDataServer;
+    }
+
+    // Getter for the exposed interface
+    public InterfaceDataServerCallsCommServer getDataServerCallsCommServer() {
+        return dataServerCallsCommServer;
+    }
+
+    /*
+     * Starts the server: begins listening for new connections(the external interface must have been set first)
+     */
     public void start() {
+        if (this.interfaceCommServerCallsDataServer == null) {
+            throw new IllegalStateException("CommServerController is not initialized. Please set the required interface before starting.");
+        }
         newConnectionListeningThread.start();
-    }
-
-    public void registerUserAndGetIndex(UserLight new_user, List<VideoLight> new_videos) {}
-
-    public List<UserLight> getConnectedClients() {
-        return null;
-    }
-
-    public void removeUser(UserLight user_profile, List<VideoLight> video_list) {}
-
-    public void updateIndex(VideoLight video_info) {}
-
-    public List<UserLight> deleteIndex(UUID video_id) {
-        return null;
-    }
-
-    // interface implementation
-
-
-    public void sendProfileInfo(String ip_address, int port, List<VideoLight> video_list, String pseudo) {
-    }
-
-    public void sendNewVideo(VideoLight video_info) {
-
-    }
-
-    public void giveDetailsRequest(UserLight requester_profile, UserLight owner_profile, UUID video) {
-
     }
 
     /* 
