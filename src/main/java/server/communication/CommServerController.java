@@ -35,7 +35,7 @@ public class CommServerController {
         this.interfaceCommServerCallsDataServer = null;
 
         this.connectionsManager = new ConnectionsManager();
-        this.newConnectionListeningThread = new NewConnectionListeningThread(connectionsManager);
+        this.newConnectionListeningThread = new NewConnectionListeningThread(connectionsManager, this);
 
         // Properly initialize the exposed interface, passing this controller
         this.dataServerCallsCommServer = new DataServerCallsCommServer(this);

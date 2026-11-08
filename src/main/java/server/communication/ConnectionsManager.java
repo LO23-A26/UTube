@@ -2,12 +2,15 @@ package server.communication;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import common.dataclasses.communication.ClientMessage;
 
 public class ConnectionsManager {
 
     // map of clients by uuid
-    private final Map<String, ActiveClient> clients;
+    private final Map<UUID, ActiveClient> clients;
 
     public ConnectionsManager() {
         this.clients = new ConcurrentHashMap<>();
@@ -28,7 +31,7 @@ public class ConnectionsManager {
         client.close();
     }
 
-    public void sendMessageToClient(String uuid, String message) {
+    public void sendMessageToClient(UUID uuid, ClientMessage message) {
         ActiveClient client = clients.get(uuid);
         if (client == null) {
             return;
@@ -41,7 +44,7 @@ public class ConnectionsManager {
         }
     }
 
-    public void broadcastMessage(String message) {
+    public void broadcastMessage(ClientMessage message) {
         for (ActiveClient client : clients.values()) {
             try {
                 client.send(message);
