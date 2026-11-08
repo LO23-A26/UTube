@@ -53,7 +53,7 @@ public class NewConnectionListeningThread extends Thread {
                         configure(socket);
                         executor.execute(() -> {
                             try {
-                                handle(socket);
+                                handle_new_connection(socket);
                             } finally {
                                 connectionLimit.release();
                             }
@@ -75,7 +75,7 @@ public class NewConnectionListeningThread extends Thread {
         socket.setKeepAlive(true);            // OS-level dead peer detection; not a heartbeat substitute
     }
 
-    private void handle(Socket socket) {
+    private void handle_new_connection(Socket socket) {
     try {
         // Création des flux de communication
         BufferedReader reader = new BufferedReader(
