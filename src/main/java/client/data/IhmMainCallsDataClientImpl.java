@@ -1,11 +1,10 @@
 package client.data;
 
-import common.dataclasses.AccessRight;
-import common.dataclasses.ContactList;
-import common.dataclasses.UserLight;
-import common.dataclasses.VideoLight;
+import common.dataclasses.*;
+import common.interfaces.comm.InterfaceData_calls_Comm;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -73,35 +72,31 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
     /**
      * Requests a connection for a user.
      *
-     * @param user_profile The lightweight user profile.
+     * @param pseudo       The user's pseudo.
      * @param password     The user's password.
      * @param ip_address   The IP address for the connection.
      * @param port         The port number.
      */
     @Override
     public void requestConnection(String pseudo, String password, String ip_address, int port) {
-        if (data_client_core.getProfileSaver().restore_profile() == null || data_client_core.getProfileSaver().restore_profile().size() == 0){
+        Set<UserFull> profiles = data_client_core.getProfileSaver().restoreProfile();
+        if (profiles == null || profiles.isEmpty()) {
             System.out.println("requestConnection - Error while restoring profiles.");
-            return
+            return;
         }
-        UserFull profile = null;
-        Set<VideoLight> video_list = null;
-        for (UserFull u : data_client_core.getProfileSaver().restore_profile()) {
-            if (u.getPassword().equals(password) && u.shared_info.getPseudo().equals(pseudo)) {
-                profile = new UserFull(u);
-                video_list = new HashSet<VideoLight>();
-                for (VideoLight v : u.getSharedVideos()){
-                    video_list.add(v);
-                }
+        List<VideoLight> video_list = null;
+        for (UserFull u : profiles) {
+            if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
+                video_list = new ArrayList<>(u.getSharedVideos());
+                break;
             }
         }
-        if (profile) {
-            InterfaceDataClientCallsCommClient.sendProfileInfo(ip_address, port, video_list, pseudo);
-        }
-        else {
+        if (video_list != null) {
+            InterfaceData_calls_Comm comm = data_client_core.getInterfaceFromComm();
+            comm.sendProfileInfo(ip_address, port, video_list, pseudo);
+        } else {
             System.out.println("requestConnection - Information don't match.");
         }
-        return
     }
 
     /**

@@ -30,8 +30,10 @@ public class UserLight {
     }
 
     UserLight(UserLight userlight) {
-        this.peudo = userlight.getPseudo();
+        this.pseudo = userlight.getPseudo();
         this.uuid = userlight.getUuid();
+        this.image_path = userlight.image_path;
+        this.avatar = userlight.getAvatar();
     }
 
     public BufferedImage getAvatar() {

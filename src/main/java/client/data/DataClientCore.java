@@ -1,6 +1,7 @@
 package client.data;
 
 import common.dataclasses.*;
+import common.interfaces.comm.InterfaceData_calls_Comm;
 
 import java.util.Set;
 
@@ -16,6 +17,15 @@ public class DataClientCore {
     private ProfileSaver profileSaver;
     private ContactList contact_lists;
     private IhmMainCallsDataClientImpl impl_interface_for_ICM;
+    private InterfaceData_calls_Comm interface_from_Comm;
+
+    public InterfaceData_calls_Comm getInterfaceFromComm() {
+        return interface_from_Comm;
+    }
+
+    public void setInterfaceFromComm(InterfaceData_calls_Comm interface_from_Comm) {
+        this.interface_from_Comm = interface_from_Comm;
+    }
 
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
