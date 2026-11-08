@@ -514,3 +514,19 @@
     -fx-padding: 4px;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 18, 0, 0, 4);
 }
+
+/* ---------- Visionneuse (06) ---------- */
+
+/* Thin yellow progress bar on a gray track. */
+.progress-bar.video-progress > .track {
+    -fx-background-color: -utube-border;
+    -fx-background-insets: 0;
+    -fx-background-radius: 999px;
+}
+
+.progress-bar.video-progress > .bar {
+    -fx-background-color: -utube-yellow;
+    -fx-background-insets: 0;
+    -fx-background-radius: 999px;
+    -fx-padding: 3px;
+}

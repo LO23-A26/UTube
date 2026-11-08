@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Region?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="client.ihmmain.MainController">
+            fx:controller="client.ihmmain.VueController">
     <fx:define>
         <ToggleGroup fx:id="navGroup"/>
     </fx:define>
@@ -32,9 +32,9 @@
             </HBox>
 
             <HBox styleClass="nav">
-                <ToggleButton text="Accueil" styleClass="nav-link" toggleGroup="$navGroup" selected="true"/>
-                <ToggleButton text="Téléchargements" styleClass="nav-link" toggleGroup="$navGroup"/>
-                <ToggleButton text="Partages" styleClass="nav-link" toggleGroup="$navGroup"/>
+                <ToggleButton text="Accueil" styleClass="nav-link" toggleGroup="$navGroup" selected="true" onAction="#openHome"/>
+                <ToggleButton text="Téléchargements" styleClass="nav-link" toggleGroup="$navGroup" onAction="#openDownloads"/>
+                <ToggleButton text="Partages" styleClass="nav-link" toggleGroup="$navGroup" onAction="#openShares"/>
                 <ToggleButton text="Amis" styleClass="nav-link" toggleGroup="$navGroup"/>
             </HBox>
 
