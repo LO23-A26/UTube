@@ -12,6 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 
+// tests of the isolated comm client
+
+/**
+ * run CommClientControllerTest.java
+ * make sure to tick "Do not use --module-path option" in edit configuration (intelliJ), otherwise JUnit cannot access the test classes
+ */
+
+
 @Timeout(10)
 class CommClientControllerTest {
 
