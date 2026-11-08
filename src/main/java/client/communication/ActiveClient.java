@@ -3,10 +3,16 @@ package client.communication;
 import java.util.UUID;
 import java.net.InetAddress;
 
-public class ActiveClient {
+public class ActiveClient { // Other clients connected to the server 
     private UUID uuid;
     private InetAddress ip;
     private int port;
+
+    public ActiveClient(InetAddress ip, int port, UUID uuid) {
+        this.ip = ip;
+        this.port = port;
+        this.uuid = uuid;
+    }
 
     // getters and setters
 
