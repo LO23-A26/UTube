@@ -23,7 +23,7 @@ public interface InterfaceDataCallsIHMMain {
      *
      * @param authentication_failed authentication error due to connexion failure
      */
-    public void raiseException(AuthenticationFailed authentication_failed);
+    public void raiseException(); //Erreur avec ce type AuthenticationFailed authentication_failed);
 
     /**
      * Notifies IHM Main that a new user is connected.
