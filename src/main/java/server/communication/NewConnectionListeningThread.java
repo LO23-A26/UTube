@@ -89,12 +89,12 @@ public class NewConnectionListeningThread extends Thread {
      * handeling loop for this client
      */
     private void handle_new_connection(Socket socket) {
-            
-        ObjectInputStream reader; 
         ObjectOutputStream writer;
+        ObjectInputStream reader;
         try {
-            reader = new ObjectInputStream(socket.getInputStream());
             writer = new ObjectOutputStream(socket.getOutputStream());
+            writer.flush();
+            reader = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
             System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
             closeQuietly(socket);
