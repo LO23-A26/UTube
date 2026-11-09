@@ -26,8 +26,8 @@ import client.communication.implementations.*;
 public class CommClientController {
     private ClientListeningService clientListener;
     private ServerListeningService  serverListener;
-    private ServerConnection serverConnection;
     private HashMap<UUID,ActiveClient> connectedClients;
+    public ServerConnection serverConnection;
 
     // External interfaces, called by this controller
     private InterfaceCommunicationCallsIHMShare interfaceCommIHMShare;
