@@ -20,22 +20,32 @@ public class DataClientCore {
     private Set<UserLight> connected_user;
     private ProfileSaver profileSaver;
     private ContactList contact_lists;
-    private IhmMainCallsDataClientImpl impl_interface_for_ICM;
+
+    private final CommClientCallsDataClientImpl impl_interface_for_comm;
+    private final IhmMainCallsDataClientImpl impl_interface_for_ICM;
     private InterfaceDataCallsIHMMain interface_from_ICM;
     private InterfaceData_calls_Comm interface_from_Comm;
 
+    public DataClientCore(){
+        profileSaver = new ProfileSaver();
+        impl_interface_for_comm = new CommClientCallsDataClientImpl();
+        impl_interface_for_ICM = new IhmMainCallsDataClientImpl();
+
+        impl_interface_for_comm.setDataClientCore(this);
+        impl_interface_for_comm.setDataClientCore(this);
+    }
+
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
+    }
+    public CommClientCallsDataClientImpl getImplInterfaceForComm(){
+        return impl_interface_for_comm;
     }
     public InterfaceDataCallsIHMMain getInterfaceFromICM() {
         return interface_from_ICM;
     }
     public InterfaceData_calls_Comm getInterfaceFromComm() {
         return interface_from_Comm;
-    }
-
-    public void setImplInterfaceForICM(IhmMainCallsDataClientImpl impl_interface_for_ICM) {
-        this.impl_interface_for_ICM = impl_interface_for_ICM;
     }
 
     public void setInterfaceFromICM(InterfaceDataCallsIHMMain interface_from_ICM) {

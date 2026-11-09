@@ -177,4 +177,8 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_id The UUID of the video to remove.
      */
     public void removeSharedVideo(UUID video_id){}
+
+    public void setDataClientCore(DataClientCore data_client_core) {
+        this.data_client_core = data_client_core;
+    }
 }

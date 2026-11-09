@@ -1,5 +1,6 @@
 package client.main;
 
+import client.data.DataClientCore;
 import client.data.IhmMainCallsDataClientImpl;
 import client.ihmmain.IHMMainManager;
 import javafx.application.Application;
@@ -21,7 +22,8 @@ public class UTubeApplication extends Application {
     public void start(Stage stage) {
         loadFonts();
         IHMMainManager viewManager = new IHMMainManager();
-        viewManager.setIData(new IhmMainCallsDataClientImpl());
+        DataClientCore dataClientCore = new DataClientCore();
+        viewManager.setIData(dataClientCore.getImplInterfaceForICM());
         // setIComm/setIShare still have to be called once Comm and IHM-Share provide a concrete implementation.
         viewManager.start(stage);
     }
@@ -37,7 +39,6 @@ public class UTubeApplication extends Application {
         }
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    public static void main(String[] args) {launch(args);
     }
 }
