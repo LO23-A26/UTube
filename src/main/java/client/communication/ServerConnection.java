@@ -1,6 +1,7 @@
 package client.communication;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
@@ -11,6 +12,7 @@ public class ServerConnection extends Thread {
     private Socket serverSocket; // connection socket between client and server
     private ObjectOutputStream outToServer;
     private CommClientController commClientController; // necessary to get the local user's UUID.
+    private ObjectInputStream inFromServer;
 
     // getters and setters
     
@@ -25,7 +27,9 @@ public class ServerConnection extends Thread {
         try {
             this.serverSocket = new Socket(config.getIP(), config.getPort());
             this.outToServer = new ObjectOutputStream(this.serverSocket.getOutputStream());
-            this.outToServer.writeObject(controller.interfaceCommDataClient.askRequesterId()); // sends a UUID object to initialize connection
+            this.outToServer.flush();
+            this.inFromServer = new ObjectInputStream(this.serverSocket.getInputStream());
+            this.outToServer.writeObject(controller.interfaceCommDataClient.askRequesterId());
         } catch (IOException ex) {
             System.getLogger(ServerConnection.class.getName()).log(System.Logger.Level.ERROR, (String) "Connexion with server failed", ex);
         }
