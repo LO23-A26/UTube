@@ -12,6 +12,8 @@ import java.util.Set;
  */
 public interface InterfaceIhmMainCallsDataClient {
 
+    public UserFull getUser();
+
     /**
      * Exports profile data to a specified path.
      *

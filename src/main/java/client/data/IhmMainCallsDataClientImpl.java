@@ -22,6 +22,11 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
 
     private DataClientCore data_client_core;
 
+    @Override
+    public UserFull getUser(){
+        return data_client_core.getUser();
+    }
+
     /**
      * Exports profile data to a specified path.
      *
