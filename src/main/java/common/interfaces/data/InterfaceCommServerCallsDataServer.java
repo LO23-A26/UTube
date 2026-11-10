@@ -21,7 +21,7 @@ public interface InterfaceCommServerCallsDataServer {
      * @return An ArrayList containing at index 0 the List<UserLight> (user index)
      *         and at index 1 the List<VideoLight> (video index).
      */
-    public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
+    public Index registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
     /**
      * Removes a user from the server's records based on their unique ID.
      *
