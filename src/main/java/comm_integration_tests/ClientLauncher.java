@@ -16,7 +16,7 @@ public class ClientLauncher {
         controller.setInterfaceCommIHMShare(new MockCommunicationCallsIHMShare());
         controller.setInterfaceCommDataClient(new MockCommClientCallsDataClient());
 
-        controller.run();
+        //controller.run();
         controller.getDataCallsComm().sendProfileInfo("127.0.0.1", 9999, new ArrayList<VideoLight>(), "John Doe");
     }
 }
