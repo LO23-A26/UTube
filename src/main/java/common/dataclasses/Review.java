@@ -1,16 +1,16 @@
 package common.dataclasses;
 
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.UUID;
 
 /**
  * Abstract class representing a user review on a video.
  *
- * @author Jean Van Gysel
- * @version 1.0
+ * @author Jean Van Gysel, Lucas Dompnier
+ * @version 2.0
  */
-public abstract class Review {
+public abstract class Review implements Serializable {
     private UserLight author;
     private UUID video_id;
     private LocalDate date;
@@ -22,6 +22,15 @@ public abstract class Review {
         this.author = author;
         this.video_id = video_id;
         this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "author=" + author +
+                ", video_id=" + video_id +
+                ", date=" + date +
+                '}';
     }
 
     public UserLight getAuthor() {
