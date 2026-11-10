@@ -10,6 +10,7 @@ import java.util.Set;
 /**
  * Interface for communication server calls to the data server.
  * Handles user registration, index updates, and connected client management.
+ * @version 2.0
  */
 public interface InterfaceCommServerCallsDataServer {
 
@@ -21,7 +22,14 @@ public interface InterfaceCommServerCallsDataServer {
      * @return An ArrayList containing at index 0 the List<UserLight> (user index)
      *         and at index 1 the List<VideoLight> (video index).
      */
-    public Index registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
+    public Index registerUserAndGetIndexStructure(UserLight new_user, Set<VideoLight> new_videos);
+
+    /**
+     * @deprecated an index structure have been added please switch to the registerUserAndGetIndexStructure function
+     */
+    @Deprecated(since="2.0", forRemoval=true)
+    public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
+
     /**
      * Removes a user from the server's records based on their unique ID.
      *
