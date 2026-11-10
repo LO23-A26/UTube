@@ -35,8 +35,25 @@ public class CommServerCallsDataServerImpl implements InterfaceCommServerCallsDa
         this.data_server_core = data_server_core;
     }
 
+    /**
+     * Last version of the registerUserAndGetIndex function
+     * @param new_user :
+     * @param new_videos
+     */
     @Override
-    public Index registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
+    public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
+        ArrayList<Object> index = new ArrayList<>();
+        if (data_server_core != null) {
+            // get the index and build the past version one
+            Index real_index = data_server_core.registerUserAndGetIndex(new_user, new_videos);
+            index.add(real_index.getUserList());
+            index.add(real_index.getVideoList());
+        }
+        return index;
+    }
+
+    @Override
+    public Index registerUserAndGetIndexStructure(UserLight new_user, Set<VideoLight> new_videos) {
         if (data_server_core != null) {
             return data_server_core.registerUserAndGetIndex(new_user, new_videos);
         }
