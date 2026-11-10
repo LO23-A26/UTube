@@ -49,15 +49,6 @@ public class UserLight implements Serializable {
                 '}';
     }
 
-    @Override
-    public String toString() {
-        return "UserLight{" +
-                "uuid=" + uuid +
-                ", pseudo='" + pseudo + '\'' +
-                ", image_path='" + image_path + '\'' +
-                '}';
-    }
-
     public BufferedImage getAvatar() {
         return avatar;
     }
