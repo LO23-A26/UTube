@@ -1,5 +1,6 @@
 package server.data;
 
+import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
@@ -35,11 +36,11 @@ public class CommServerCallsDataServerImpl implements InterfaceCommServerCallsDa
     }
 
     @Override
-    public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
+    public Index registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
         if (data_server_core != null) {
             return data_server_core.registerUserAndGetIndex(new_user, new_videos);
         }
-        return new ArrayList<>();
+        return new Index();
     }
 
     @Override
@@ -67,7 +68,7 @@ public class CommServerCallsDataServerImpl implements InterfaceCommServerCallsDa
     @Override
     public List<UserLight> getConnectedClients() {
         if (data_server_core != null) {
-            return data_server_core.getUserList();
+            return data_server_core.getIndex().getUserList();
         }
         return List.of();
     }

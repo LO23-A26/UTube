@@ -1,5 +1,6 @@
 package server.data;
 
+import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
@@ -17,17 +18,19 @@ import java.util.UUID;
  */
 public class DataServerCore {
 
-    private List<UserLight> user_list;
-    private List<VideoLight> video_list;
+    private Index index;
 
     private CommServerCallsDataServerImpl impl_interface_for_CS;
 
     public DataServerCore() {
-        this.user_list = new ArrayList<>();
-        this.video_list = new ArrayList<>();
+        this.index = new Index();
     }
 
-    public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
+    public Index registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
+
+        List<UserLight> user_list = index.getUserList();
+        List<VideoLight> video_list = index.getVideoList();
+
         if (new_user != null) {
             UUID user_id = new_user.getUuid();
 
@@ -54,9 +57,9 @@ public class DataServerCore {
             video_list.addAll(new_videos);
         }
 
-        ArrayList<Object> index = new ArrayList<>();
-        index.add(user_list);
-        index.add(video_list);
+        index.setUserList(user_list);
+        index.setVideoList(video_list);
+
         return index;
     }
 
@@ -64,6 +67,9 @@ public class DataServerCore {
         if (user_id == null) {
             return;
         }
+
+        List<UserLight> user_list = index.getUserList();
+        List<VideoLight> video_list = index.getVideoList();
 
         for (int i = 0; i < user_list.size(); i++) {
             if (user_id.equals(user_list.get(i).getUuid())) {
@@ -78,6 +84,9 @@ public class DataServerCore {
                 video_list.remove(i);
             }
         }
+
+        index.setUserList(user_list);
+        index.setVideoList(video_list);
     }
 
     public void removeUser(UserLight user_profile, List<VideoLight> video_list) {
@@ -86,21 +95,12 @@ public class DataServerCore {
         }
     }
 
-
-    public List<UserLight> getUserList() {
-        return user_list;
+    public Index getIndex() {
+        return index;
     }
 
-    public void setUserList(List<UserLight> user_list) {
-        this.user_list = user_list;
-    }
-
-    public List<VideoLight> getVideoList() {
-        return video_list;
-    }
-
-    public void setVideoList(List<VideoLight> video_list) {
-        this.video_list = video_list;
+    public void setIndex(Index index) {
+        this.index = index;
     }
 
     public CommServerCallsDataServerImpl getImplInterfaceForCS() {
