@@ -48,8 +48,8 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param profile The Data Transfer Object for the user.
      */
     @Override
-    public void saveLocalProfile(UserLight profile){
-
+    public void saveLocalProfile(UserFull profile){
+        data_client_core.getProfileSaver().saveProfile(profile);
     }
 
     /**
@@ -58,8 +58,8 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param profile The Data Transfer Object for the user.
      */
     @Override
-    public void updateLocalProfile(UserLight profile){
-
+    public void updateLocalProfile(UserFull profile){
+        data_client_core.getProfileSaver().saveProfile(profile);
     }
 
     /**

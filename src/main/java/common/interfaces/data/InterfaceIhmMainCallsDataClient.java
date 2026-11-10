@@ -31,14 +31,14 @@ public interface InterfaceIhmMainCallsDataClient {
      *
      * @param profile The Data Transfer Object for the user.
      */
-    public void saveLocalProfile(UserLight profile);
+    public void saveLocalProfile(UserFull profile);
 
     /**
      * Updates an existing local user profile.
      *
      * @param profile The Data Transfer Object for the user.
      */
-    public void updateLocalProfile(UserLight profile);
+    public void updateLocalProfile(UserFull profile);
 
     /**
      * Deletes a local video.
