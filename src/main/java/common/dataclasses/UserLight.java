@@ -30,7 +30,7 @@ public class UserLight {
     }
 
     UserLight(UserLight userlight) {
-        this.pseudo = userlight.getPseudo();
+        this.peudo = userlight.getPseudo();
         this.uuid = userlight.getUuid();
     }
 
