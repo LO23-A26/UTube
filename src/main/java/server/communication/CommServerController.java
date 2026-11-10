@@ -90,6 +90,5 @@ public class CommServerController {
             index
         );
         connectionsManager.sendMessageToClient(new_user.getUuid(), message);
-        throw new UnsupportedOperationException("Unimplemented method 'sendFullIndex'");
     }
 }
