@@ -81,10 +81,9 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param port         The port number.
      */
     @Override
-    public void requestConnection(String pseudo, String password, String ip_address, int port) {
+    public boolean requestConnection(String pseudo, String password, String ip_address, int port) {
         if (data_client_core.getProfileSaver().restoreProfile() == null || data_client_core.getProfileSaver().restoreProfile().isEmpty()){
-            System.out.println("requestConnection - Error while restoring profiles.");
-            return;
+            throw new AuthentificationFailed("requestConnection - Error while restoring profiles.");
         }
         boolean found = false;
         List <VideoLight> video_list = null;
@@ -99,11 +98,11 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
         }
         if (found) {
             data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
+            return true;
         }
         else {
-            System.out.println("requestConnection - Information don't match.");
+            throw new AuthentificationFailed("requestConnection - Information don't match.");
         }
-        return;
     }
 
     /**
@@ -225,3 +224,4 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
         this.data_client_core = data_client_core;
     }
 }
+
