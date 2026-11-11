@@ -4,6 +4,8 @@ import common.dataclasses.ContactList;
 import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
+import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
+import common.interfaces.comm.InterfaceData_calls_Comm;
 
 import java.util.Set;
 
@@ -19,13 +21,29 @@ public class DataClientCore {
     private ProfileSaver profileSaver;
     private ContactList contact_lists;
     private IhmMainCallsDataClientImpl impl_interface_for_ICM;
+    private InterfaceDataCallsIHMMain interface_from_ICM;
+    private InterfaceData_calls_Comm interface_from_Comm;
 
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
     }
+    public InterfaceDataCallsIHMMain getInterfaceFromICM() {
+        return interface_from_ICM;
+    }
+    public InterfaceData_calls_Comm getInterfaceFromComm() {
+        return interface_from_Comm;
+    }
 
     public void setImplInterfaceForICM(IhmMainCallsDataClientImpl impl_interface_for_ICM) {
         this.impl_interface_for_ICM = impl_interface_for_ICM;
+    }
+
+    public void setInterfaceFromICM(InterfaceDataCallsIHMMain interface_from_ICM) {
+        this.interface_from_ICM = interface_from_ICM;
+    }
+
+    public void setInterfaceFromComm(InterfaceData_calls_Comm interface_from_Comm) {
+        this.interface_from_Comm = interface_from_Comm;
     }
 
     public UserFull getUser() {

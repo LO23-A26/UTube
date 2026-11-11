@@ -12,6 +12,8 @@ import java.util.Set;
  */
 public interface InterfaceIhmMainCallsDataClient {
 
+    public UserFull getUser();
+
     /**
      * Exports profile data to a specified path.
      *
@@ -31,14 +33,14 @@ public interface InterfaceIhmMainCallsDataClient {
      *
      * @param profile The Data Transfer Object for the user.
      */
-    public void saveLocalProfile(UserLight profile);
+    public void saveLocalProfile(UserFull profile);
 
     /**
      * Updates an existing local user profile.
      *
      * @param profile The Data Transfer Object for the user.
      */
-    public void updateLocalProfile(UserLight profile);
+    public void updateLocalProfile(UserFull profile);
 
     /**
      * Deletes a local video.
@@ -55,7 +57,7 @@ public interface InterfaceIhmMainCallsDataClient {
      * @param ip_address The IP address for the connection.
      * @param port The port number.
      */
-    public void requestConnection(String pseudo, String password, String ip_address, int port);
+    public boolean requestConnection(String pseudo, String password, String ip_address, int port);
 
     /**
      * Gets all contact lists for the user.

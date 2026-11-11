@@ -1,7 +1,7 @@
 package client.ihmmain;
 
 import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
-import common.interfaces.comm.InterfaceIHMMain_calls_Comm;
+import common.interfaces.comm.InterfaceIHMMainCallsComm;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,7 +36,7 @@ public class IHMMainManager {
      */
     private final Map<Class<? extends Controller>, Controller> controllers = new HashMap<>();
     private InterfaceIhmMainCallsDataClient dataCalls;
-    private InterfaceIHMMain_calls_Comm commCalls;
+    private InterfaceIHMMainCallsComm commCalls;
     private InterfaceIHMMainCallsIHMShare shareCalls;
     private Scene primaryScene;
     /** Controller of the main view (header and users panel) while it is displayed, null otherwise. */
@@ -46,7 +46,7 @@ public class IHMMainManager {
         this.dataCalls = dataCalls;
     }
 
-    public void setIComm(InterfaceIHMMain_calls_Comm commCalls) {
+    public void setIComm(InterfaceIHMMainCallsComm commCalls) {
         this.commCalls = commCalls;
     }
 
@@ -58,7 +58,7 @@ public class IHMMainManager {
         return dataCalls;
     }
 
-    public InterfaceIHMMain_calls_Comm getIComm() {
+    public InterfaceIHMMainCallsComm getIComm() {
         return commCalls;
     }
 

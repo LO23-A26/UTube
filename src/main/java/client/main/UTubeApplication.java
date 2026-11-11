@@ -1,6 +1,5 @@
 package client.main;
 
-import client.data.IhmMainCallsDataClientImpl;
 import client.ihmmain.IHMMainManager;
 import javafx.application.Application;
 import javafx.scene.text.Font;
@@ -17,12 +16,17 @@ import java.io.UncheckedIOException;
  */
 public class UTubeApplication extends Application {
 
+    // Preserve the resource constants used by develop's existing tests.
+    public static final String MAIN_VIEW = IHMMainManager.MAIN_VIEW;
+    public static final String LOGIN_VIEW = IHMMainManager.LOGIN_VIEW;
+    public static final String STYLESHEET = IHMMainManager.STYLESHEET;
+
     @Override
     public void start(Stage stage) {
         loadFonts();
         IHMMainManager viewManager = new IHMMainManager();
-        viewManager.setIData(new IhmMainCallsDataClientImpl());
-        // setIComm/setIShare still have to be called once Comm and IHM-Share provide a concrete implementation.
+        // Services remain unwired until the external integration blockers are fixed.
+        // Do not construct a Data facade without its DataClientCore.
         viewManager.start(stage);
     }
 
