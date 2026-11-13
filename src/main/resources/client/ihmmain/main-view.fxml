@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -10,14 +12,21 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
+<!--
+    Mockup v2 · layout of the logged-in screens (style guide 8.1, "Mise en page"):
+    header at the top, users panel on the right, and content_pane in the center,
+    where the IHMMainManager displays the current screen (04, 10, 11, 12, IHM-Share screens).
+-->
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="client.ihmmain.MainController">
     <fx:define>
         <ToggleGroup fx:id="navGroup"/>
     </fx:define>
 
-    <!-- Maquette v2 · Header UTube -->
+    <!-- Mockup v2 · UTube header -->
     <top>
         <HBox styleClass="header">
             <ImageView fitHeight="28" preserveRatio="true">
@@ -32,7 +41,9 @@
             </HBox>
 
             <HBox styleClass="nav">
-                <ToggleButton text="Accueil" styleClass="nav-link" toggleGroup="$navGroup" selected="true"/>
+                <ToggleButton fx:id="home_tab" text="Accueil" styleClass="nav-link" toggleGroup="$navGroup"
+                              selected="true" onAction="#showHome"/>
+                <!-- Téléchargements and Partages tabs (IHM-Share), Amis tab (10): not implemented yet -->
                 <ToggleButton text="Téléchargements" styleClass="nav-link" toggleGroup="$navGroup"/>
                 <ToggleButton text="Partages" styleClass="nav-link" toggleGroup="$navGroup"/>
                 <ToggleButton text="Amis" styleClass="nav-link" toggleGroup="$navGroup"/>
@@ -41,7 +52,7 @@
             <Region HBox.hgrow="ALWAYS"/>
 
             <HBox spacing="12" alignment="CENTER_RIGHT">
-                <Button styleClass="icon-button">
+                <Button styleClass="icon-button" onAction="#toggleUsersPanel">
                     <graphic>
                         <ImageView>
                             <Image url="@../../assets/icons/utilisateurs.png"/>
@@ -53,7 +64,31 @@
             </HBox>
         </HBox>
     </top>
+
     <center>
-        <Label fx:id="statusLabel"/>
+        <StackPane fx:id="content_pane"/>
     </center>
+
+    <!-- Connected users panel -->
+    <right>
+        <VBox fx:id="users_panel" styleClass="users-panel" managed="${users_panel.visible}">
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 0 0 12px 0;">
+                <Label text="Utilisateur·rice·s" styleClass="panel-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button styleClass="icon-button,flat" onAction="#toggleUsersPanel">
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../../assets/icons/fermer.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </HBox>
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background-color: transparent; -fx-background: transparent;">
+                <VBox fx:id="users_container" spacing="4"/>
+            </ScrollPane>
+            <!-- Screen 03 · Serveurs (servers): not implemented yet -->
+            <Hyperlink text="Gérer les serveurs"/>
+        </VBox>
+    </right>
 </BorderPane>

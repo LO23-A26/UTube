@@ -1,8 +1,8 @@
 package client.main;
 
 /**
- * Lanceur sans héritage d'Application, utile pour exécuter le client
- * depuis le classpath (jar exécutable, IDE sans configuration de modules).
+ * Launcher that does not extend Application, used to run the client
+ * from the classpath (executable jar, IDE without module configuration).
  */
 public class Launcher {
 

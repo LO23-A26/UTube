@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<!-- Maquette v2 · 01 Connexion -->
+<!-- Mockup v2 · 01 Connexion (login) -->
 <StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="client.ihmmain.LoginController">
     <VBox styleClass="card,large" spacing="18" maxWidth="420" maxHeight="-Infinity"
@@ -51,7 +51,7 @@
                 maxWidth="Infinity" onAction="#connect"/>
 
         <HBox>
-            <!-- Écrans 02 · Créer un profil / Importer un profil : pas encore implémentés -->
+            <!-- Screens 02 · Créer un profil / Importer un profil (create / import a profile): not implemented yet -->
             <Hyperlink text="Créer un profil"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Hyperlink text="Importer un profil"/>

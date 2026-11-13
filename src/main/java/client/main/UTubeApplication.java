@@ -1,9 +1,7 @@
 package client.main;
 
+import client.ihmmain.IHMMainManager;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -12,30 +10,27 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 
 /**
- * Point d'entrée JavaFX du client UTube.
+ * JavaFX entry point of the UTube client: starts the application, builds the
+ * managers of the modules and lets the {@link IHMMainManager} handle the
+ * display of the FXML views.
  */
 public class UTubeApplication extends Application {
 
-    public static final String MAIN_VIEW = "/client/ihmmain/main-view.fxml";
-    public static final String LOGIN_VIEW = "/client/ihmmain/login-view.fxml";
-    public static final String STYLESHEET = "/assets/styles/utube.css";
+    // Preserve the resource constants used by develop's existing tests.
+    public static final String MAIN_VIEW = IHMMainManager.MAIN_VIEW;
+    public static final String LOGIN_VIEW = IHMMainManager.LOGIN_VIEW;
+    public static final String STYLESHEET = IHMMainManager.STYLESHEET;
 
     @Override
     public void start(Stage stage) {
         loadFonts();
-        Scene scene = new Scene(load(LOGIN_VIEW), 1280, 800);
-        scene.getStylesheets().add(UTubeApplication.class.getResource(STYLESHEET).toExternalForm());
-        stage.setTitle("UTube");
-        stage.setScene(scene);
-        stage.show();
+        IHMMainManager viewManager = new IHMMainManager();
+        // Services remain unwired until the external integration blockers are fixed.
+        // Do not construct a Data facade without its DataClientCore.
+        viewManager.start(stage);
     }
 
-    /** Remplace le contenu de la fenêtre par la vue FXML donnée. */
-    public static void show(Scene scene, String view) {
-        scene.setRoot(load(view));
-    }
-
-    /** Les @font-face du CSS échouent si le chemin du projet contient un espace : on charge les polices ici. */
+    /** The CSS @font-face rules fail if the project path contains a space, so the fonts are loaded here. */
     private static void loadFonts() {
         for (String font : new String[]{"Regular", "Italic", "Medium", "SemiBold"}) {
             try (InputStream in = UTubeApplication.class.getResourceAsStream("/assets/fonts/IBMPlexSans-" + font + ".ttf")) {
@@ -43,14 +38,6 @@ public class UTubeApplication extends Application {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-        }
-    }
-
-    private static Parent load(String view) {
-        try {
-            return FXMLLoader.load(UTubeApplication.class.getResource(view));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
     }
 

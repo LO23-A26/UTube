@@ -1,15 +1,14 @@
 package client.ihmmain;
 
-import client.main.UTubeApplication;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 /**
- * Contrôleur de l'écran de connexion (maquette 01).
+ * Controller of the login screen (mockup 01).
  */
-public class LoginController {
+public class LoginController extends Controller {
 
     @FXML
     private TextField pseudoField;
@@ -22,20 +21,24 @@ public class LoginController {
     @FXML
     private Label errorLabel;
 
+    @Override
+    public void refreshView() {
+        errorLabel.setVisible(false);
+    }
+
     @FXML
     private void connect() {
         String error = validate(pseudoField.getText(), passwordField.getText(),
                 ipField.getText(), portField.getText());
         errorLabel.setText(error);
         errorLabel.setVisible(error != null);
-        if (error != null) {
-            return;
+        if (error == null) {
+            // no authentication or server connection yet, call the Data/Comm interfaces here once the connection process is defined
+            viewManager.showContent(IHMMainManager.HOME_VIEW);
         }
-        // ponytail: aucune authentification ni connexion serveur, brancher les interfaces data/comm ici
-        UTubeApplication.show(pseudoField.getScene(), UTubeApplication.MAIN_VIEW);
     }
 
-    /** Renvoie le message d'erreur à afficher, ou null si la saisie est valide. */
+    /** Returns the error message to display, or null if the input is valid. */
     static String validate(String pseudo, String password, String ip, String port) {
         if (pseudo.isBlank() || password.isEmpty() || ip.isBlank() || port.isBlank()) {
             return "Tous les champs sont obligatoires.";
