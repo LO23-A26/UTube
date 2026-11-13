@@ -20,7 +20,7 @@ import common.interfaces.comm.InterfaceDataCallsComm;
  */
 public class DataClientCallsComm implements InterfaceDataCallsComm {
 
-    private CommClientController commClientController;
+    private final CommClientController commClientController;
 
     // Constructor, takes in the comm client controller
     public DataClientCallsComm(CommClientController commClientController) {
@@ -40,26 +40,24 @@ public class DataClientCallsComm implements InterfaceDataCallsComm {
         ServerConfig config = new ServerConfig(server_ip, 9000);
         
         // creates socket with server and sends UUID
-        commClientController.initialize_server_connexion(config);
+        commClientController.initializeServerConnexion(config);
         // Send profile to server
-        ServerMessage message = new ConnectionRequestMessage( //TODO : should be renamed to "send profile to server" or something
+        ServerMessage message = new ConnectionRequestMessage( 
             commClientController.interfaceCommDataClient.getMyProfile().getSharedInfo(),
             ip_address,
             port,
             new HashSet<>(video_list)  // Temporary conversion waiting for parameter type to change
         );
-        commClientController.serverConnection.send_message(message); 
+        commClientController.serverConnection.sendMessage(message); 
     }
 
     @Override
     public void sendNewVideo(VideoLight video_info) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'sendNewVideo'");
     }
 
     @Override
     public void giveDetailsRequest(UserLight requester_profile, UserLight owner_profile, UUID video) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'giveDetailsRequest'");
     }
     
