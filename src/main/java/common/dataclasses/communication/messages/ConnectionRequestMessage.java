@@ -1,8 +1,8 @@
 package common.dataclasses.communication.messages;
 
-import java.util.ArrayList;
 import java.util.Set;
 
+import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.ServerMessage;
@@ -30,7 +30,7 @@ public class ConnectionRequestMessage implements ServerMessage {
      */
     @Override
     public void handle(CommServerController controller) {  
-        ArrayList<Object> index = controller.interfaceCommServerCallsDataServer.registerUserAndGetIndex(this.new_user, this.new_user_videos);
+        Index index = controller.interfaceCommServerCallsDataServer.registerUserAndGetIndexStructure(this.new_user, this.new_user_videos);
         // send the new infos to all (not implemented yet)
         controller.broadcastNewUserNotification(this.new_user, new_user_ip, new_user_port, this.new_user_videos);
 
