@@ -19,7 +19,11 @@ import java.util.UUID;
  */
 public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDataClient {
 
-    private DataClientCore data_client_core;
+    private final DataClientCore data_client_core;
+
+    public CommClientCallsDataClientImpl(DataClientCore data_client_core) {
+        this.data_client_core = data_client_core;
+    }
 
     /**
      * Gives details access for a specific video to a requester.
@@ -154,7 +158,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @return UserFull object representing the current user.
      */
     public UserFull getMyProfile(){
-        return null;
+        return data_client_core.getUser();
     }
 
     /**
