@@ -59,6 +59,7 @@ public class CommClientController {
      */
     public void initialize_server_connexion(ServerConfig config) {
         this.serverConnection = new ServerConnection(config, this);
+        serverConnection.start();
     }
 
     public void addClient(InetAddress ip_adress, int port, UUID uuid) {

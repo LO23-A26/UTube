@@ -1,10 +1,13 @@
 package client.communication;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
+import common.dataclasses.communication.ClientMessage;
 import common.dataclasses.communication.ServerMessage;
 
 public class ServerConnection extends Thread {
@@ -47,6 +50,24 @@ public class ServerConnection extends Thread {
     // independent thread execution
     @Override
     public void run() {
+        try {
+            while (!serverSocket.isClosed()) {
+                try {
+                    ClientMessage message = (ClientMessage) inFromServer.readObject();
+                    message.handle(commClientController);
+                } catch (SocketTimeoutException ignored) {
+                    // pas de timeout configuré côté client, par sécurité
+                }
+            }
+        } catch (EOFException e) {
+            System.out.println("[ServerConnection] Server closed the connection");
+        } catch (IOException | ClassNotFoundException e) {
+            if (!serverSocket.isClosed()) {
+                System.err.println("[ServerConnection] Read error: " + e.getMessage());
+            }
+        } finally {
+            try { serverSocket.close(); } catch (IOException ignored) { }
+        }
     }
 
 }
