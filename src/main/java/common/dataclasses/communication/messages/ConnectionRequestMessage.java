@@ -1,11 +1,11 @@
 package common.dataclasses.communication.messages;
-
-import java.util.ArrayList;
 import java.util.Set;
 
+import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.ServerMessage;
+import server.communication.ActiveClient;
 import server.communication.CommServerController;
 
 public class ConnectionRequestMessage implements ServerMessage {
@@ -26,16 +26,17 @@ public class ConnectionRequestMessage implements ServerMessage {
 
     /**
      * Handles the message by registering the new user and their videos on the server side.
-     * @param controller The client controller.
+     *
+     * @param controller   The client controller.
+     * @param sender
      */
     @Override
-    public void handle(CommServerController controller) {  
-        ArrayList<Object> index = controller.interfaceCommServerCallsDataServer.registerUserAndGetIndex(this.new_user, this.new_user_videos);
-        // send the new infos to all (not implemented yet)
-        controller.broadcastNewUserNotification(this.new_user, new_user_ip, new_user_port, this.new_user_videos);
-
+    public void handle(CommServerController controller, ActiveClient sender) {
+        Index index = controller.interfaceCommServerCallsDataServer.registerUserAndGetIndexStructure(new_user,new_user_videos);
         // send the index to the new user
-        controller.sendFullIndex(new_user, index);
+        controller.sendFullIndex(sender, index);
+        // send the new infos to all
+        controller.broadcastNewUserNotification(sender, new_user, new_user_ip, new_user_port, new_user_videos);
     }
     
 }

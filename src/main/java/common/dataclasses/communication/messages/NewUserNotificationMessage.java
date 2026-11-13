@@ -2,6 +2,7 @@ package common.dataclasses.communication.messages;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Set;
 
 import client.communication.CommClientController;
@@ -43,7 +44,7 @@ public class NewUserNotificationMessage implements ClientMessage {
         }
         
         controller.addClient(ip, new_user_port, new_user.getUuid());
-        controller.interfaceCommDataClient.saveNewUser(this.new_user, null); // TODO ABSOLUTLY SEND ALL VIDEOS WHEN INTERFACE IS FIXED
+        controller.interfaceCommDataClient.saveNewUser(this.new_user,new ArrayList<>(this.new_user_videos));
 
     }
 }
