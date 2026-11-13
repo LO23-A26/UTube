@@ -1,13 +1,14 @@
 package client.data;
 
+import java.util.Set;
+
 import common.dataclasses.ContactList;
 import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
-import common.interfaces.comm.InterfaceData_calls_Comm;
+import common.interfaces.comm.InterfaceDataCallsComm;
 
-import java.util.Set;
 
 /**
  * @author Lucas Dompnier
@@ -22,7 +23,7 @@ public class DataClientCore {
     private ContactList contact_lists;
     private IhmMainCallsDataClientImpl impl_interface_for_ICM;
     private InterfaceDataCallsIHMMain interface_from_ICM;
-    private InterfaceData_calls_Comm interface_from_Comm;
+    private InterfaceDataCallsComm interface_from_Comm;
 
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
@@ -30,7 +31,7 @@ public class DataClientCore {
     public InterfaceDataCallsIHMMain getInterfaceFromICM() {
         return interface_from_ICM;
     }
-    public InterfaceData_calls_Comm getInterfaceFromComm() {
+    public InterfaceDataCallsComm getInterfaceFromComm() {
         return interface_from_Comm;
     }
 
@@ -42,7 +43,7 @@ public class DataClientCore {
         this.interface_from_ICM = interface_from_ICM;
     }
 
-    public void setInterfaceFromComm(InterfaceData_calls_Comm interface_from_Comm) {
+    public void setInterfaceFromComm(InterfaceDataCallsComm interface_from_Comm) {
         this.interface_from_Comm = interface_from_Comm;
     }
 
