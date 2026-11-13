@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
@@ -15,6 +16,10 @@ public class MockCommServerCallsDataServer implements InterfaceCommServerCallsDa
     public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
         System.out.println("[MockCommServerCallsDataServer] registerUserAndGetIndex: " + new_user + " / " + new_videos.size());
         return new ArrayList<>();
+    }
+
+    public Index registerUserAndGetIndexStructure(UserLight new_user, Set<VideoLight> new_videos){
+        return new Index();
     }
 
     @Override

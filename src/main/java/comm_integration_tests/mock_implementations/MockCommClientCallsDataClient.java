@@ -82,7 +82,7 @@ public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDa
     }
 
     @Override
-    public void saveNewUser(UserLight new_user, VideoLight new_video) {
+    public void saveNewUser(UserLight new_user, List<VideoLight> new_video) {
         System.out.println("[MockCommClientCallsDataClient] saveNewUser user=" + new_user + " video=" + new_video);
     }
 

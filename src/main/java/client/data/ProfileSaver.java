@@ -22,13 +22,13 @@ import common.dataclasses.UserLight;
 /**
  * Class that save client data on user's computer
  *
- * @author Lucas Dompnier
- * @version 2.0
+ * @author Lucas Dompnier, Kilian Lagrevol
+ * @version 3.0
  */
 public class ProfileSaver {
 
-    static final String user_dir = System.getProperty("user.home") + "\\AppData\\Local\\Utube";
-    static final String profile_dir = user_dir + "\\profile";
+    static final String user_dir = Path.of(System.getProperty("user.home"), "AppData", "Local", "Utube").toString();
+    static final String profile_dir = Path.of(user_dir, "profile").toString();
 
     /**
      * Create a directory in user's computer
@@ -72,16 +72,21 @@ public class ProfileSaver {
         }
 
         // Copy the avatar to the directory
-        File avatar_file = new File(user.getSharedInfo().getAvatarPath());
-        String new_avatar_path = user_profile_directory + "\\" + avatar_file.getName();
-        try {
-            Files.copy(Path.of(user.getSharedInfo().getAvatarPath()),
-                    Path.of(new_avatar_path),
-                    StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        String avatar_path = user.getSharedInfo().getAvatarPath();
+
+        if(avatar_path != null){
+            File avatar_file = new File(avatar_path);
+            String new_avatar_path = user_profile_directory + "\\" + avatar_file.getName();
+            try {
+                Files.copy(Path.of(avatar_path),
+                        Path.of(new_avatar_path),
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            user.getSharedInfo().setAvatarPath(new_avatar_path);
         }
-        user.getSharedInfo().setAvatarPath(new_avatar_path);
+
 
         // Saving the user into a file
         FileOutputStream fos;
@@ -166,57 +171,29 @@ public class ProfileSaver {
      */
     public Set<UserFull> restoreProfile(){
 
-        String base_directory = user_dir;
-        if (createDirectory(base_directory)) {
-            System.out.println("UTube home directory created successfully at: " + base_directory);
-        } else {
-            System.out.println("Failed to create UTube home directory. It may already exist at: " + base_directory);
-        }
-
-        String profile_directory = profile_dir;
-        if (createDirectory(profile_directory)) {
-            System.out.println("Profile directory created successfully at: " + profile_directory);
-        } else {
-            System.out.println("Failed to create profile directory. It may already exist at: " + profile_directory);
+        if (createDirectory(user_dir)) {
+            return  null;
         }
 
         Set<UserFull> users = new HashSet<>();
 
         // List all the profile files
-        for(String dir_name : listDirectory(profile_directory)){
-            // Open the file
-            FileInputStream fis;
-            try {
-                fis = new FileInputStream(dir_name + "\\user.ser");
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
+        for (String dir_name : listDirectory(profile_dir)) {
+            File profile_file = new File(dir_name, "user.ser");
+            if (!profile_file.isFile()) {
+                System.out.println("Skipping incomplete profile folder: " + dir_name);
+                continue;
             }
-            ObjectInputStream ois;
-            try {
-                ois = new ObjectInputStream(fis);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            // Convert the file into usable UserFull object
-            UserFull user_parsed;
-            try {
-                user_parsed = (UserFull)ois.readObject(); // down-casting object
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(profile_file))) {
+                UserFull user_parsed = (UserFull) ois.readObject();
+                String avatar_path = user_parsed.getSharedInfo().getAvatarPath();
+                if(avatar_path != null){
+                    user_parsed.getSharedInfo().setAvatar(avatar_path);
+                }
+                users.add(user_parsed);
             } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                System.out.println("Unreadable profile in " + dir_name + ": " + e.getMessage());
             }
-
-            // set manually the avatar image
-            user_parsed.getSharedInfo().setAvatar(user_parsed.getSharedInfo().getAvatarPath());
-
-            // Closing stream
-            try {
-                ois.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            users.add(user_parsed);
         }
 
         return users;

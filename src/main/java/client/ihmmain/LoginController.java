@@ -1,5 +1,6 @@
 package client.ihmmain;
 
+import client.data.AuthentificationFailed;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -28,13 +29,27 @@ public class LoginController extends Controller {
 
     @FXML
     private void connect() {
-        String error = validate(pseudoField.getText(), passwordField.getText(),
-                ipField.getText(), portField.getText());
+        String pseudo = pseudoField.getText();
+        String password = passwordField.getText();
+        String ip = ipField.getText();
+        String port = portField.getText();
+
+        String error = validate(pseudo, password, ip, port);
         errorLabel.setText(error);
         errorLabel.setVisible(error != null);
         if (error == null) {
             // no authentication or server connection yet, call the Data/Comm interfaces here once the connection process is defined
-            viewManager.showContent(IHMMainManager.HOME_VIEW);
+            try{
+                boolean connect = viewManager.getIData().requestConnection(pseudo, password, ip, Integer.parseInt(port));
+                if(connect){
+                    viewManager.showContent(IHMMainManager.HOME_VIEW);
+                }
+            } catch (AuthentificationFailed e) {
+                error = e.getMessage();
+                errorLabel.setText(error);
+                errorLabel.setVisible(true);
+            }
+
         }
     }
 

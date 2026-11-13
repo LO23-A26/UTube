@@ -1,7 +1,10 @@
 package client.main;
 
+import client.communication.CommClientController;
+import client.data.DataClientCore;
 import client.ihmmain.IHMMainManager;
 import javafx.application.Application;
+import javafx.scene.chart.PieChart;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -25,8 +28,16 @@ public class UTubeApplication extends Application {
     public void start(Stage stage) {
         loadFonts();
         IHMMainManager viewManager = new IHMMainManager();
-        // Services remain unwired until the external integration blockers are fixed.
-        // Do not construct a Data facade without its DataClientCore.
+        DataClientCore dataClientCore = new DataClientCore();
+        CommClientController commClientController = new CommClientController();
+
+        viewManager.setIData(dataClientCore.getImplInterfaceForICM());
+        viewManager.setIComm(commClientController.getIhmMainCallsComm());
+
+        dataClientCore.setInterfaceFromComm(commClientController.getDataCallsComm());
+
+        commClientController.setInterfaceCommDataClient(dataClientCore.getImplInterfaceForComm());
+
         viewManager.start(stage);
     }
 
