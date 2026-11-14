@@ -2,8 +2,13 @@ package client.communication;
 
 import java.net.ServerSocket;
 
+/**
+ * Service that listens for incoming connections from another client.
+ * TODO: Implementation
+ */
 public class ClientListeningService extends Thread {
-    private CommClientController clientController;
+    @SuppressWarnings("unused")
+    private final CommClientController clientController;
     private ServerSocket listeningSocket;
 
     // Constructor
@@ -21,5 +26,7 @@ public class ClientListeningService extends Thread {
 
     // thread execution
     @Override
-    public void run(){}
+    public void run(){
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }

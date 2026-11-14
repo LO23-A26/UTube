@@ -38,7 +38,7 @@ public class NewUserNotificationMessage implements ClientMessage {
         try {
             ip = InetAddress.getByName(new_user_ip);
         } catch (UnknownHostException ex) {
-            System.getLogger(NewUserNotificationMessage.class.getName()).log(System.Logger.Level.ERROR, (String) "New client ip adress is invalid, creation failed", ex);
+            System.getLogger(NewUserNotificationMessage.class.getName()).log(System.Logger.Level.ERROR, "New client ip adress is invalid, creation failed", ex);
             return;
         }
         
