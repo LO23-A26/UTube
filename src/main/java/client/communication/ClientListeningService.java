@@ -2,6 +2,10 @@ package client.communication;
 
 import java.net.ServerSocket;
 
+/**
+ * Service that listens for incoming connections from another client.
+ * TODO: Implementation
+ */
 public class ClientListeningService extends Thread {
     @SuppressWarnings("unused")
     private final CommClientController clientController;
