@@ -1,8 +1,8 @@
 package server.communication;
 
-import java.util.ArrayList;
 import java.util.Set;
 
+import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.ClientMessage;
@@ -85,7 +85,7 @@ public class CommServerController {
      * @param new_user The new user.
      * @param index The full index.
      */
-    public void sendFullIndex(UserLight new_user, ArrayList<Object> index) {
+    public void sendFullIndex(UserLight new_user, Index index) {
         SendFullIndexMessage message = new SendFullIndexMessage(
             index
         );
