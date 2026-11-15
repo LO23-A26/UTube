@@ -2,6 +2,8 @@ package server.communication;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.UUID;
+
 import common.dataclasses.communication.messages.NotifyVideoDeletedMessage;
 import common.dataclasses.communication.messages.NotifyVideoSharedMessage;
 import java.util.UUID;
@@ -10,6 +12,7 @@ import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.ClientMessage;
 import common.dataclasses.communication.messages.NewUserNotificationMessage;
+import common.dataclasses.communication.messages.NotifyDisconnectionMessage;
 import common.dataclasses.communication.messages.SendFullIndexMessage;
 import common.interfaces.comm.InterfaceDataServerCallsCommServer;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
@@ -67,7 +70,7 @@ public class CommServerController {
         newConnectionListeningThread.start();
     }
 
-    /** 
+    /**
      * Broadcasts a notification (NewUserNotificationMessage) to all connected clients about a new user.
      * @param new_user The new user.
      * @param new_user_videos The videos of the new user.
@@ -105,4 +108,18 @@ public class CommServerController {
     public void broadcastVideoDeleted(ActiveClient sender, UUID videoId) {
         connectionsManager.broadcastMessageExcept(sender.getUuid(), new NotifyVideoDeletedMessage(videoId));
     }
+
+    public void handleClientDisconnected(ActiveClient client) {
+        // Only the first call for this client goes further (voluntary + socket closed = 1 treatment)
+        if (!connectionsManager.disconnectClient(client)) {
+            return;
+        }
+        UUID userId = client.getUserId();
+        if (userId == null) {
+            return; // never registered: nothing in the index, nobody to notify
+        }
+        interfaceCommServerCallsDataServer.removeUser(userId);
+        connectionsManager.broadcastMessage(new NotifyDisconnectionMessage(userId));
+    }
+
 }
