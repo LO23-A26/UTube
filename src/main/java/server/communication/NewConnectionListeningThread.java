@@ -128,7 +128,7 @@ public class NewConnectionListeningThread extends Thread {
         try { // Ici on lance la boucle de handle
             client.readLoop(); // blocks until the client leaves 
         } finally {
-            connectionsManager.disconnectClient(client);
+            serverController.handleClientDisconnected(client);
         }
 
     }
