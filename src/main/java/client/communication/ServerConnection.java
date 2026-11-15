@@ -9,6 +9,7 @@ import java.net.SocketTimeoutException;
 
 import common.dataclasses.communication.ClientMessage;
 import common.dataclasses.communication.ServerMessage;
+import common.dataclasses.communication.messages.DisconnectionRequestMessage;
 
 public class ServerConnection extends Thread {
     @SuppressWarnings("unused")
@@ -72,5 +73,12 @@ public class ServerConnection extends Thread {
             try { serverSocket.close(); } catch (IOException ignored) { }
         }
     }
+
+    public void disconnect() {
+        send_message(new DisconnectionRequestMessage());
+        try { serverSocket.close(); } catch (IOException ignored) { }
+    }
+
+
 
 }
