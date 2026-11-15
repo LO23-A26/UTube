@@ -50,7 +50,7 @@ public class ConnectionsManager {
         try {
             client.send(message);
         } catch (IOException e) {
-            disconnectClient(client);
+            client.close();
         }
     }
     /**
@@ -69,9 +69,31 @@ public class ConnectionsManager {
             try {
                 client.send(message);
             } catch (IOException e) {
-                disconnectClient(client);
+                client.close();
             }
         }
     }
+
+    public void broadcastMessage(ClientMessage message) {
+        for (ActiveClient client : clients.values()) {
+            try {
+                client.send(message);
+            } catch (IOException e) {
+                client.close();
+            }
+        }
+    }
+
+    /** @return true if this call actually removed the client. */
+    public boolean disconnectClient(ActiveClient client) {
+        if (client == null) {
+            return false;
+        }
+        boolean removed = clients.remove(client.getUuid()) != null;
+        client.close();
+        return removed;
+    }
+
+
 
 }
