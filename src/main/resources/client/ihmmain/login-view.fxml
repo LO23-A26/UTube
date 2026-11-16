@@ -47,7 +47,7 @@
         <Label fx:id="errorLabel" styleClass="text-secondary" wrapText="true"
                visible="false" managed="${errorLabel.visible}"/>
 
-        <Button text="Se connecter" styleClass="primary" defaultButton="true"
+        <Button fx:id="connectButton" text="Se connecter" styleClass="primary" defaultButton="true"
                 maxWidth="Infinity" onAction="#connect"/>
 
         <HBox>
