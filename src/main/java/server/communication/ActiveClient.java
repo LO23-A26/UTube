@@ -85,7 +85,9 @@ public class ActiveClient {
         }
 
         synchronized (out) {
+            out.reset();
             out.writeObject(message);
+            out.flush();
         }
     }
 
@@ -135,7 +137,7 @@ public class ActiveClient {
         // Il faudra call le handler dans le message une fois qu'on a une classe message
         // v1 avec du texte pr l'instant : on affiche la ligne recue et on repond "OK ..." pour verifier que la connexion marche.
         System.out.println("received from " + uuid + " : " + message);
-        message.handle(this.serverController);
+        message.handle(this.serverController, this);
         
     }
     

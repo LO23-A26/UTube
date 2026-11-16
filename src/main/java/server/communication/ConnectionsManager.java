@@ -44,8 +44,11 @@ public class ConnectionsManager {
         }
     }
 
-    public void broadcastMessage(ClientMessage message) {
+    public void broadcastMessageExcept(UUID excludedUuid, ClientMessage message) {
         for (ActiveClient client : clients.values()) {
+            if (client.getUuid().equals(excludedUuid)) {
+                continue;
+            }
             try {
                 client.send(message);
             } catch (IOException e) {

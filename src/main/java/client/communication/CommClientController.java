@@ -95,6 +95,7 @@ public class CommClientController {
      */
     public void initializeServerConnexion(ServerConfig config) {
         this.serverConnection = new ServerConnection(config, this);
+        serverConnection.start();
     }
 
     /**

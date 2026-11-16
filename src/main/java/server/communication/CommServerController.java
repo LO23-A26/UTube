@@ -1,5 +1,6 @@
 package server.communication;
 
+import java.io.IOException;
 import java.util.Set;
 
 import common.dataclasses.Index;
@@ -69,15 +70,11 @@ public class CommServerController {
      * @param new_user The new user.
      * @param new_user_videos The videos of the new user.
      */
-    public void broadcastNewUserNotification(UserLight new_user, String new_user_ip, int new_user_port, Set<VideoLight> new_user_videos) {
-        ClientMessage message = new NewUserNotificationMessage(
-            new_user, 
-            new_user_ip, 
-            new_user_port, 
-            new_user_videos
-        );
-        
-        connectionsManager.broadcastMessage(message);
+    public void broadcastNewUserNotification(ActiveClient newClient, UserLight user,
+                                             String ip, int port, Set<VideoLight> videos) {
+        connectionsManager.broadcastMessageExcept(
+                newClient.getUuid(),
+                new NewUserNotificationMessage(user, ip, port, videos));
     }
 
     /**
@@ -85,10 +82,8 @@ public class CommServerController {
      * @param new_user The new user.
      * @param index The full index.
      */
-    public void sendFullIndex(UserLight new_user, Index index) {
-        SendFullIndexMessage message = new SendFullIndexMessage(
-            index
-        );
-        connectionsManager.sendMessageToClient(new_user.getUuid(), message);
+    public void sendFullIndex(ActiveClient receiver, Index index) {
+        connectionsManager.sendMessageToClient(receiver.getUuid(), new SendFullIndexMessage(index));
     }
+
 }

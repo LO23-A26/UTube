@@ -1,5 +1,4 @@
 package common.dataclasses.communication.messages;
-
 import java.util.List;
 
 import client.communication.CommClientController;
@@ -20,13 +19,12 @@ public class SendFullIndexMessage implements ClientMessage {
 
     /**
      * Handles the message by giving the full index to the Data client.
-     * The index built by the Data server is [List of UserLight, List of VideoLight].
      * @param controller The client controller.
      */
     @Override
     public void handle(CommClientController controller) {
-        List<UserLight> users = (List<UserLight>) index.getUserList();
-        List<VideoLight> videos = (List<VideoLight>) index.getVideoList();
+        List<UserLight> users = index.getUserList();
+        List<VideoLight> videos = index.getVideoList();
         controller.interfaceCommDataClient.saveFullIndex(users, videos);
     }
 }

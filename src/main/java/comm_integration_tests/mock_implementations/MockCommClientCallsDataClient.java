@@ -1,6 +1,7 @@
 package comm_integration_tests.mock_implementations;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import common.dataclasses.Comment;
@@ -82,13 +83,16 @@ public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDa
     }
 
     @Override
-    public void saveNewUser(UserLight new_user, VideoLight new_video) {
-        System.out.println("[MockCommClientCallsDataClient] saveNewUser user=" + new_user + " video=" + new_video);
+    public void saveFullIndex(List<UserLight> users, List<VideoLight> videos) {
+        System.out.println("[MockDataClient] saveFullIndex: " + users.size()
+                + " users, " + videos.size() + " videos");
+        users.forEach(u -> System.out.println("   - " + u));
     }
 
     @Override
-    public void saveFullIndex(List<UserLight> user_list, List<VideoLight> video_list) {
-        System.out.println("[MockCommClientCallsDataClient] saveFullIndex users=" + user_list.size() + " videos=" + video_list.size());
+    public void saveNewUser(UserLight user, List<VideoLight> videos) {
+        System.out.println("[MockDataClient] saveNewUser: " + user
+                + " (" + (videos == null ? 0 : videos.size()) + " videos)");
     }
 
     @Override
