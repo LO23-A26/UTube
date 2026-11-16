@@ -1,12 +1,12 @@
 package server.communication;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
-import common.dataclasses.communication.ClientMessage;
+import common.dataclasses.communication.PeerAddress;
 import common.dataclasses.communication.messages.NewUserNotificationMessage;
 import common.dataclasses.communication.messages.SendFullIndexMessage;
 import common.interfaces.comm.InterfaceDataServerCallsCommServer;
@@ -78,12 +78,13 @@ public class CommServerController {
     }
 
     /**
-     * Sends the full index to a new user (SendFullIndexMessage).
-     * @param new_user The new user.
+     * Sends the full index to a new user (SendFullIndexMessage), with the address of the clients already connected for the P2P
+     * @param receiver The new user.
      * @param index The full index.
      */
     public void sendFullIndex(ActiveClient receiver, Index index) {
-        connectionsManager.sendMessageToClient(receiver.getUuid(), new SendFullIndexMessage(index));
+        List<PeerAddress> peers = connectionsManager.getPeerAddressesExcept(receiver.getUuid());
+        connectionsManager.sendMessageToClient(receiver.getUuid(), new SendFullIndexMessage(index, peers));
     }
 
 }

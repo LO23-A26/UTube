@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import common.dataclasses.communication.ClientMessage;
+import common.dataclasses.communication.PeerAddress;
 import common.dataclasses.communication.ServerMessage;
 
 /**
@@ -20,6 +21,7 @@ public class ActiveClient {
     private final UUID uuid;
     private final String ipAddress;
     private final int port;
+    private volatile PeerAddress peerAddress;
 
     private final Socket socket;
     private final ObjectInputStream in; // Ici mettre des ObjectStreams ? 
@@ -72,6 +74,22 @@ public class ActiveClient {
      */
     public int getPort() {
         return port;
+    }
+
+    /**
+     * Returns where the client listens for the other clients
+     * @return the address or null not announced yet
+     */
+    public PeerAddress getPeerAddress() {
+        return peerAddress;
+    }
+
+    /**
+     * Remembers where the client listens for the other clients
+     * @param peerAddress the address announced by the client.
+     */
+    public void setPeerAddress(PeerAddress peerAddress) {
+        this.peerAddress = peerAddress;
     }
 
     /**

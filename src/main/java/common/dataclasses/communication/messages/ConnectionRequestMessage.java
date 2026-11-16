@@ -4,6 +4,7 @@ import java.util.Set;
 import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
+import common.dataclasses.communication.PeerAddress;
 import common.dataclasses.communication.ServerMessage;
 import server.communication.ActiveClient;
 import server.communication.CommServerController;
@@ -32,8 +33,13 @@ public class ConnectionRequestMessage implements ServerMessage {
      */
     @Override
     public void handle(CommServerController controller, ActiveClient sender) {
+        // remember where this client listens for the other clients
+        sender.setPeerAddress(new PeerAddress(new_user.getUuid(), new_user_ip, new_user_port));
+        System.getLogger(ConnectionRequestMessage.class.getName()).log(System.Logger.Level.INFO,
+                "Client " + new_user.getUuid() + " (connection " + sender.getUuid() + ") listens for the other clients on "
+                + new_user_ip + ":" + new_user_port);
         Index index = controller.interfaceCommServerCallsDataServer.registerUserAndGetIndexStructure(new_user,new_user_videos);
-        // send the index to the new user
+        // send the index (and the address of the other clients) to the new user
         controller.sendFullIndex(sender, index);
         // send the new infos to all
         controller.broadcastNewUserNotification(sender, new_user, new_user_ip, new_user_port, new_user_videos);
