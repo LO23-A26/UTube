@@ -13,7 +13,7 @@ import common.interfaces.comm.InterfaceDataServerCallsCommServer;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
 import server.communication.implementations.DataServerCallsCommServer;
 
-/*
+/**
  * Controller for the communication server, entry point for the communication module on the server side.
  * How to use :
  * 1. Create an instance of CommServerController, the constructor requires no interface
@@ -21,16 +21,16 @@ import server.communication.implementations.DataServerCallsCommServer;
  * 3. Call start()
  */
 public class CommServerController {
-    private ConnectionsManager connectionsManager;
-    private NewConnectionListeningThread newConnectionListeningThread;
+    private final ConnectionsManager connectionsManager;
+    private final NewConnectionListeningThread newConnectionListeningThread;
 
     // External interface, called by this controller
     public InterfaceCommServerCallsDataServer interfaceCommServerCallsDataServer; // public: the messages call it through the controller
 
     // Exposed interface, called by the Data server
-    private DataServerCallsCommServer dataServerCallsCommServer;
+    private final DataServerCallsCommServer dataServerCallsCommServer;
 
-    /*
+    /**
      * Constructor for the CommServerController class.
      * Requires no interface, but the external one must be set before start().
      */
@@ -55,7 +55,7 @@ public class CommServerController {
         return dataServerCallsCommServer;
     }
 
-    /*
+    /**
      * Starts the server: begins listening for new connections(the external interface must have been set first)
      */
     public void start() {
@@ -65,7 +65,7 @@ public class CommServerController {
         newConnectionListeningThread.start();
     }
 
-    /*
+    /** 
      * Broadcasts a notification (NewUserNotificationMessage) to all connected clients about a new user.
      * @param new_user The new user.
      * @param new_user_videos The videos of the new user.
@@ -77,8 +77,7 @@ public class CommServerController {
                 new NewUserNotificationMessage(user, ip, port, videos));
     }
 
-
-    /*
+    /**
      * Sends the full index to a new user (SendFullIndexMessage).
      * @param new_user The new user.
      * @param index The full index.

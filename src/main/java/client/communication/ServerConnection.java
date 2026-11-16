@@ -11,10 +11,13 @@ import common.dataclasses.communication.ClientMessage;
 import common.dataclasses.communication.ServerMessage;
 
 public class ServerConnection extends Thread {
-    private ServerConfig serverConfig;
+    @SuppressWarnings("unused")
+    private final ServerConfig serverConfig;
     private Socket serverSocket; // connection socket between client and server
     private ObjectOutputStream outToServer;
-    private CommClientController commClientController; // necessary to get the local user's UUID.
+    @SuppressWarnings("unused")
+    private final CommClientController commClientController; // necessary to get the local user's UUID.
+    @SuppressWarnings("unused")
     private ObjectInputStream inFromServer;
 
     // getters and setters
@@ -34,15 +37,15 @@ public class ServerConnection extends Thread {
             this.inFromServer = new ObjectInputStream(this.serverSocket.getInputStream());
             this.outToServer.writeObject(controller.interfaceCommDataClient.askRequesterId());
         } catch (IOException ex) {
-            System.getLogger(ServerConnection.class.getName()).log(System.Logger.Level.ERROR, (String) "Connexion with server failed", ex);
+            System.getLogger(ServerConnection.class.getName()).log(System.Logger.Level.ERROR, "Connexion with server failed", ex);
         }
     }
 
-    public void send_message(ServerMessage message) {
+    public void sendMessage(ServerMessage message) {
         try {
             this.outToServer.writeObject(message);
         } catch (IOException ex) {
-            System.getLogger(ServerConnection.class.getName()).log(System.Logger.Level.ERROR, (String) "Message could not be sent", ex);
+            System.getLogger(ServerConnection.class.getName()).log(System.Logger.Level.ERROR, "Message could not be sent", ex);
         }
     }
 
