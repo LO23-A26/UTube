@@ -27,13 +27,6 @@ public class ConnectionsManager {
         clients.put(client.getUuid(), client);
     }
 
-    public void disconnectClient(ActiveClient client) {
-        if (client == null) {
-            return;
-        }
-        clients.remove(client.getUuid());
-        client.close();
-    }
     /**
      * Sends a message to one client, identified by its UUID.
      * Does nothing if no such client is connected.
@@ -93,7 +86,4 @@ public class ConnectionsManager {
         client.close();
         return removed;
     }
-
-
-
 }
