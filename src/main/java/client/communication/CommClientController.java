@@ -1,7 +1,6 @@
 package client.communication;
 
 import java.net.InetAddress;
-import java.util.HashMap;
 import java.util.UUID;
 
 import common.interfaces.IHMShare.InterfaceCommunicationCallsIHMShare;
@@ -18,7 +17,7 @@ import client.communication.implementations.*;
  * </ol>
  */
 public class CommClientController {
-    private final HashMap<UUID,RemoteClient> connectedClients;
+    private final ClientConnectionsManager clientConnectionsManager; // the other clients, available for a direct connection
     public ServerConnection serverConnection;
 
     /**
@@ -99,14 +98,14 @@ public class CommClientController {
     }
 
     /**
-     * Adds a connected client to the controller.
+     * Remembers a client who is connected to the server, to be able to contact him directly
      *
      * @param ip_adress the client's IP address
      * @param port the client's port
      * @param uuid the client's UUID
      */
     public void addClient(InetAddress ip_adress, int port, UUID uuid) {
-        connectedClients.put(uuid, new RemoteClient(ip_adress, port, uuid));
+        clientConnectionsManager.connectNewClient(new RemoteClient(ip_adress, port, uuid));
     }
 
     /**
@@ -127,6 +126,6 @@ public class CommClientController {
         this.ihmShareCallsComm = new IHMShareCallsComm(this);
         this.dataClientCallsComm = new DataClientCallsComm(this);
 
-        this.connectedClients = new HashMap<>();
+        this.clientConnectionsManager = new ClientConnectionsManager();
     }
 }
