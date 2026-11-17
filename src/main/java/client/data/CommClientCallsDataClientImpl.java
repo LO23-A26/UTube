@@ -11,6 +11,7 @@ import common.interfaces.data.InterfaceCommClientCallsDataClient;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -22,7 +23,14 @@ import java.util.UUID;
 public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDataClient {
 
     private DataClientCore data_client_core;
-    
+
+
+    /*
+     ISSUE 86
+     */
+    public void removeUser(UUID user_id){
+        data_client_core.removeRemoteUserFromLocalIndex(user_id);
+    }
 
     /**
      * Gives details access for a specific video to a requester.
@@ -205,6 +213,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
     public void removeUser(UserFull user_profile){
         data_client_core.getInterfaceFromICM().refreshUserList(user_profile);
     }
+
 
     /**
      * Removes a shared video.

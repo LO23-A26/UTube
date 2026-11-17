@@ -1,6 +1,16 @@
 package client.data;
 
-import common.dataclasses.*;
+import java.util.Set;
+import java.util.UUID;
+
+import common.dataclasses.ContactList;
+import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
+import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
+import common.interfaces.comm.InterfaceDataCallsComm;
+
+
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,6 +56,30 @@ public class DataClientCore {
         this.impl_interface_for_ICS.setDataClientCore(this);
     }
 
+
+
+
+    /*
+
+    $$$$$$$$$$$$$*************************************************** ISSUE 86 /CcCallsDcImpl
+
+     */
+    void removeRemoteUserFromLocalIndex(UUID user_id){
+        if (user_id != null){
+            UserLight user_to_remove = null;
+            for (UserLight u : connected_user) {
+                if (user_id.equals(u.getUuid())) {
+                    user_to_remove = u;
+                    connected_user.remove(u);
+                    break;
+                }
+            }
+            list_video.removeIf(v -> v.getOwner() != null && user_id.equals(v.getOwner().getUuid()));
+            if (user_to_remove != null){interface_from_ICM.refreshUserList(user_to_remove);}
+
+        }
+    }
+
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
     }
@@ -55,7 +89,7 @@ public class DataClientCore {
     public InterfaceDataCallsComm getInterfaceFromComm() {
         return interface_from_Comm;
     }
-    
+
     public IhmShareCallsDataClientImpl getImplInterfaceForICS() {
     return impl_interface_for_ICS;
 }
@@ -175,7 +209,7 @@ public class DataClientCore {
         VideoFull video = new VideoFull(info, file_path, format, empty_ratings, empty_comments);
         return video;
 	}
-	
+
     boolean announceVideo(VideoLight video_info) {
 		if (interface_from_Comm == null) {
 			return false;
