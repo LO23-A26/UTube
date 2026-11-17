@@ -13,7 +13,7 @@ import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceCommClientCallsDataClient;
 
 public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDataClient {
-
+    private final UUID fixedRequesterUuid = UUID.randomUUID();
     @Override
     public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id) {
         System.out.println("[MockCommClientCallsDataClient] giveDetailsAccess for video " + video_id);
@@ -67,7 +67,7 @@ public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDa
 
     @Override
     public UUID askRequesterId() {
-        return UUID.randomUUID();
+        return fixedRequesterUuid;
     }
 
     @Override
@@ -98,9 +98,15 @@ public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDa
     @Override
     public UserFull getMyProfile() {
         System.out.println("[MockCommClientCallsDataClient] getMyProfile");
-        return new UserFull("Jhon Doe", "kzjhebfkjah", null, null, null);
-    }
 
+        //On crée le profil normalement
+        UserFull profile = new UserFull("Jhon Doe", "kzjhebfkjah", null, null, null);
+
+        //On remplace simplement l'UUID généré par notre UUID fixe
+        profile.getSharedInfo().setUuid(fixedRequesterUuid);
+
+        return profile;
+    }
     @Override
     public void saveProfileUpdated(UserFull user_profile) {
         System.out.println("[MockCommClientCallsDataClient] saveProfileUpdated: " + user_profile);
