@@ -24,6 +24,7 @@ public class DataServerCore {
 
     public DataServerCore() {
         this.index = new Index();
+        this.impl_interface_for_CS = new CommServerCallsDataServerImpl(this);
     }
 
     public Index registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
@@ -113,5 +114,27 @@ public class DataServerCore {
 
     public InterfaceCommServerCallsDataServer getInterfaceForCS() {
         return impl_interface_for_CS;
+    }
+
+    void removeVideoFromIndex(UUID video_id){
+        if (video_id == null) {
+            return;
+        }
+        List<VideoLight> video_list = index.getVideoList();
+        for (int i = video_list.size() - 1; i >= 0; i--) {
+            if (video_id.equals(video_list.get(i).getVideoId())) {
+                video_list.remove(i);
+                break;
+            }
+        }
+
+    }
+
+    void addOrUpdateVideoIndex(VideoLight video_info) {
+        if (video_info == null || video_info.getVideoId() == null) {
+            return;
+        }
+        removeVideoFromIndex(video_info.getVideoId());
+        index.addVideo(video_info);
     }
 }

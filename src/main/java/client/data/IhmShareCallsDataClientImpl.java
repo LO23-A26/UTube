@@ -72,9 +72,10 @@ public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataCl
      * @param creator The name of the video's creator.
      * @param tags A set of tags for the video.
      */
-    @Override
-    public void addVideo(Path file, String title, String creator, Set<String> tags) {
-    }
+     @Override
+     public void addVideo(Path file, String title, String creator, Set<String> tags) {
+        data_client_core.addingNewVideo(file, title, creator, tags);
+     }
 
     /**
      * Gets the full video object. Not implemented yet.

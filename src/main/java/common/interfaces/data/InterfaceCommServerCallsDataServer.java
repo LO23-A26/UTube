@@ -49,20 +49,29 @@ public interface InterfaceCommServerCallsDataServer {
         }
     }
 
-    /**
-     * Deletes a specific video index from the server.
-     *
-     * @param video_id The UUID of the video index to delete.
-     */
-    public void deleteIndex(UUID video_id);
+
 
     /**
-     * Updates an existing video index with new information.
+     * Supprime une vidéo de l'index du serveur.
+     *
+     * @param video_id UUID de la vidéo à supprimer
+     */
+    void removeVideo(UUID video_id);
+    @Deprecated(since = "2.0", forRemoval = true)
+    default void deleteIndex(UUID video_id) {
+        removeVideo(video_id);
+    }
+
+    /**
+     * Adds a new video or Updates an existing one in index with new information.
      *
      * @param video_info The lightweight video object containing the updated data.
      */
-    public void updateIndex(VideoLight video_info);
-
+    public void addOrUpdateVideo(VideoLight video_info);
+    @Deprecated(since = "2.0", forRemoval = true)
+    default void updateIndex(VideoLight video_info) {
+        addOrUpdateVideo(video_info);
+    }
     /**
      * Retrieves the list of all currently connected clients.
      *

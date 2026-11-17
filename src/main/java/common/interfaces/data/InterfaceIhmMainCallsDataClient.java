@@ -52,7 +52,7 @@ public interface InterfaceIhmMainCallsDataClient {
     /**
      * Requests a connection for a user.
      *
-     * @param user_profile The lightweight user profile.
+     * @param pseudo The lightweight user login.
      * @param password The user's password.
      * @param ip_address The IP address for the connection.
      * @param port The port number.
