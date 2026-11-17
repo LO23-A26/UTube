@@ -44,7 +44,7 @@ public class DownloadsController extends ShareController {
             delete_button.setOnAction(event -> deleteVideo(video));
             String uploader = video.getOwner() != null ? video.getOwner().getPseudo() : "";
             videos_box.getChildren().add(videoRow(video.getTitle(), uploader,
-                    () -> core.getInterfaceForIHMMain().launchVideo(video), share_button, delete_button));
+                    () -> core.openVideo(video), share_button, delete_button));
         }
         empty_label.setVisible(videos.isEmpty());
         empty_label.setManaged(videos.isEmpty());
@@ -62,7 +62,7 @@ public class DownloadsController extends ShareController {
             showError("Le fichier de cette vidéo est introuvable.");
             return;
         }
-        AddVideoController add_video = attach(view_manager.changeContent(AddVideoController.VIEW), core);
+        AddVideoController add_video = core.changeContent(AddVideoController.VIEW);
         core.setControllerAddVideo(add_video);
         add_video.prefill(local_video);
     }

@@ -46,7 +46,7 @@ public class ManageVideosController extends ShareController {
             Button delete_button = new Button("Supprimer");
             delete_button.setOnAction(event -> deleteVideo(video));
             videos_box.getChildren().add(videoRow(video.getTitle(), subtitle(video),
-                    () -> core.getInterfaceForIHMMain().launchVideo(video), delete_button));
+                    () -> core.openVideo(video), delete_button));
         }
         empty_label.setVisible(videos.isEmpty());
         empty_label.setManaged(videos.isEmpty());
@@ -55,7 +55,7 @@ public class ManageVideosController extends ShareController {
     /** "Ajouter un partage": opens the screen 09. */
     @FXML
     private void addVideo() {
-        AddVideoController add_video = attach(view_manager.changeContent(AddVideoController.VIEW), core);
+        AddVideoController add_video = core.changeContent(AddVideoController.VIEW);
         core.setControllerAddVideo(add_video);
     }
 

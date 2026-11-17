@@ -20,8 +20,10 @@ import java.util.Optional;
 /**
  * Common base of the IHM-Share controllers.
  * <p>
- * The views are loaded by the shared view manager (so the controllers extend {@link Controller}),
- * then {@link IHMShareCore} gives them a pointer to itself with {@link #setCore}.
+ * The views are loaded by {@link IHMShareCore} and displayed in the StackPane received from
+ * IHM-Main; the core gives each controller a pointer to itself with {@link #setCore}, then
+ * calls {@link #refreshView()}. Navigation between screens goes through the core
+ * ({@code core.changeContent(...)}, {@code core.goBack()}, {@code core.backTo(...)}).
  *
  * @author IHM-Share
  * @version 1.0
@@ -37,20 +39,6 @@ public abstract class ShareController extends Controller {
      */
     public void setCore(IHMShareCore core) {
         this.core = core;
-    }
-
-    /**
-     * Give the core to a controller freshly loaded by the view manager (JavaFX creates the
-     * controllers, so they cannot receive it in their constructor), then refresh it
-     *
-     * @param controller (C) controller returned by the view manager
-     * @param core       (IHMShareCore) core of the module
-     * @return (C) the same controller, ready to receive its data
-     */
-    public static <C extends ShareController> C attach(C controller, IHMShareCore core) {
-        controller.setCore(core);
-        controller.refreshView();
-        return controller;
     }
 
     /**

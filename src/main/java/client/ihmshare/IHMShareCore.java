@@ -1,8 +1,20 @@
 package client.ihmshare;
 
 import client.ihmmain.IHMMainManager;
+import common.dataclasses.VideoLight;
 import common.interfaces.comm.InterfaceIHMShare_calls_Comm;
 import common.interfaces.data.InterfaceIhmShareCallsDataClient;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.layout.StackPane;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 /**
  * Core of the IHM Share component. Only references the elements of the module so that
@@ -35,6 +47,19 @@ public class IHMShareCore {
     private final DownloadVideo download_video;
 
     /**
+     * A screen displayed in the container: the nodes put in it and, for an IHM-Share screen,
+     * its FXML path and controller. The content left by IHM-Main has no path nor controller.
+     */
+    private record Screen(String fxml_path, List<Node> nodes, ShareController controller) {
+    }
+
+    /** StackPane received from IHM-Main, in which the IHM-Share screens are displayed. */
+    private StackPane container;
+    private Screen current_screen;
+    /** Previous screens, most recent first, for the "Retour" buttons. */
+    private final Deque<Screen> history = new ArrayDeque<>();
+
+    /**
      * Class constructor. Creates the implementations of the interfaces exposed
      * to the other components, each one keeping a pointer to this object
      */
@@ -52,6 +77,107 @@ public class IHMShareCore {
      */
     public DownloadVideo getDownloadVideo() {
         return this.download_video;
+    }
+
+    // ---------- Navigation in the StackPane given by IHM-Main ----------
+
+    /**
+     * Entry point from IHM-Main: displays an IHM-Share screen in the given container.
+     * The previous content of the container is kept, so that "Retour" can put it back.
+     *
+     * @param container (StackPane) area of IHM-Main in which the screen is displayed
+     * @param fxml_path (String) path of the FXML file of the screen
+     * @return (C) controller of the displayed screen, to give it its data
+     */
+    public <C extends ShareController> C openScreen(StackPane container, String fxml_path) {
+        this.container = container;
+        history.clear();
+        history.push(new Screen(null, new ArrayList<>(container.getChildren()), null));
+        return show(fxml_path);
+    }
+
+    /**
+     * Displays another IHM-Share screen in the same container, keeping the current one
+     * in the history for the "Retour" button
+     *
+     * @param fxml_path (String) path of the FXML file of the screen
+     * @return (C) controller of the displayed screen, to give it its data
+     */
+    public <C extends ShareController> C changeContent(String fxml_path) {
+        if (current_screen != null) {
+            history.push(current_screen);
+        }
+        return show(fxml_path);
+    }
+
+    /**
+     * Opens the video detail (05, 05b or 05c) from another IHM-Share screen (07, 08),
+     * keeping that screen in the history for "Retour"
+     *
+     * @param video (VideoLight) data of the video to display
+     */
+    public void openVideo(VideoLight video) {
+        DisplayVideoController controller = changeContent(DisplayVideoController.VIEW);
+        setControllerDisplayVideo(controller);
+        controller.displayVideo(video);
+    }
+
+    /**
+     * "Retour": displays the previous screen again, with its state. From the first
+     * IHM-Share screen, puts back the content IHM-Main had in the container.
+     */
+    public void goBack() {
+        if (!history.isEmpty()) {
+            restore(history.pop());
+        }
+    }
+
+    /**
+     * Goes back to a given screen (e.g. 09 "Ajouter un partage" → 08 "Mes partages").
+     * If the screen is in the history, it is restored with its state; otherwise it is loaded again.
+     *
+     * @param fxml_path (String) path of the FXML file of the screen
+     * @return (C) controller of the displayed screen
+     */
+    @SuppressWarnings("unchecked") // the screen with this FXML path was loaded with a controller of type C
+    public <C extends ShareController> C backTo(String fxml_path) {
+        boolean in_history = history.stream().anyMatch(screen -> fxml_path.equals(screen.fxml_path()));
+        if (!in_history) {
+            return show(fxml_path);
+        }
+        Screen target = history.pop();
+        while (!fxml_path.equals(target.fxml_path())) {
+            target = history.pop();
+        }
+        restore(target);
+        return (C) target.controller();
+    }
+
+    private <C extends ShareController> C show(String fxml_path) {
+        if (container == null) {
+            throw new IllegalStateException("No container: IHM-Main must call an IHM-Share method with its StackPane first");
+        }
+        FXMLLoader loader = new FXMLLoader(IHMShareCore.class.getResource(fxml_path));
+        Parent root;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Cannot load the view " + fxml_path, e);
+        }
+        C controller = loader.getController();
+        controller.setCore(this);
+        container.getChildren().setAll(root);
+        current_screen = new Screen(fxml_path, List.of(root), controller);
+        controller.refreshView();
+        return controller;
+    }
+
+    private void restore(Screen screen) {
+        container.getChildren().setAll(screen.nodes());
+        current_screen = screen.controller() == null ? null : screen;
+        if (screen.controller() != null) {
+            screen.controller().refreshView();
+        }
     }
 
     // ---------- Getters and setters ----------

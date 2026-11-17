@@ -2,12 +2,13 @@ package client.ihmshare;
 
 import common.dataclasses.VideoLight;
 import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
+import javafx.scene.layout.StackPane;
 
 /**
  * Implementation of the IHM Main calls IHM Share Interface
  *
  * @author IHM-Share
- * @version 1.1
+ * @version 1.2
  */
 public class IHMMainCallsIHMShareImpl implements InterfaceIHMMainCallsIHMShare {
 
@@ -25,30 +26,34 @@ public class IHMMainCallsIHMShareImpl implements InterfaceIHMMainCallsIHMShare {
     /**
      * Launch the video in the IHM-Share (screen 05, 05b or 05c depending on the video)
      *
-     * @param video (VideoLight) data of the video to read
+     * @param container (StackPane) area of IHM-Main in which the screen is displayed
+     * @param video     (VideoLight) data of the video to read
      */
     @Override
-    public void launchVideo(VideoLight video) {
-        DisplayVideoController controller = ShareController.attach(
-                core.getViewManager().changeContent(DisplayVideoController.VIEW), core);
+    public void launchVideo(StackPane container, VideoLight video) {
+        DisplayVideoController controller = core.openScreen(container, DisplayVideoController.VIEW);
         core.setControllerDisplayVideo(controller);
         controller.displayVideo(video);
+        // "Retour" puts back the IHM-Main content that was in the container
     }
 
     /**
      * Open the "Mes téléchargements" screen (07)
+     *
+     * @param container (StackPane) area of IHM-Main in which the screen is displayed
      */
     @Override
-    public void openDownloads() {
-        core.setControllerDownloads(
-                ShareController.attach(core.getViewManager().openTab(DownloadsController.VIEW), core));
+    public void openDownloads(StackPane container) {
+        core.openScreen(container, DownloadsController.VIEW);
     }
 
     /**
      * Open the "Mes partages" screen (08)
+     *
+     * @param container (StackPane) area of IHM-Main in which the screen is displayed
      */
     @Override
-    public void openMyShares() {
-        ShareController.attach(core.getViewManager().openTab(ManageVideosController.VIEW), core);
+    public void openMyShares(StackPane container) {
+        core.openScreen(container, ManageVideosController.VIEW);
     }
 }
