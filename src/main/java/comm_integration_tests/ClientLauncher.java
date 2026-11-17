@@ -43,6 +43,11 @@ public class ClientLauncher {
             UUID videoId = UUID.randomUUID();
             controller.serverConnection.sendMessage(new DeleteVideoMessage(videoId));
             System.out.println("[ClientLauncher:" + name + "] DeleteVideoMessage sent: " + videoId);
+        } else if (args.length > 2 && args[2].equals("leave")) {
+            Thread.sleep(5000);
+            controller.serverConnection.disconnect();
+            System.out.println("[ClientLauncher:" + name + "] disconnect sent");
+            return;
         }
 
         Thread.currentThread().join();
