@@ -1,5 +1,6 @@
 package common.dataclasses;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Map;
@@ -13,6 +14,10 @@ import java.util.UUID;
  * @version 3.0
  */
 public class VideoFull implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 333L;
+
     private VideoLight shared_info;
     private String file_path;
     private VideoFormat video_format;

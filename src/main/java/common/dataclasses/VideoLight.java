@@ -1,5 +1,6 @@
 package common.dataclasses;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
@@ -11,6 +12,10 @@ import java.util.UUID;
  * @version 3.0
  */
 public class VideoLight implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 222L;
+
     private UUID video_id;
     private UserLight owner;
     private String title;
