@@ -32,12 +32,12 @@ public class DataClientCallsComm implements InterfaceDataCallsComm {
         // Create hard coded config for now
         InetAddress server_ip;
         try {
-            server_ip = InetAddress.getByName("127.0.0.1");
+            server_ip = InetAddress.getByName(ip_address);
         } catch (UnknownHostException ex) {
-            System.getLogger(DataClientCallsComm.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            System.getLogger(DataClientCallsComm.class.getName()).log(System.Logger.Level.ERROR, (String) "Ip invalide", ex);
             return;
         }
-        ServerConfig config = new ServerConfig(server_ip, 9000);
+        ServerConfig config = new ServerConfig(server_ip, port);
         
         // creates socket with server and sends UUID
         commClientController.initialize_server_connexion(config);
