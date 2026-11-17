@@ -112,7 +112,7 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
 
         if (found) {
             try{
-                //data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
+                data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
             }catch(RuntimeException e){
                 throw new AuthentificationFailed(e.getMessage());
             }
