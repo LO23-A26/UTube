@@ -1,6 +1,7 @@
 package common.interfaces.data;
 
 import common.dataclasses.*;
+import common.exceptions.AccessDeniedException;
 import java.util.UUID;
 import java.util.List;
 
@@ -15,9 +16,10 @@ public interface InterfaceCommClientCallsDataClient {
      *
      * @param requester_profile The profile of the user requesting access.
      * @param video_id The UUID of the video.
-     * @return VideoHeavy object containing heavy video details, or null by default.
+     * @return The full video with its metadata, ratings and comments.
+     * @throws AccessDeniedException If the requester is not allowed or the video is unknown.
      */
-    public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id);
+    public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id) throws AccessDeniedException;
 
     /**
      * Adds a comment to a video.
