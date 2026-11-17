@@ -17,5 +17,6 @@ public class NotifyDisconnectionMessage implements ClientMessage {
     public void handle(CommClientController controller) {
         // TODO: remove the user (and their videos) from the local index through the
         // data client, once the data team has provided a method taking a UUID.
+        System.out.println("[Comm] user disconnected: " + userId);   // TEMP
     }
 }
