@@ -5,7 +5,7 @@ import server.data.DataServerCore;
 
 public class UTubeServerLauncher {
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         CommServerController comm_controller = new CommServerController();
         DataServerCore data_controller = new DataServerCore();
         comm_controller.setInterfaceCommServerCallsDataServer(data_controller.getInterfaceForCS());
