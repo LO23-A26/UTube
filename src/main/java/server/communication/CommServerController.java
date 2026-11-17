@@ -72,8 +72,8 @@ public class CommServerController {
 
     /**
      * Broadcasts a notification (NewUserNotificationMessage) to all connected clients about a new user.
-     * @param new_user The new user.
-     * @param new_user_videos The videos of the new user.
+     * @param newClient The new user.
+     * @param videos The videos of the new user.
      */
     public void broadcastNewUserNotification(ActiveClient newClient, UserLight user,
                                              String ip, int port, Set<VideoLight> videos) {
@@ -84,7 +84,7 @@ public class CommServerController {
 
     /**
      * Sends the full index to a new user (SendFullIndexMessage).
-     * @param new_user The new user.
+     * @param receiver The new user.
      * @param index The full index.
      */
     public void sendFullIndex(ActiveClient receiver, Index index) {
@@ -114,7 +114,7 @@ public class CommServerController {
         if (!connectionsManager.disconnectClient(client)) {
             return;
         }
-        UUID userId = client.getUserId();
+        UUID userId = client.getUuid();
         if (userId == null) {
             return; // never registered: nothing in the index, nobody to notify
         }
