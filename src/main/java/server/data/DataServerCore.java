@@ -20,7 +20,7 @@ public class DataServerCore {
 
     private Index index;
 
-    private CommServerCallsDataServerImpl impl_interface_for_CS;
+    private CommServerCallsDataServerImpl impl_interface_for_CS = new CommServerCallsDataServerImpl(this);
 
     public DataServerCore() {
         this.index = new Index();
