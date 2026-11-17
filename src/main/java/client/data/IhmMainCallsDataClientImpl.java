@@ -22,9 +22,14 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
 
     private DataClientCore data_client_core;
 
+    /**
+     * Gets the currently connected user.
+     *
+     * @return The full profile of the connected user, or null if none.
+     */
     @Override
-    public UserFull getUser(){
-        return data_client_core.getUser();
+    public UserFull getUser() {
+        return data_client_core == null ? null : data_client_core.getUser();
     }
 
     /**
@@ -53,8 +58,8 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param profile The Data Transfer Object for the user.
      */
     @Override
-    public void saveLocalProfile(UserFull profile){
-        data_client_core.getProfileSaver().saveProfile(profile);
+    public void saveLocalProfile(UserLight profile){
+        // TODO: call ProfileSaver once the Data team's saveProfile() is merged
     }
 
     /**
@@ -63,8 +68,8 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param profile The Data Transfer Object for the user.
      */
     @Override
-    public void updateLocalProfile(UserFull profile){
-        data_client_core.getProfileSaver().saveProfile(profile);
+    public void updateLocalProfile(UserLight profile){
+        // TODO: call ProfileSaver once the Data team's saveProfile() is merged
     }
 
     /**
@@ -86,29 +91,21 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param port         The port number.
      */
     @Override
-    public boolean requestConnection(String pseudo, String password, String ip_address, int port) {
-        if (data_client_core.getProfileSaver().restoreProfile() == null || data_client_core.getProfileSaver().restoreProfile().isEmpty()){
-            throw new AuthentificationFailed("requestConnection - Error while restoring profiles.");
+    public void requestConnection(String pseudo, String password, String ip_address, int port) {
+        Set<UserFull> profiles = data_client_core.getProfileSaver().restoreProfile();
+        if (profiles == null || profiles.isEmpty()) {
+            System.out.println("requestConnection - Error while restoring profiles.");
+            return;
         }
-        boolean found = false;
-        List <VideoLight> video_list = null;
-        for (UserFull u : data_client_core.getProfileSaver().restoreProfile()) {
+        for (UserFull u : profiles) {
             if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
-                found = true;
                 data_client_core.setUser(u);
-                video_list = new ArrayList<VideoLight>();
-                for (VideoLight v : u.getSharedVideos()){
-                    video_list.add(v);
-                }
+                List<VideoLight> video_list = new ArrayList<>(u.getSharedVideos());
+                data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
+                return;
             }
         }
-        if (found) {
-            data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
-            return true;
-        }
-        else {
-            throw new AuthentificationFailed("requestConnection - Information don't match.");
-        }
+        System.out.println("requestConnection - Information don't match.");
     }
 
     /**
