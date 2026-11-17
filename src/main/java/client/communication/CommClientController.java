@@ -18,7 +18,7 @@ import client.communication.implementations.*;
  * </ol>
  */
 public class CommClientController {
-    private final HashMap<UUID,ActiveClient> connectedClients;
+    private final HashMap<UUID,RemoteClient> connectedClients;
     public ServerConnection serverConnection;
 
     /**
@@ -106,7 +106,7 @@ public class CommClientController {
      * @param uuid the client's UUID
      */
     public void addClient(InetAddress ip_adress, int port, UUID uuid) {
-        connectedClients.put(uuid, new ActiveClient(ip_adress, port, uuid));
+        connectedClients.put(uuid, new RemoteClient(ip_adress, port, uuid));
     }
 
     /**
