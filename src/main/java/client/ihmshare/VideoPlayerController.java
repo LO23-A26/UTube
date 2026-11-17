@@ -68,6 +68,6 @@ public class VideoPlayerController extends ShareController {
     @FXML
     private void goBack() {
         playing = false;
-        view_manager.goBack();
+        core.goBack();
     }
 }

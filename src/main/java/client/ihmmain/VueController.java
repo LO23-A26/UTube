@@ -3,6 +3,7 @@ package client.ihmmain;
 import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 
 /**
  * Controller of the connected layout (header + central area).
@@ -16,6 +17,8 @@ public class VueController extends Controller {
     private void initialize() {
         refreshView();
     }
+
+    private StackPane  contentPane;
 
     @Override
     public void refreshView() {
@@ -33,7 +36,7 @@ public class VueController extends Controller {
     private void openDownloads() {
         InterfaceIHMMainCallsIHMShare share_calls = view_manager.getInterfaceCallsShare();
         if (share_calls != null) {
-            share_calls.openDownloads();
+            share_calls.openDownloads(contentPane);
         }
     }
 
@@ -42,7 +45,7 @@ public class VueController extends Controller {
     private void openShares() {
         InterfaceIHMMainCallsIHMShare share_calls = view_manager.getInterfaceCallsShare();
         if (share_calls != null) {
-            share_calls.openMyShares();
+            share_calls.openMyShares(contentPane);
         }
     }
 
