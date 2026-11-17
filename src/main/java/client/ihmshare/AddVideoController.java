@@ -141,7 +141,7 @@ public class AddVideoController extends ShareController {
 
     /** Back to "Mes partages" (08), restored from the history if it was the previous screen. */
     private void backToMyShares() {
-        attach(view_manager.backTo(ManageVideosController.VIEW), core);
+        core.backTo(ManageVideosController.VIEW);
     }
 
     /**

@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="client.ihmmain.VueController">
@@ -53,7 +54,10 @@
             </HBox>
         </HBox>
     </top>
+    <!-- Zone centrale : StackPane donné à IHM-Share, qui y affiche ses écrans -->
     <center>
-        <Label fx:id="statusLabel"/>
+        <StackPane fx:id="content_pane">
+            <Label fx:id="statusLabel"/>
+        </StackPane>
     </center>
 </BorderPane>

@@ -272,7 +272,7 @@ public class DisplayVideoController extends ShareController {
 
     @FXML
     private void goBack() {
-        view_manager.goBack();
+        core.goBack();
     }
 
     /** "Télécharger" (sequence "Télécharger vidéo"): asked to Comm, answer in {@link #downloadDone}. */
@@ -295,7 +295,7 @@ public class DisplayVideoController extends ShareController {
             showError("La vidéo n'est pas disponible sur cette machine.");
             return;
         }
-        VideoPlayerController player = attach(view_manager.changeContent(VideoPlayerController.VIEW), core);
+        VideoPlayerController player = core.changeContent(VideoPlayerController.VIEW);
         player.loadVideo(video_full);
     }
 
