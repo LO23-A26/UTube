@@ -106,8 +106,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @return UUID representing the requester.
      */
+    @Override 
     public UUID askRequesterId(){
-        return null;
+        return data_client_core.getUser().getSharedInfo().getUuid();
     }
 
     /**
