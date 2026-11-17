@@ -28,21 +28,22 @@ public class DataClientCore {
     private IhmMainCallsDataClientImpl impl_interface_for_ICM;
     private InterfaceDataCallsIHMMain interface_from_ICM;
     private InterfaceDataCallsComm interface_from_Comm;
-
-    // A VERIFIER AVEC LES MODULES CONCERNÉS
-    private IhmShareCallsDataClientImpl impl_interface_for_ICS;
     private CommClientCallsDataClientImpl impl_interface_for_CC;
+    private IhmShareCallsDataClientImpl impl_interface_for_ICS;
+
+
 
     public DataClientCore() {
         this.list_video = new HashSet<>();
         this.connected_user = new HashSet<>();
         this.profileSaver = new ProfileSaver();
 
-        this.impl_interface_for_ICS = new IhmShareCallsDataClientImpl(this);
         this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl();
         this.impl_interface_for_ICM.setDataClientCore(this);
         this.impl_interface_for_CC = new CommClientCallsDataClientImpl();
         this.impl_interface_for_CC.setDataClientCore(this);
+        this.impl_interface_for_ICS = new IhmShareCallsDataClientImpl();
+        this.impl_interface_for_ICS.setDataClientCore(this);
     }
 
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
