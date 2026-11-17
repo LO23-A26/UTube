@@ -75,10 +75,7 @@ public class ServerConnection extends Thread {
     }
 
     public void disconnect() {
-        send_message(new DisconnectionRequestMessage());
+        sendMessage(new DisconnectionRequestMessage());
         try { serverSocket.close(); } catch (IOException ignored) { }
     }
-
-
-
 }
