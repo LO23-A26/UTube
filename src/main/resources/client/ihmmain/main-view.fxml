@@ -87,8 +87,7 @@
                         style="-fx-background-color: transparent; -fx-background: transparent;">
                 <VBox fx:id="users_container" spacing="4"/>
             </ScrollPane>
-            <!-- Screen 03 · Serveurs (servers): not implemented yet -->
-            <Hyperlink text="Gérer les serveurs"/>
+            <Hyperlink text="Gérer les serveurs" onAction="#showServer"/>
         </VBox>
     </right>
 </BorderPane>

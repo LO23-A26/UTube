@@ -34,6 +34,7 @@ public class LoginController extends Controller {
         errorLabel.setVisible(error != null);
         if (error == null) {
             // no authentication or server connection yet, call the Data/Comm interfaces here once the connection process is defined
+            viewManager.setServer(ipField.getText().strip(), Integer.parseInt(portField.getText().strip()));
             viewManager.showContent(IHMMainManager.HOME_VIEW);
         }
     }

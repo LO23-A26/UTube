@@ -32,17 +32,18 @@ public class MainController extends Controller {
         displayConnectedUsers(List.of("alice", "bastien", "camille", "dylan", "emma"));
     }
 
-    /** Replaces the screen displayed in the content area. */
-    void setContent(Parent content) {
+    /** Replaces the screen displayed in the content area and selects the header tab of this screen. */
+    void setContent(Parent content, String fxml_path) {
         content_pane.getChildren().setAll(content);
+        // Also reselects the tab after a second click, which deselects a ToggleButton.
+        // Screens without a tab (Serveur...) leave no tab selected.
+        home_tab.setSelected(IHMMainManager.HOME_VIEW.equals(fxml_path));
     }
 
     /** "Accueil" (home) tab of the header. */
     @FXML
     private void showHome() {
         viewManager.showContent(IHMMainManager.HOME_VIEW);
-        // A ToggleButton is deselected when it is clicked again
-        home_tab.setSelected(true);
     }
 
     /** Users icon of the header and close button of the panel: shows or hides the panel. */
@@ -56,6 +57,12 @@ public class MainController extends Controller {
     private void logout() {
         // no server logout yet, call the Comm interface here
         viewManager.changeView(IHMMainManager.LOGIN_VIEW);
+    }
+
+    /** "Gérer les serveurs" (manage servers) link of the users panel: server screen (mockup 03). */
+    @FXML
+    private void showServer() {
+        viewManager.showContent(IHMMainManager.SERVER_VIEW);
     }
 
     private void displayConnectedUsers(List<String> pseudos) {

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Mockup v2 · 03 Serveur (server), displayed in the content area of main-view.fxml -->
+<ScrollPane fx:id="scroll_pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ihmmain.ServerController" fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: transparent; -fx-background: transparent;">
+    <VBox alignment="CENTER" style="-fx-padding: 28px 40px;">
+        <!--
+            Centered block taking 70% of the width of the content area.
+            When the window gets too narrow, it keeps its minimum width and the margins shrink.
+        -->
+        <VBox spacing="18" prefWidth="${scroll_pane.width * 0.7}" maxWidth="-Infinity">
+            <Label text="Serveur" styleClass="page-title"/>
+
+            <!-- Current server: only the empty regions shrink when the window gets narrower, not the texts -->
+            <HBox styleClass="card" spacing="12" alignment="CENTER_LEFT" style="-fx-padding: 10px 12px 10px 16px;">
+                <Region styleClass="status-dot"/>
+                <Label fx:id="server_label" minWidth="-Infinity"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Connecté" styleClass="text-small" minWidth="-Infinity"/>
+                <Region prefWidth="40"/>
+                <Button text="Se déconnecter du serveur" styleClass="small"
+                        minWidth="-Infinity" onAction="#disconnect"/>
+            </HBox>
+
+            <Label text="Une seule connexion serveur à la fois : se connecter à un autre serveur ferme la connexion actuelle."
+                   styleClass="text-small" wrapText="true"/>
+
+            <!-- Change of server -->
+            <Label text="Changer de serveur" styleClass="label-strong"/>
+            <HBox spacing="12" alignment="BOTTOM_LEFT">
+                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                    <Label text="Adresse IP" styleClass="field-label" labelFor="$ip_field"/>
+                    <TextField fx:id="ip_field"/>
+                </VBox>
+                <VBox spacing="6" prefWidth="110" minWidth="110">
+                    <Label text="Port" styleClass="field-label" labelFor="$port_field"/>
+                    <TextField fx:id="port_field"/>
+                </VBox>
+                <Button text="Se connecter" styleClass="primary" defaultButton="true"
+                        onAction="#changeServer"/>
+            </HBox>
+
+            <Label fx:id="error_label" styleClass="text-secondary" wrapText="true"
+                   visible="false" managed="${error_label.visible}"/>
+        </VBox>
+    </VBox>
+</ScrollPane>

@@ -25,6 +25,7 @@ public class IHMMainManager {
     public static final String LOGIN_VIEW = "/client/ihmmain/login-view.fxml";
     public static final String MAIN_VIEW = "/client/ihmmain/main-view.fxml";
     public static final String HOME_VIEW = "/client/ihmmain/home-view.fxml";
+    public static final String SERVER_VIEW = "/client/ihmmain/server-view.fxml";
     public static final String STYLESHEET = "/assets/styles/utube.css";
 
 
@@ -41,6 +42,9 @@ public class IHMMainManager {
     private Scene primaryScene;
     /** Controller of the main view (header and users panel) while it is displayed, null otherwise. */
     private MainController main_controller;
+    /** Server the user is connected to: no interface gives it back, so IHM Main keeps the address entered. */
+    private String server_ip;
+    private int server_port;
 
     public void setIData(InterfaceIhmMainCallsDataClient dataCalls) {
         this.dataCalls = dataCalls;
@@ -64,6 +68,20 @@ public class IHMMainManager {
 
     public InterfaceIHMMainCallsIHMShare getIShare() {
         return shareCalls;
+    }
+
+    /** Saves the server the user has just connected to (login or server change). */
+    public void setServer(String ip_address, int port) {
+        this.server_ip = ip_address;
+        this.server_port = port;
+    }
+
+    public String getServerIp() {
+        return server_ip;
+    }
+
+    public int getServerPort() {
+        return server_port;
     }
 
     /** Builds the main window and displays the login screen. */
@@ -95,7 +113,7 @@ public class IHMMainManager {
             changeView(MAIN_VIEW);
         }
         LoadedView view = loadView(fxml_path);
-        main_controller.setContent(view.root());
+        main_controller.setContent(view.root(), fxml_path);
         view.controller().refreshView();
     }
 
