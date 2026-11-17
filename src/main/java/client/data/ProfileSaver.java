@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,18 +26,44 @@ import common.dataclasses.UserLight;
  */
 public class ProfileSaver {
 
-    static final String user_dir = Path.of(System.getProperty("user.home"), "AppData", "Local", "Utube").toString();
+    static final String user_dir = getAppDataDirectory().toString();
     static final String profile_dir = Path.of(user_dir, "profile").toString();
 
     /**
-     * Create a directory in user's computer
+     * Find the folder where the app stores its data, depending on the operating system:
+     * Windows: %USERPROFILE%\AppData\Local\Utube
+     * macOS:   ~/Library/Application Support/Utube
+     * Linux:   $XDG_DATA_HOME/Utube, or ~/.local/share/Utube if XDG_DATA_HOME is not set
+     * @return path of the app data directory
+     */
+    static Path getAppDataDirectory() {
+        String home = System.getProperty("user.home");
+        String os = System.getProperty("os.name", "").toLowerCase();
+
+        if (os.contains("win")) {
+            return Path.of(home, "AppData", "Local", "Utube");
+        }
+        if (os.contains("mac")) {
+            return Path.of(home, "Library", "Application Support", "Utube");
+        }
+        // Linux and other Unix-like systems follow the XDG Base Directory specification
+        String xdg_data_home = System.getenv("XDG_DATA_HOME");
+        if (xdg_data_home != null && !xdg_data_home.isBlank()) {
+            return Path.of(xdg_data_home, "Utube");
+        }
+        return Path.of(home, ".local", "share", "Utube");
+    }
+
+    /**
+     * Create a directory in user's computer, including any missing parent directories
      * @param directory_path: path of the directory
+     * @return true if the directory was created, false if it already existed or could not be created
      */
     public boolean createDirectory(String directory_path){
         // Defining the directory of the app
         File directory = new File(directory_path);
-        // Attempt to create the directory
-        return directory.mkdir();
+        // Attempt to create the directory and its parents
+        return directory.mkdirs();
     }
 
     /**
@@ -64,7 +89,7 @@ public class ProfileSaver {
         }
 
         // Creating the user profile directory if not exists
-        String user_profile_directory = profile_dir + "\\" + user.getSharedInfo().getUuid();
+        String user_profile_directory = Path.of(profile_dir, user.getSharedInfo().getUuid().toString()).toString();
         if (createDirectory(user_profile_directory)) {
             System.out.println("Profile directory created successfully at: " + user_profile_directory);
         } else {
@@ -76,7 +101,7 @@ public class ProfileSaver {
 
         if(avatar_path != null){
             File avatar_file = new File(avatar_path);
-            String new_avatar_path = user_profile_directory + "\\" + avatar_file.getName();
+            String new_avatar_path = Path.of(user_profile_directory, avatar_file.getName()).toString();
             try {
                 Files.copy(Path.of(avatar_path),
                         Path.of(new_avatar_path),
@@ -91,7 +116,7 @@ public class ProfileSaver {
         // Saving the user into a file
         FileOutputStream fos;
         try {
-            fos = new FileOutputStream(user_profile_directory + "\\user.ser");
+            fos = new FileOutputStream(Path.of(user_profile_directory, "user.ser").toFile());
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -150,16 +175,20 @@ public class ProfileSaver {
      */
     public void deleteProfile(UserLight user) {
         // Delete the user's directory
-        deleteDirectory(new File(profile_dir + "\\" + user.getUuid()));
+        deleteDirectory(Path.of(profile_dir, user.getUuid().toString()).toFile());
     }
 
     /**
      * Lists all the files in a directory
      * @param dir : directory where we want to list the files
-     * @return set of the name of the files
+     * @return set of the name of the files, empty if the directory does not exist or cannot be read
      */
     public Set<String> listDirectory(String dir) {
-        return Stream.of(Objects.requireNonNull(new File(dir).listFiles()))
+        File[] files = new File(dir).listFiles();
+        if (files == null) {
+            return new HashSet<>();
+        }
+        return Stream.of(files)
                 .filter(File::isDirectory)
                 .map(File::getAbsolutePath)
                 .collect(Collectors.toSet());
