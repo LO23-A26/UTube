@@ -1,13 +1,16 @@
 package client.data;
 
-import common.dataclasses.*;
-import common.interfaces.comm.InterfaceData_calls_Comm;
+import common.dataclasses.AccessRight;
+import common.dataclasses.ContactList;
+import common.dataclasses.UserLight;
+import common.dataclasses.UserFull;
+import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.ArrayList;
 
 /**
  * Implementation of the IHM Main calls Dataclient interface
@@ -18,6 +21,11 @@ import java.util.UUID;
 public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClient {
 
     private DataClientCore data_client_core;
+
+    @Override
+    public UserFull getUser(){
+        return data_client_core.getUser();
+    }
 
     /**
      * Exports profile data to a specified path.
@@ -45,8 +53,8 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param profile The Data Transfer Object for the user.
      */
     @Override
-    public void saveLocalProfile(UserLight profile){
-
+    public void saveLocalProfile(UserFull profile){
+        data_client_core.getProfileSaver().saveProfile(profile);
     }
 
     /**
@@ -55,8 +63,8 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param profile The Data Transfer Object for the user.
      */
     @Override
-    public void updateLocalProfile(UserLight profile){
-
+    public void updateLocalProfile(UserFull profile){
+        data_client_core.getProfileSaver().saveProfile(profile);
     }
 
     /**
@@ -72,30 +80,34 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
     /**
      * Requests a connection for a user.
      *
-     * @param pseudo       The user's pseudo.
+     * @param pseudo The user's pseudo.
      * @param password     The user's password.
      * @param ip_address   The IP address for the connection.
      * @param port         The port number.
      */
     @Override
-    public void requestConnection(String pseudo, String password, String ip_address, int port) {
-        Set<UserFull> profiles = data_client_core.getProfileSaver().restoreProfile();
-        if (profiles == null || profiles.isEmpty()) {
-            System.out.println("requestConnection - Error while restoring profiles.");
-            return;
+    public boolean requestConnection(String pseudo, String password, String ip_address, int port) {
+        if (data_client_core.getProfileSaver().restoreProfile() == null || data_client_core.getProfileSaver().restoreProfile().isEmpty()){
+            throw new AuthentificationFailed("requestConnection - Error while restoring profiles.");
         }
-        List<VideoLight> video_list = null;
-        for (UserFull u : profiles) {
+        boolean found = false;
+        List <VideoLight> video_list = null;
+        for (UserFull u : data_client_core.getProfileSaver().restoreProfile()) {
             if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
-                video_list = new ArrayList<>(u.getSharedVideos());
-                break;
+                found = true;
+                data_client_core.setUser(u);
+                video_list = new ArrayList<VideoLight>();
+                for (VideoLight v : u.getSharedVideos()){
+                    video_list.add(v);
+                }
             }
         }
-        if (video_list != null) {
-            InterfaceData_calls_Comm comm = data_client_core.getInterfaceFromComm();
-            comm.sendProfileInfo(ip_address, port, video_list, pseudo);
-        } else {
-            System.out.println("requestConnection - Information don't match.");
+        if (found) {
+            data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
+            return true;
+        }
+        else {
+            throw new AuthentificationFailed("requestConnection - Information don't match.");
         }
     }
 
