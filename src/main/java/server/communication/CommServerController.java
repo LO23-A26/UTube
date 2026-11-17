@@ -2,7 +2,9 @@ package server.communication;
 
 import java.io.IOException;
 import java.util.Set;
-
+import common.dataclasses.communication.messages.NotifyVideoDeletedMessage;
+import common.dataclasses.communication.messages.NotifyVideoSharedMessage;
+import java.util.UUID;
 import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
@@ -85,5 +87,22 @@ public class CommServerController {
     public void sendFullIndex(ActiveClient receiver, Index index) {
         connectionsManager.sendMessageToClient(receiver.getUuid(), new SendFullIndexMessage(index));
     }
-
+    /**
+     * Notifies every connected client except the sender that a video was shared.
+     *
+     * @param sender the client that shared the video, excluded from the broadcast.
+     * @param video  the shared video.
+     */
+    public void broadcastVideoShared(ActiveClient sender, VideoLight video) {
+        connectionsManager.broadcastMessageExcept(sender.getUuid(), new NotifyVideoSharedMessage(video));
+    }
+    /**
+     * Notifies every connected client except the sender that a video was deleted.
+     *
+     * @param sender  the client that deleted the video, excluded from the broadcast.
+     * @param videoId the UUID of the deleted video.
+     */
+    public void broadcastVideoDeleted(ActiveClient sender, UUID videoId) {
+        connectionsManager.broadcastMessageExcept(sender.getUuid(), new NotifyVideoDeletedMessage(videoId));
+    }
 }
