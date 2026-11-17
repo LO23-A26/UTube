@@ -75,11 +75,17 @@ public class CommServerCallsDataServerImpl implements InterfaceCommServerCallsDa
     }
 
     @Override
-    public void deleteIndex(UUID video_id) {
+    public void removeVideo(UUID video_id) {
+        if (data_server_core != null) {
+            data_server_core.removeVideoFromIndex(video_id);
+        }
     }
 
     @Override
-    public void updateIndex(VideoLight video_info) {
+    public void addOrUpdateVideo(VideoLight video_info) {
+        if (data_server_core != null) {
+            data_server_core.addOrUpdateVideoIndex(video_info);
+        }
     }
 
     @Override
@@ -89,4 +95,6 @@ public class CommServerCallsDataServerImpl implements InterfaceCommServerCallsDa
         }
         return List.of();
     }
+
+
 }

@@ -1,16 +1,22 @@
 package common.dataclasses;
 
 import java.io.Serializable;
+import java.io.Serial;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * @author Lucas Dompnier, Kilian Lagrevol
  * @version 3.0
  */
 public class UserFull implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 111L;
 
     private UserLight shared_info;
     private String password;
@@ -19,9 +25,9 @@ public class UserFull implements Serializable {
     private String last_name;
     private LocalDate birth_date;
 
-    private Set<VideoLight> shared_videos;
-    private Map<UUID, VideoFull> uploaded_videos;
-    private Map<AccessRight, ContactList> contact_lists;
+    private Set<VideoLight> shared_videos = new HashSet<>();
+    private Map<UUID, VideoFull> uploaded_videos = new HashMap<>();
+    private Map<AccessRight, ContactList> contact_lists = new HashMap<>();
 
     public UserFull(String pseudo, String avatar_path, String password, String first_name, String last_name, LocalDate birth_date) {
         this.shared_info = new UserLight(pseudo, avatar_path);
@@ -71,6 +77,15 @@ public class UserFull implements Serializable {
     public void addUploadedVideo(UUID video_uuid, VideoFull video) {
         this.uploaded_videos.put(video_uuid, video);
     }
+    
+    
+    public VideoFull removeUploadedVideo(UUID video_uuid) {
+		VideoFull removed = uploaded_videos.remove(video_uuid);
+		if (removed != null) {
+			shared_videos.remove(removed.getSharedInfo());
+		}
+    return removed;
+}
 
     /**
      * Add a contact list to the map of contact lists with the access right
@@ -78,6 +93,9 @@ public class UserFull implements Serializable {
      * @param access_right: ...
      * @param contact_list: ...
      */
+     
+
+
     public void addContactList(AccessRight access_right, ContactList contact_list) {
         this.contact_lists.put(access_right, contact_list);
     }
@@ -157,4 +175,6 @@ public class UserFull implements Serializable {
     public void setSharedInfo(UserLight shared_info) {
         this.shared_info = shared_info;
     }
+    
+    
 }
