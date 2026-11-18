@@ -52,7 +52,7 @@
 
         <HBox>
             <!-- Screens 02 · Créer un profil / Importer un profil (create / import a profile): not implemented yet -->
-            <Hyperlink text="Créer un profil"/>
+            <Hyperlink text="Créer un profil" onAction="#createProfile"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Hyperlink text="Importer un profil"/>
         </HBox>

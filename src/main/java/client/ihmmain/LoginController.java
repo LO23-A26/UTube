@@ -53,4 +53,10 @@ public class LoginController extends Controller {
         }
         return null;
     }
+
+    /** On click on Créer un profil */
+    @FXML
+    private void createProfile() {
+        viewManager.changeView(IHMMainManager.CREATE_PROFILE_VIEW);
+    }
 }
