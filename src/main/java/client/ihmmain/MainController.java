@@ -29,9 +29,14 @@ public class MainController extends Controller {
     @FXML
     private VBox users_container;
 
-    /** Redraws the users panel from the users kept by the manager (filled by the Data notifications). */
+    /** Called by the manager when the main view is displayed: draws the users panel. */
     @Override
     public void refreshView() {
+        refreshUserList();
+    }
+
+    /** Redraws the users panel from the users kept by the manager (filled by the Data notifications). */
+    void refreshUserList() {
         List<String> pseudos = new ArrayList<>();
         for (UserLight user : viewManager.getDisplayedUsers()) {
             if (user.getPseudo() != null) pseudos.add(user.getPseudo());
