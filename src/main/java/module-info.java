@@ -6,4 +6,5 @@ module utube {
     opens client.ihmmain to javafx.fxml;
     exports client.main;
     exports client.ihmmain;
+    exports server.main;
 }

@@ -33,6 +33,10 @@ public class MockCommServerCallsDataServer implements InterfaceCommServerCallsDa
         return new ArrayList<>();
     }
 
+    public Index registerUserAndGetIndexStructure(UserLight new_user, Set<VideoLight> new_videos){
+        return new Index();
+    }
+
     @Override
     public void removeUser(UUID user_id) {
         System.out.println("[MockCommServerCallsDataServer] removeUser: " + user_id);
