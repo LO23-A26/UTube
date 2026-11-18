@@ -28,17 +28,7 @@ public class HomeController extends Controller {
 
     @Override
     public void refreshView() {
-        // Placeholder videos until Data provides the videos of the connected users
-        displayVideos(List.of(
-                new VideoLight(null, "Présentation UTube", "alice", Set.of("lo23", "projet")),
-                new VideoLight(null, "Tutoriel JavaFX : FXML et contrôleurs", "bastien", Set.of("java", "javafx", "tuto")),
-                new VideoLight(null, "Git : le rebase", "camille", Set.of("git", "tuto")),
-                new VideoLight(null, "Le modèle MVC", "dylan", Set.of("conception", "mvc")),
-                new VideoLight(null, "Visite du campus", "emma", Set.of("utc", "campus")),
-                new VideoLight(null, "Concert de l'UTC", "alice", Set.of("musique")),
-                new VideoLight(null, "Recette de crêpes", "bastien", Set.of("cuisine")),
-                new VideoLight(null, "Soirée d'intégration", "camille", Set.of()))
-        );
+        displayVideos(viewManager.getDisplayedVideos());
     }
 
     /** Replaces the displayed cards with the cards of the given videos. */
