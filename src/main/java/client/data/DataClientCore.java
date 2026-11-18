@@ -61,7 +61,15 @@ public class DataClientCore {
 }
     public CommClientCallsDataClientImpl getImplInterfaceForCC() { return impl_interface_for_CC; }
 
-
+    /**
+     * get a video by id
+     *
+     * @param video_id to retrieve
+     * @return the videofull
+     */
+    public VideoFull getVideoById(UUID video_id){
+        return this.user.getUploadedVideos().get(video_id);
+    }
 
 	public void setImplInterfaceForICS(IhmShareCallsDataClientImpl impl_interface_for_ICS) {
 		this.impl_interface_for_ICS = impl_interface_for_ICS;

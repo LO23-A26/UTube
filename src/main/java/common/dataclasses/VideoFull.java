@@ -99,4 +99,12 @@ public class VideoFull implements Serializable {
     public void setComments(Map<UUID, Comment> comments) {
         this.comments = comments;
     }
+
+    public void addComment(Comment comment){
+        this.comments.put(comment.getAuthor().getUuid(),comment);
+    }
+
+    public void addRating(Rating rating){
+        this.ratings.put(rating.getAuthor().getUuid(),rating);
+    }
 }

@@ -58,7 +58,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @param comment The comment object to be added.
      */
-    public void addComment(Comment comment){}
+    public void addComment(Comment comment){
+        data_client_core.getVideoById(comment.getVideoId()).addComment(comment);
+    }
 
     /**
      * Edits an existing comment.
@@ -72,7 +74,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @param rating The rating object to be added.
      */
-    public void addRating(Rating rating){}
+    public void addRating(Rating rating){
+        data_client_core.getVideoById(rating.getVideoId()).addRating(rating);
+    }
 
     /**
      * Edits an existing rating.
