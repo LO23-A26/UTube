@@ -1,10 +1,13 @@
 package server.communication;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import client.communication.RemoteClient;
 import common.dataclasses.communication.ClientMessage;
 
 public class ConnectionsManager {
@@ -86,4 +89,23 @@ public class ConnectionsManager {
         client.close();
         return removed;
     }
+
+    /**
+     * Gives the other clients which can be contacted directly: those which announced where they listen for the
+     * other clients. A client which did not announce it (yet) is skipped.
+     *
+     * @param excludedUuid UUID of the client asking
+     * @return a copy of the list
+     */
+    public List<RemoteClient> getRemoteClientsExcept(UUID excludedUuid) {
+        List<RemoteClient> others = new ArrayList<>();
+        for (ActiveClient client : clients.values()) {
+            RemoteClient remote = client.getRemoteClient();
+            if (remote != null && !client.getUuid().equals(excludedUuid)) {
+                others.add(remote);
+            }
+        }
+        return others;
+    }
+
 }

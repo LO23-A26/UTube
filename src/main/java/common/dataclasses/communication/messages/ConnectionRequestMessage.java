@@ -1,6 +1,10 @@
 package common.dataclasses.communication.messages;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Set;
 
+import client.communication.RemoteClient;
 import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
@@ -27,13 +31,25 @@ public class ConnectionRequestMessage implements ServerMessage {
     /**
      * Handles the message by registering the new user and their videos on the server side.
      *
-     * @param controller   The client controller.
-     * @param sender
+     * @param controller The client controller.
+     * @param sender The active client sending the request.
      */
     @Override
     public void handle(CommServerController controller, ActiveClient sender) {
-        Index index = controller.interfaceCommServerCallsDataServer.registerUserAndGetIndexStructure(new_user,new_user_videos);
-        // send the index to the new user
+
+        // Remembers where the client listens for the other clients
+        if (new_user_ip != null && !new_user_ip.isBlank()) {
+            try {
+                InetAddress ip = InetAddress.getByName(new_user_ip);
+                sender.setRemoteClient(new RemoteClient(ip, new_user_port, new_user.getUuid()));
+            } catch (UnknownHostException ex) {
+                System.getLogger(ConnectionRequestMessage.class.getName()).log(System.Logger.Level.WARNING,
+                        "IP address missing or not valid " + new_user.getUuid() + " : " + new_user_ip);
+            }
+        }
+
+        Index index = controller.interfaceCommServerCallsDataServer.registerUserAndGetIndexStructure(new_user, new_user_videos);
+        // send the index (and the address of the other clients) to the new user
         controller.sendFullIndex(sender, index);
         // send the new infos to all
         controller.broadcastNewUserNotification(sender, new_user, new_user_ip, new_user_port, new_user_videos);

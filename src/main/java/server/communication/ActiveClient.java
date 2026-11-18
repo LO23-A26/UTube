@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import client.communication.RemoteClient;
 import common.dataclasses.communication.ClientMessage;
 import common.dataclasses.communication.ServerMessage;
 
@@ -20,6 +21,7 @@ public class ActiveClient {
     private final UUID uuid;
     private final String ipAddress;
     private final int port;
+    private volatile RemoteClient remoteClient;
 
     private final Socket socket;
     private final ObjectInputStream in; // Ici mettre des ObjectStreams ? 
@@ -72,6 +74,22 @@ public class ActiveClient {
      */
     public int getPort() {
         return port;
+    }
+
+    /**
+     * Returns where the client listens for the other clients
+     * @return the card of the client or null if not announced yet
+     */
+    public RemoteClient getRemoteClient() {
+        return remoteClient;
+    }
+
+    /**
+     * Remembers where the client listens for the other clients
+     * @param remoteClient the card built from the address announced by the client.
+     */
+    public void setRemoteClient(RemoteClient remoteClient) {
+        this.remoteClient = remoteClient;
     }
 
     /**
