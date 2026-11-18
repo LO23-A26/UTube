@@ -4,6 +4,9 @@ import common.dataclasses.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,8 +18,8 @@ import common.interfaces.comm.InterfaceDataCallsComm;
 import java.util.Set;
 
 /**
- * @author Lucas Dompnier
- * @version 1.0
+ * @author Lucas Dompnier, Jean Van Gysel
+ * @version 2.0
  */
 public class DataClientCore {
 
@@ -228,6 +231,102 @@ public class DataClientCore {
 
     }
 
+    private String normalizeText(String input) {
+        if (input == null) {
+            return null;
+        }
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{M}", "").toLowerCase().trim();
+    }
 
+    public List<VideoLight> searchSharedVideos(String title, String creator, Set<String> tags) {
+        List<VideoLight> matching_videos = new ArrayList<>();
 
+        if (list_video == null || list_video.isEmpty()) {
+            return matching_videos;
+        }
+
+        // Clean and normalize title filter
+        String search_title = null;
+        if (title != null && !title.isBlank()) {
+            search_title = normalizeText(title);
+        }
+
+        // Clean and normalize creator filter
+        String search_creator = null;
+        if (creator != null && !creator.isBlank()) {
+            search_creator = normalizeText(creator);
+        }
+
+        // Clean and normalize tags filter
+        Set<String> search_tags = new HashSet<>();
+        if (tags != null) {
+            for (String tag : tags) {
+                if (tag != null && !tag.isBlank()) {
+                    search_tags.add(normalizeText(tag));
+                }
+            }
+        }
+
+        // If no filter is provided, return all shared videos
+        if (search_title == null && search_creator == null && search_tags.isEmpty()) {
+            matching_videos.addAll(list_video);
+            return matching_videos;
+        }
+
+        // Filter videos against search criteria
+        for (VideoLight video : list_video) {
+            if (video == null) {
+                continue;
+            }
+
+            // Check title filter
+            if (search_title != null) {
+                if (video.getTitle() == null) {
+                    continue;
+                }
+                String normalized_title = normalizeText(video.getTitle());
+                if (!normalized_title.contains(search_title)) {
+                    continue;
+                }
+            }
+
+            // Check creator filter
+            if (search_creator != null) {
+                if (video.getCreator() == null) {
+                    continue;
+                }
+                String normalized_creator = normalizeText(video.getCreator());
+                if (!normalized_creator.contains(search_creator)) {
+                    continue;
+                }
+            }
+
+            // Check tags filter: matches if video contains at least one searched tag
+            if (!search_tags.isEmpty()) {
+                if (video.getTags() == null || video.getTags().isEmpty()) {
+                    continue;
+                }
+
+                boolean has_matching_tag = false;
+                for (String video_tag : video.getTags()) {
+                    if (video_tag != null) {
+                        String normalized_video_tag = normalizeText(video_tag);
+                        if (search_tags.contains(normalized_video_tag)) {
+                            has_matching_tag = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!has_matching_tag) {
+                    continue;
+                }
+            }
+
+            matching_videos.add(video);
+        }
+
+        return matching_videos;
+    }
 }
