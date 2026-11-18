@@ -28,7 +28,12 @@ class LoginConnectionTest {
 
     @BeforeAll static void startToolkit() throws Exception {
         CountDownLatch ready = new CountDownLatch(1);
-        Platform.startup(() -> { Platform.setImplicitExit(false); ready.countDown(); });
+        Runnable initialized = () -> { Platform.setImplicitExit(false); ready.countDown(); };
+        try {
+            Platform.startup(initialized);
+        } catch (IllegalStateException alreadyStarted) {
+            Platform.runLater(initialized);
+        }
         assertTrue(ready.await(10, TimeUnit.SECONDS));
     }
 
