@@ -78,7 +78,7 @@ class IncomingInterfacesTest {
         VideoLight second = video(new UserLight("bob"), "Second");
         manager.getInterfaceForData().notifyNewUser(alice.getSharedInfo(), List.of(first));
         manager.getInterfaceForData().displayNewVideo(second);
-        manager.getInterfaceForData().refreshUserList(alice);
+        manager.getInterfaceForData().refreshUserList(alice.getSharedInfo());
         fx(() -> { assertEquals(List.of(second), manager.getDisplayedVideos()); return null; });
         manager.getInterfaceForData().refreshSharedVideos(Set.of(first));
         fx(() -> { assertEquals(List.of(first), manager.getDisplayedVideos()); return null; });

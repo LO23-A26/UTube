@@ -1,6 +1,5 @@
 package client.ihmmain;
 
-import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 import javafx.application.Platform;
@@ -83,7 +82,7 @@ class UserNotificationsTest {
             callbacks.refreshFullDisplay(List.of(), List.of());
             fx(() -> { assertEquals(List.of("bob", "carol"), displayedUsers(stage)); return null; });
             users.set(List.of());
-            callbacks.refreshUserList(new UserFull("bob", "secret", "Bob", "Test", null));
+            callbacks.refreshUserList(new UserLight("bob"));
             fx(() -> { assertTrue(displayedUsers(stage).isEmpty()); return null; });
             fx(() -> { manager.changeView(IHMMainManager.LOGIN_VIEW); return null; });
             callbacks.notifyNewUser(new UserLight("late"), List.of());

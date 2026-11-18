@@ -3,7 +3,6 @@ package common.interfaces.IHMMain;
 import java.util.List;
 import java.util.Set;
 
-import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 
@@ -38,9 +37,9 @@ public interface InterfaceDataCallsIHMMain {
     /**
      * Refreshes the displayed user list.
      *
-     * @param user_profile user profile of the disconnected user
+     * @param user_profile light profile of the disconnected user
      */
-    public void refreshUserList(UserFull user_profile);
+    public void refreshUserList(UserLight user_profile);
 
     /**
      * Displays a newly available video.

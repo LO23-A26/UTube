@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
@@ -42,8 +41,8 @@ public final class DataCallsIHMMainImpl implements InterfaceDataCallsIHMMain {
         });
     }
 
-    @Override public void refreshUserList(UserFull user) {
-        UUID id = user == null || user.getSharedInfo() == null ? null : user.getSharedInfo().getUuid();
+    @Override public void refreshUserList(UserLight user) {
+        UUID id = user == null ? null : user.getUuid();
         Platform.runLater(() -> {
             manager.refreshUsers();
             if (id != null) manager.removeUserVideos(id);
