@@ -1,5 +1,15 @@
 package client.ihmshare;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import common.dataclasses.VideoFull;
 import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceIhmShareCallsDataClient;
@@ -13,16 +23,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Controller of the "Ajouter un partage" screen (09), sequence "Ajout vidéo".
@@ -76,6 +76,9 @@ public class AddVideoController extends ShareController {
         }
     }
 
+    /**
+     * Refresh the share lists
+     */
     @Override
     public void refreshView() {
         error_label.setText("");
@@ -147,6 +150,8 @@ public class AddVideoController extends ShareController {
     /**
      * Check the form of the screen 09
      *
+     * @param file (Path) the path of the video file
+     * @param title (String) the title of the video
      * @return (String) the error message to display, or null if the form is valid
      */
     static String validate(Path file, String title) {
@@ -162,7 +167,13 @@ public class AddVideoController extends ShareController {
         return null;
     }
 
-    /** "a, b ,,c" → {a, b, c} */
+    /** 
+     * Get tags from a text input
+     * ex: "a, b ,,c" → {a, b, c}
+     * 
+     * @param text (String) the user list of tags input
+     * @return (Set<String>) a set a tags
+     */
     static Set<String> parseTags(String text) {
         if (text == null) {
             return new LinkedHashSet<>();
@@ -173,12 +184,23 @@ public class AddVideoController extends ShareController {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    /**
+     * Set variables with the new file chosen
+     * 
+     * @param file (Path) the path of the new file chosen
+     */
     private void setChosenFile(Path file) {
         chosen_file = file;
         file_label.setText(file.getFileName().toString());
     }
 
-    /** Row "List name  [x] Télécharger  [x] Noter  [x] Commenter", everything checked by default. */
+    /**
+     * Create a row for managing share list right
+     * Row "List name  [x] Télécharger  [x] Noter  [x] Commenter", everything checked by default.
+     * 
+     * @param list_name (String) share list name
+     * @return (HBox) fxml object corresponding to the row
+     */
     private static HBox rightsRow(String list_name) {
         Label name = new Label(list_name);
         Region spacer = new Region();

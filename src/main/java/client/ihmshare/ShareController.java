@@ -1,5 +1,7 @@
 package client.ihmshare;
 
+import java.util.Optional;
+
 import client.ihmmain.Controller;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -14,8 +16,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-
-import java.util.Optional;
 
 /**
  * Common base of the IHM-Share controllers.
@@ -89,6 +89,12 @@ public abstract class ShareController extends Controller {
         return row;
     }
 
+    /**
+     * Check if a node is inside of a button
+     * 
+     * @param node (Node) the node to check
+     * @return (boolean) true if the node is in a button
+     */
     private static boolean isInsideButton(Node node) {
         for (Node current = node; current != null; current = current.getParent()) {
             if (current instanceof Button) {
