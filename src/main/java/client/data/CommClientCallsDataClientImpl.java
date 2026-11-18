@@ -85,7 +85,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         if(videoFull != null){
             videoFull.addRating(rating);
         }else{
-            throw new AddCommentFailed("Can't find the video");
+            throw new AddRatingFailed("Can't find the video");
         }
 
     }
@@ -104,7 +104,15 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param author_uid The UUID of the comment's author.
      */
     public void deleteComment(UUID video_id, UUID author_uid){
-
+        VideoFull videoFull = data_client_core.getVideoById(video_id);
+        if(videoFull != null){
+            Comment comment = videoFull.deleteComment(author_uid);
+            if(comment == null){
+                throw new DelCommentFailed("Can't find the comment");
+            }
+        }else{
+            throw new DelCommentFailed("Can't find the video");
+        }
     }
 
     /**
@@ -113,7 +121,17 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_id The UUID of the video.
      * @param author_uid The UUID of the rating's author.
      */
-    public void deleteRating(UUID video_id, UUID author_uid){}
+    public void deleteRating(UUID video_id, UUID author_uid){
+        VideoFull videoFull = data_client_core.getVideoById(video_id);
+        if(videoFull != null){
+            Rating rating = videoFull.deleteRating(author_uid);
+            if(rating == null){
+                throw new DelRatingFailed("Can't find the rating");
+            }
+        }else{
+            throw new DelRatingFailed("Can't find the video");
+        }
+    }
 
     /**
      * Marks a video as shared.

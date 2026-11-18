@@ -107,4 +107,12 @@ public class VideoFull implements Serializable {
     public void addRating(Rating rating){
         this.ratings.put(rating.getAuthor().getUuid(),rating);
     }
+
+    public Comment deleteComment(UUID author_id){
+        return this.comments.remove(author_id);
+    }
+
+    public Rating deleteRating(UUID author_id){
+        return this.ratings.remove(author_id);
+    }
 }
