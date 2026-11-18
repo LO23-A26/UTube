@@ -81,7 +81,7 @@ public class IHMMainManager {
 
     /** Redraws the users panel of the main view, if it is displayed. */
     void refreshUsers() {
-        if (main_controller != null) main_controller.refreshView();
+        if (main_controller != null) main_controller.refreshUserList();
     }
 
     void addVideos(Collection<VideoLight> videos) {
