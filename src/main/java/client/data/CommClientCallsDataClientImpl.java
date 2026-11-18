@@ -8,7 +8,11 @@ import common.dataclasses.Comment;
 import common.dataclasses.Rating;
 import common.exceptions.AccessDeniedException;
 import common.interfaces.data.InterfaceCommClientCallsDataClient;
+import common.dataclasses.VideoFormat;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -147,8 +151,84 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @return Byte array containing video data.
      */
     public byte[] askVideo(UUID video_id, UUID requester_id){
-        byte[] emptyArr = {};
-        return emptyArr;
+
+        // Recover the video thanks to video_id
+        VideoFull v;
+        try {
+            v = data_client_core.getUser().getUploadedVideos().get(video_id);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
+        // Check is path format is supported
+        if (!VideoFormat.isSupported(Path.of(v.getFilePath()))){
+            throw new RuntimeException("Error : the path of the video is not supported.");
+        }
+
+        // Serialisation of mp4 and v
+        File file = new File(v.getFilePath());
+        byte[] mp4_bytes;
+        try {
+            mp4_bytes = Files.readAllBytes(file.toPath());
+        }
+        catch (IOException e){
+            throw new RuntimeException(e);
+        }
+
+        String video_title = v.getSharedInfo().getTitle();
+
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(video_title + ".txt");
+        }
+        catch (FileNotFoundException e){
+            throw new RuntimeException(e);
+        }
+
+        ObjectOutputStream oos;
+        try{
+            oos = new ObjectOutputStream(fos);
+        }
+        catch (IOException e){
+            throw new RuntimeException(e);
+        }
+
+        try {
+            oos.writeObject(v);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        byte[] video_object_bytes;
+        ByteArrayOutputStream video_object_byte_array_output_stream;
+        try {
+            video_object_byte_array_output_stream = new ByteArrayOutputStream();
+            video_object_byte_array_output_stream.writeTo(oos);
+            video_object_bytes = video_object_byte_array_output_stream.toByteArray();
+        }
+        catch (IOException e){
+            throw new RuntimeException(e);
+        }
+
+        int length_mp4_bytes = mp4_bytes.length;
+        int length_object_bytes = video_object_bytes.length;
+
+
+        byte[] video_object_and_mp4_bytes = new byte[length_mp4_bytes + length_object_bytes + 100];
+        for (int i = 0 ; i < length_mp4_bytes ; i++){
+            video_object_and_mp4_bytes[i] = mp4_bytes[i];
+        }
+
+        // Separateur arbitraire : 100 * "-128"
+        for (int i = length_mp4_bytes ; i < length_mp4_bytes + 100 ; i++){
+            video_object_and_mp4_bytes[i] = -128;
+        }
+        for (int i = length_mp4_bytes + 100 ; i < length_object_bytes ; i++){
+            video_object_and_mp4_bytes[i] = video_object_bytes[i];
+        }
+
+        return video_object_and_mp4_bytes;
     }
 
     /**
@@ -158,6 +238,11 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @return VideoLight object representing the saved video.
      */
     public VideoLight saveVideo(byte[] video_file){
+        // Il faut changer l'id du VideoFull (generation aleatoire)
+        // Download video: save la video dans le dossier local de l'user (voir ProfileSaver)
+        // Deserialiser et telecharger le path
+        // Deserialiser l'id
+        // SaveLocally(VideoFull video) ?
         return null;
     }
 
