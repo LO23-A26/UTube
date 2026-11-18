@@ -1,11 +1,13 @@
 package common.interfaces.data;
 
-import common.dataclasses.*;
-
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+
+import common.dataclasses.Index;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
 
 /**
  * Interface for communication server calls to the data server.
@@ -29,6 +31,12 @@ public interface InterfaceCommServerCallsDataServer {
      */
     @Deprecated(since="2.0", forRemoval=true)
     public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
+
+    /**
+     * Get the profile of a remote user based on their UserLight.
+     * @param owner_profile
+     */
+    public void requestFetchRemoteProfile(UserLight owner_profile);
 
     /**
      * Removes a user from the server's records based on their unique ID.
