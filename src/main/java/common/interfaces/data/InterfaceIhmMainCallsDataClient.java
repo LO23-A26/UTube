@@ -127,9 +127,8 @@ public interface InterfaceIhmMainCallsDataClient {
      * Requests the profile of a remote user.
      *
      * @param owner_profile The profile of the remote user.
-     * @param requester_profile The profile of the user making the request.
      */
-    public void requestRemoteProfile(UserLight owner_profile, UserLight requester_profile);
+    public void requestRemoteProfile(UserLight owner_profile);
 
     /**
      * Searches for shared videos based on specific criteria.
