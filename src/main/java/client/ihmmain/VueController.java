@@ -18,8 +18,6 @@ public class VueController extends Controller {
         refreshView();
     }
 
-    private StackPane  contentPane;
-
     @Override
     public void refreshView() {
         statusLabel.setText("Bienvenue sur UTube");
@@ -29,24 +27,6 @@ public class VueController extends Controller {
     @FXML
     private void openHome() {
         view_manager.showHome();
-    }
-
-    /** "Téléchargements" tab of the header: screen 07, provided by IHM-Share. */
-    @FXML
-    private void openDownloads() {
-        InterfaceIHMMainCallsIHMShare share_calls = view_manager.getInterfaceCallsShare();
-        if (share_calls != null) {
-            share_calls.openDownloads(contentPane);
-        }
-    }
-
-    /** "Partages" tab of the header: screen 08, provided by IHM-Share. */
-    @FXML
-    private void openShares() {
-        InterfaceIHMMainCallsIHMShare share_calls = view_manager.getInterfaceCallsShare();
-        if (share_calls != null) {
-            share_calls.openMyShares(contentPane);
-        }
     }
 
     /** "Se déconnecter" in the header: back to the login screen (01). */
