@@ -1,5 +1,6 @@
 package client.ihmmain;
 
+import common.dataclasses.UserLight;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -8,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,8 +30,11 @@ public class MainController extends Controller {
 
     @Override
     public void refreshView() {
-        // Placeholder users until Data provides the list (getIData().getConnectedUsers())
-        displayConnectedUsers(List.of("alice", "bastien", "camille", "dylan", "emma"));
+        List<String> pseudos = new ArrayList<>();
+        for (UserLight connected_user : viewManager.getIData().getConnectedUsers()) {
+            pseudos.add(connected_user.getPseudo());
+        }
+        displayConnectedUsers(pseudos);
     }
 
     /** Replaces the screen displayed in the content area. */

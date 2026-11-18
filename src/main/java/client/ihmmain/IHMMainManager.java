@@ -42,6 +42,13 @@ public class IHMMainManager {
     /** Controller of the main view (header and users panel) while it is displayed, null otherwise. */
     private MainController main_controller;
 
+    /** Refreshes the connected users panel if the main view is displayed. */
+    void refreshUsers() {
+        if (main_controller != null) {
+            main_controller.refreshView();
+        }
+    }
+
     public void setIData(InterfaceIhmMainCallsDataClient dataCalls) {
         this.dataCalls = dataCalls;
     }

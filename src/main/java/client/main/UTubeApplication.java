@@ -3,6 +3,7 @@ package client.main;
 import client.communication.CommClientController;
 import client.data.DataClientCore;
 import client.ihmmain.IHMMainManager;
+import client.ihmmain.DataCallsIHMMainImpl;
 import javafx.application.Application;
 import javafx.scene.chart.PieChart;
 import javafx.scene.text.Font;
@@ -29,6 +30,7 @@ public class UTubeApplication extends Application {
         loadFonts();
         IHMMainManager viewManager = new IHMMainManager();
         DataClientCore dataClientCore = new DataClientCore();
+        dataClientCore.setInterfaceFromICM(new DataCallsIHMMainImpl(viewManager));
         CommClientController commClientController = new CommClientController();
 
         viewManager.setIData(dataClientCore.getImplInterfaceForICM());
