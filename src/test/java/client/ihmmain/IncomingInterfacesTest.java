@@ -78,18 +78,26 @@ class IncomingInterfacesTest {
         VideoLight second = video(new UserLight("bob"), "Second");
         manager.getInterfaceForData().notifyNewUser(alice.getSharedInfo(), List.of(first));
         manager.getInterfaceForData().displayNewVideo(second);
+        fx(() -> { assertEquals(List.of(alice.getSharedInfo()), manager.getDisplayedUsers()); return null; });
         manager.getInterfaceForData().refreshUserList(alice);
-        fx(() -> { assertEquals(List.of(second), manager.getDisplayedVideos()); return null; });
+        fx(() -> {
+            assertTrue(manager.getDisplayedUsers().isEmpty());
+            assertEquals(List.of(second), manager.getDisplayedVideos());
+            return null;
+        });
+        // refreshSharedVideos carries the whole catalog: it replaces the displayed videos.
         manager.getInterfaceForData().refreshSharedVideos(Set.of(first));
         fx(() -> { assertEquals(List.of(first), manager.getDisplayedVideos()); return null; });
+        // refreshFullDisplay only adds: an empty index removes nothing.
         manager.getInterfaceForData().refreshFullDisplay(List.of(), List.of());
-        fx(() -> { assertTrue(manager.getDisplayedVideos().isEmpty()); return null; });
-        manager.getInterfaceForData().displayNewVideo(first);
+        fx(() -> { assertEquals(List.of(first), manager.getDisplayedVideos()); return null; });
+        manager.getInterfaceForData().notifyNewUser(alice.getSharedInfo(), List.of());
         fx(() -> {
             Stage stage = new Stage();
             try {
                 manager.start(stage);
                 manager.changeView(IHMMainManager.LOGIN_VIEW);
+                assertTrue(manager.getDisplayedUsers().isEmpty());
                 assertTrue(manager.getDisplayedVideos().isEmpty());
             } finally { stage.close(); }
             return null;
