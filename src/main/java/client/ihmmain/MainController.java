@@ -1,6 +1,10 @@
 package client.ihmmain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import common.dataclasses.UserLight;
+import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -8,9 +12,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Controller of the main view of the logged-in screens: header, connected users
@@ -53,6 +54,22 @@ public class MainController extends Controller {
         viewManager.showContent(IHMMainManager.HOME_VIEW);
         // A ToggleButton is deselected when it is clicked again
         home_tab.setSelected(true);
+    }
+
+    @FXML
+    private void openDownloads(){
+        InterfaceIHMMainCallsIHMShare share_calls = viewManager.getIShare();
+        if (share_calls!=null){
+            share_calls.openDownloads(content_pane);
+        }
+    }
+
+    @FXML 
+    private void openMyShares(){
+        InterfaceIHMMainCallsIHMShare share_calls = viewManager.getIShare();
+        if (share_calls!=null){
+            share_calls.openMyShares(content_pane);
+        }
     }
 
     /** Users icon of the header and close button of the panel: shows or hides the panel. */
