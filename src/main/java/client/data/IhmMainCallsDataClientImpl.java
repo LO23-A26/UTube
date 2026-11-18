@@ -15,8 +15,8 @@ import java.util.ArrayList;
 /**
  * Implementation of the IHM Main calls Dataclient interface
  *
- * @author Lucas Dompnier
- * @version 1.0
+ * @author Lucas Dompnier, Jean Van Gysel
+ * @version 2.0
  */
 public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClient {
 
@@ -219,7 +219,10 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      */
     @Override
     public List<VideoLight> searchSharedVideos(String title, String creator, Set<String> tags) {
-        return List.of();
+        if (data_client_core != null) {
+            return data_client_core.searchSharedVideos(title, creator, tags);
+        }
+        return new ArrayList<>();
     }
 
     public DataClientCore getDataClientCore() {
