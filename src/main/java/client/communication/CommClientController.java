@@ -98,6 +98,23 @@ public class CommClientController {
     }
 
     /**
+    * Gets a client connected to the server
+    * @param uuid the UUID of the client
+    * @return the client, or null if he's not known
+    */
+    public RemoteClient getClient(UUID uuid) {
+        return clientConnectionsManager.getClient(uuid);
+    }
+
+    /**
+ * Forgets a client who left
+ * @param uuid the UUID of the client
+ */
+    public void removeClient(UUID uuid) {
+        clientConnectionsManager.disconnectClient(uuid);
+    }
+
+    /**
      * Remembers a client who is connected to the server, to be able to contact him directly
      *
      * @param ip_adress the client's IP address

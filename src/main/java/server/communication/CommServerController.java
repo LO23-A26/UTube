@@ -1,16 +1,15 @@
 package server.communication;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import client.communication.RemoteClient;
 import common.dataclasses.communication.messages.NotifyVideoDeletedMessage;
 import common.dataclasses.communication.messages.NotifyVideoSharedMessage;
-import java.util.UUID;
 import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
-import common.dataclasses.communication.ClientMessage;
 import common.dataclasses.communication.messages.NewUserNotificationMessage;
 import common.dataclasses.communication.messages.NotifyDisconnectionMessage;
 import common.dataclasses.communication.messages.SendFullIndexMessage;
@@ -83,12 +82,13 @@ public class CommServerController {
     }
 
     /**
-     * Sends the full index to a new user (SendFullIndexMessage).
+     * Sends the full index to a new user (SendFullIndexMessage), with the address of the clients already connected for the P2P
      * @param receiver The new user.
      * @param index The full index.
      */
     public void sendFullIndex(ActiveClient receiver, Index index) {
-        connectionsManager.sendMessageToClient(receiver.getUuid(), new SendFullIndexMessage(index));
+        List<RemoteClient> others = connectionsManager.getRemoteClientsExcept(receiver.getUuid());
+        connectionsManager.sendMessageToClient(receiver.getUuid(), new SendFullIndexMessage(index, others));
     }
     /**
      * Notifies every connected client except the sender that a video was shared.
