@@ -1,7 +1,9 @@
 package comm_integration_tests.mock_implementations;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import common.dataclasses.Comment;
 import common.dataclasses.Rating;
@@ -13,6 +15,27 @@ import common.interfaces.data.InterfaceCommClientCallsDataClient;
 
 public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDataClient {
     private final UUID fixedRequesterUuid = UUID.randomUUID();
+
+    private final String pseudo;
+    // users received in the index by UUID
+    private final Map<UUID, String> knownUsers = new ConcurrentHashMap<>();
+
+    public MockCommClientCallsDataClient() {
+        this("Jhon Doe");
+    }
+
+    public MockCommClientCallsDataClient(String pseudo) {
+        this.pseudo = pseudo;
+    }
+
+    public Map<UUID, String> getKnownUsers() {
+        return knownUsers;
+    }
+
+    public UUID getMyUuid() {
+        return fixedRequesterUuid;
+    }
+
     @Override
     public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id) {
         System.out.println("[MockCommClientCallsDataClient] giveDetailsAccess for video " + video_id);
@@ -86,12 +109,14 @@ public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDa
         System.out.println("[MockDataClient] saveFullIndex: " + users.size()
                 + " users, " + videos.size() + " videos");
         users.forEach(u -> System.out.println("   - " + u));
+        users.forEach(u -> knownUsers.put(u.getUuid(), u.getPseudo()));
     }
 
     @Override
     public void saveNewUser(UserLight user, List<VideoLight> videos) {
         System.out.println("[MockDataClient] saveNewUser: " + user
                 + " (" + (videos == null ? 0 : videos.size()) + " videos)");
+        knownUsers.put(user.getUuid(), user.getPseudo());
     }
 
     @Override
@@ -99,7 +124,7 @@ public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDa
         System.out.println("[MockCommClientCallsDataClient] getMyProfile");
 
         //On crée le profil normalement
-        UserFull profile = new UserFull("Jhon Doe", "kzjhebfkjah", null, null, null);
+        UserFull profile = new UserFull(pseudo, "kzjhebfkjah", null, null, null);
 
         //On remplace simplement l'UUID généré par notre UUID fixe
         profile.getSharedInfo().setUuid(fixedRequesterUuid);
