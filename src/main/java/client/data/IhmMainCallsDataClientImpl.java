@@ -202,11 +202,10 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * Requests the profile of a remote user.
      *
      * @param owner_profile     The profile of the remote user.
-     * @param requester_profile The profile of the user making the request.
      */
     @Override
-    public void requestRemoteProfile(UserLight owner_profile, UserLight requester_profile) {
-
+    public void requestRemoteProfile(UserLight owner_profile) {
+        data_client_core.getInterfaceFromComm().requestFetchRemoteProfile(owner_profile);
     }
 
     /**
