@@ -29,6 +29,7 @@ public class UTubeApplication extends Application {
         loadFonts();
         IHMMainManager viewManager = new IHMMainManager();
         DataClientCore dataClientCore = new DataClientCore();
+        dataClientCore.setInterfaceFromICM(viewManager.getInterfaceForData());
         CommClientController commClientController = new CommClientController();
 
         viewManager.setIData(dataClientCore.getImplInterfaceForICM());
