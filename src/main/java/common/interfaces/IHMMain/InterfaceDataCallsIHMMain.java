@@ -39,7 +39,7 @@ public interface InterfaceDataCallsIHMMain {
      *
      * @param user_profile user profile of the disconnected user
      */
-    public void refreshUserList(UserFull user_profile);
+    public void refreshUserList(UserLight user_profile);
 
     /**
      * Displays a newly available video.

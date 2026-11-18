@@ -90,6 +90,8 @@ public interface InterfaceIhmMainCallsDataClient {
      */
     public List<UserLight> getConnectedUsers();
 
+    public Index getLocalIndex();
+
     /**
      * Gets all contacts within a specific contact list.
      *

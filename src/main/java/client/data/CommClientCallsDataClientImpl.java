@@ -26,11 +26,22 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
 
 
     /*
-     ISSUE 86
+     ######################################################### ISSUE 86 : removeUser aurait besoin d'un UID en argument
+    ########################################## avec COMM (voir DataClientcore
+
+
+     Problème sous-jaçent plus profond, actuellement méthodes transmette à IhmMain sans mettre à jour index local. Soltuion => passer par DataClientCore.
+
+   ATTENTION : RemoveUser chez DataServer = on remove le user (et ses vidéos, préciser à COMM) du server, ici => retire user et ses vidéos sur index local => redondant avec saveFullIndex
+
+
      */
-    public void removeUser(UUID user_id){
-        data_client_core.removeRemoteUserFromLocalIndex(user_id);
-    }
+
+
+
+
+
+    //1#########################################################
 
     /**
      * Gives details access for a specific video to a requester.
@@ -176,7 +187,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param new_video The lightweight video information.
      */
     public void saveNewUser(UserLight new_user, List<VideoLight> new_video){
-        data_client_core.getInterfaceFromICM().notifyNewUser(new_user,new_video);
+        data_client_core.saveNewUserLocalIndex(new_user, new_video);
     }
 
     /**
@@ -186,7 +197,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_list The list of videos.
      */
     public void saveFullIndex(List<UserLight> user_list, List<VideoLight> video_list){
-        data_client_core.getInterfaceFromICM().refreshFullDisplay(user_list,video_list);
+        data_client_core.saveFullLocalIndex(user_list, video_list);
     }
 
     /**
@@ -210,8 +221,8 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @param user_profile The full user profile to remove.
      */
-    public void removeUser(UserFull user_profile){
-        data_client_core.getInterfaceFromICM().refreshUserList(user_profile);
+    public void removeUser(UUID user_id){
+        data_client_core.removeRemoteUserFromLocalIndex(user_id);
     }
 
 

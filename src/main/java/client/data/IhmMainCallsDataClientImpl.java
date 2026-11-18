@@ -5,6 +5,7 @@ import common.dataclasses.ContactList;
 import common.dataclasses.UserLight;
 import common.dataclasses.UserFull;
 import common.dataclasses.VideoLight;
+import common.dataclasses.Index;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 
 import java.util.List;
@@ -21,6 +22,16 @@ import java.util.ArrayList;
 public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClient {
 
     private DataClientCore data_client_core;
+
+
+    //ISSUE 30 : réglée par la classe Authentification Failed.
+
+    //################################################ ISSUE 75 IhmMain veut faire une interface pour Connected User, ça peut leur être pratique
+
+
+
+    //###########################
+
 
     @Override
     public UserFull getUser(){
@@ -150,8 +161,14 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      */
     @Override
     public List<UserLight> getConnectedUsers() {
-        return List.of();
+        return data_client_core.getConnectedUser();
     }
+
+    @Override
+    public Index getLocalIndex() {
+        return data_client_core.getIndexLocal();
+    }
+
 
     /**
      * Gets all contacts within a specific contact list.

@@ -1,12 +1,18 @@
 package client.data;
 
 import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import common.dataclasses.ContactList;
 import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
+import common.dataclasses.VideoFull;
+import common.dataclasses.VideoFormat;
+import common.dataclasses.Comment;
+import common.dataclasses.Rating;
+import common.dataclasses.Index;
 import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
 import common.interfaces.comm.InterfaceDataCallsComm;
 
@@ -31,8 +37,7 @@ import java.util.Set;
 public class DataClientCore {
 
     private UserFull user;
-    private Set<VideoLight> list_video;
-    private Set<UserLight> connected_user;
+    private Index index_local;
     private ProfileSaver profileSaver;
     private ContactList contact_lists;
     private IhmMainCallsDataClientImpl impl_interface_for_ICM;
@@ -44,8 +49,8 @@ public class DataClientCore {
 
 
     public DataClientCore() {
-        this.list_video = new HashSet<>();
-        this.connected_user = new HashSet<>();
+        this.index_local = new Index();
+
         this.profileSaver = new ProfileSaver();
 
         this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl();
@@ -54,31 +59,58 @@ public class DataClientCore {
         this.impl_interface_for_CC.setDataClientCore(this);
         this.impl_interface_for_ICS = new IhmShareCallsDataClientImpl();
         this.impl_interface_for_ICS.setDataClientCore(this);
+
     }
 
-
+    // ISSUE 30 et 75 IhmMain -> IhmMainCallsDataClientImpl
+    //   Remplacer les 2 Set par un index dans DataClientCore? => attention au passage de Set-> List.
 
 
     /*
+    ########################################## ISSUE 86
+    ########################################## avec COMM /CcCallsDcImpl
 
-    $$$$$$$$$$$$$*************************************************** ISSUE 86 /CcCallsDcImpl
+    // Problème de sérialisation de l'avatar tjrs pas traité
 
      */
     void removeRemoteUserFromLocalIndex(UUID user_id){
         if (user_id != null){
             UserLight user_to_remove = null;
-            for (UserLight u : connected_user) {
+            for (UserLight u : index_local.getUserList()) {
                 if (user_id.equals(u.getUuid())) {
                     user_to_remove = u;
-                    connected_user.remove(u);
+                    index_local.getUserList().remove(u);
                     break;
                 }
             }
-            list_video.removeIf(v -> v.getOwner() != null && user_id.equals(v.getOwner().getUuid()));
-            if (user_to_remove != null){interface_from_ICM.refreshUserList(user_to_remove);}
+            index_local.getVideoList().removeIf(v -> v.getOwner() != null && user_id.equals(v.getOwner().getUuid()));
+            if (user_to_remove != null){interface_from_ICM.refreshUserList(user_to_remove);} // ATTENTION ATTENTION voir avec IhmMain pour que signature soit Userlight et pas UserFull
 
         }
     }
+
+    void saveNewUserLocalIndex(UserLight new_user, List<VideoLight> new_video){
+        if (new_user != null){
+            index_local.addUser(new_user);
+            if (new_video != null){
+                index_local.getVideoList().addAll(new_video);
+            }
+            getInterfaceFromICM().notifyNewUser(new_user,new_video);
+        }
+    }
+
+    void saveFullLocalIndex(List<UserLight> user_list, List<VideoLight> video_list) {
+        index_local.getVideoList().clear();
+        index_local.getUserList().clear();
+        if (user_list != null) index_local.getUserList().addAll(user_list);
+        if (video_list != null) index_local.getVideoList().addAll(video_list);
+        if (interface_from_ICM == null) return;
+        getInterfaceFromICM().refreshFullDisplay(user_list, video_list);
+    }
+
+
+    //###############################################################
+
 
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
@@ -121,20 +153,23 @@ public class DataClientCore {
         this.user = user;
     }
 
-    public Set<VideoLight> getListVideo() {
-        return list_video;
+    public Index getIndexLocal(){ return index_local;
     }
 
-    public void setListVideo(Set<VideoLight> list_video) {
-        this.list_video = list_video;
+    public List<VideoLight> getListVideo() {
+        return index_local.getVideoList();
     }
 
-    public Set<UserLight> getConnectedUser() {
-        return connected_user;
+    public void setListVideo(List<VideoLight> list_video) {
+        this.index_local.setVideoList( list_video);
     }
 
-    public void setConnectedUser(Set<UserLight> connected_user) {
-        this.connected_user = connected_user;
+    public List<UserLight> getConnectedUser() {
+        return index_local.getUserList();
+    }
+
+    public void setConnectedUser(List<UserLight> connected_user) {
+        this.index_local.setUserList(connected_user);
     }
 
     public ProfileSaver getProfileSaver() {
@@ -239,9 +274,9 @@ public class DataClientCore {
     }
     void removeRemoteVideoFromLocalIndex(UUID video_id){
         if (video_id != null){
-            for (VideoLight v : list_video) {
+            for (VideoLight v : getListVideo()) {
                 if (video_id.equals(v.getVideoId())) {
-                    list_video.remove(v);
+                    getListVideo().remove(v);
                     break;
                 }
             }
@@ -253,7 +288,7 @@ public class DataClientCore {
         if (video_info != null && video_info.getVideoId() != null) {
             removeRemoteVideoFromLocalIndex(video_info.getVideoId());
 
-            list_video.add(video_info);
+            getListVideo().add(video_info);
 
             if (interface_from_ICM != null) {
                 interface_from_ICM.displayNewVideo(video_info);

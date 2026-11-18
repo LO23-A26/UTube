@@ -7,6 +7,7 @@ import common.interfaces.data.InterfaceIhmShareCallsDataClient;
 
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -42,7 +43,7 @@ public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataCl
      * @return The owner of the video, or null if the video is unknown.
      */
     private UserLight findOwner(UUID video_id) {
-        Set<VideoLight> videos = data_client_core.getListVideo();
+        List <VideoLight> videos = data_client_core.getListVideo();
         if (videos == null) {
             return null;
         }
