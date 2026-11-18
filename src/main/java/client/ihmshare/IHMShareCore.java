@@ -1,5 +1,12 @@
 package client.ihmshare;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+
 import client.ihmmain.IHMMainManager;
 import common.dataclasses.VideoLight;
 import common.interfaces.comm.InterfaceIHMShare_calls_Comm;
@@ -8,13 +15,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
 
 /**
  * Core of the IHM Share component. Only references the elements of the module so that
@@ -46,6 +46,10 @@ public class IHMShareCore {
     /**
      * A screen displayed in the container: the nodes put in it and, for an IHM-Share screen,
      * its FXML path and controller. The content left by IHM-Main has no path nor controller.
+     *
+     * @param fxml_path  (String) path of the FXML file of the screen, null for the content left by IHM-Main
+     * @param nodes      (List<Node>) nodes displayed in the container for this screen
+     * @param controller (ShareController) controller of the screen, null for the content left by IHM-Main
      */
     private record Screen(String fxml_path, List<Node> nodes, ShareController controller) {
     }
@@ -112,6 +116,7 @@ public class IHMShareCore {
     /**
      * "Retour": displays the previous screen again, with its state. From the first
      * IHM-Share screen, puts back the content IHM-Main had in the container.
+     * Does nothing if the history is empty.
      */
     public void goBack() {
         if (!history.isEmpty()) {
@@ -127,7 +132,7 @@ public class IHMShareCore {
      * @return (C) controller of the displayed screen
      */
     @SuppressWarnings("unchecked") // the screen with this FXML path was loaded with a controller of type C
-    public <C extends ShareController> C backTo(String fxml_path) {
+    public <C extends ShareController> C goBackTo(String fxml_path) {
         boolean in_history = history.stream().anyMatch(screen -> fxml_path.equals(screen.fxml_path()));
         if (!in_history) {
             return show(fxml_path);
@@ -140,6 +145,15 @@ public class IHMShareCore {
         return (C) target.controller();
     }
 
+    /**
+     * Loads an FXML view, displays it in the container in place of the current content,
+     * links its controller to this core and asks the controller to refresh its view
+     *
+     * @param fxml_path (String) path of the FXML file of the screen
+     * @return (C) controller of the displayed screen
+     * @throws IllegalStateException if IHM-Main has not given its container yet
+     * @throws UncheckedIOException  if the FXML file cannot be loaded
+     */
     private <C extends ShareController> C show(String fxml_path) {
         if (container == null) {
             throw new IllegalStateException("No container: IHM-Main must call an IHM-Share method with its StackPane first");
@@ -159,6 +173,12 @@ public class IHMShareCore {
         return controller;
     }
 
+    /**
+     * Puts a previously displayed screen back in the container and, if it is an
+     * IHM-Share screen, asks its controller to refresh its view
+     *
+     * @param screen (Screen) screen to display again
+     */
     private void restore(Screen screen) {
         container.getChildren().setAll(screen.nodes());
         current_screen = screen.controller() == null ? null : screen;
@@ -289,14 +309,30 @@ public class IHMShareCore {
         this.ptr_display_video_controller = ctrl;
     }
 
+    /**
+     * Set the controller of the "add video" view currently displayed, so that the answers
+     * of the other components can be displayed in it
+     *
+     * @param ctrl (AddVideoController) controller of the add video view
+     */
     public void setControllerAddVideo(AddVideoController ctrl) {
         this.ptr_add_video_controller = ctrl;
     }
 
+    /**
+     * Get the controller of the video detail view currently displayed (screens 05, 05b and 05c)
+     *
+     * @return (DisplayVideoController) controller of the video detail view, null if none is displayed
+     */
     public DisplayVideoController getControllerDisplayVideo() {
         return this.ptr_display_video_controller;
     }
 
+    /**
+     * Get the controller of the "add video" view currently displayed
+     *
+     * @return (AddVideoController) controller of the add video view, null if none is displayed
+     */
     public AddVideoController getControllerAddVideo() {
         return this.ptr_add_video_controller;
     }
