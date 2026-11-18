@@ -1,11 +1,16 @@
 package client.ihmmain;
 
+import common.dataclasses.UserFull;
+import common.dataclasses.VideoLight;
+import common.interfaces.IHMMain.InterfaceCommCallsIHMMain;
+import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
 import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
 import common.interfaces.comm.InterfaceIHMMainCallsComm;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -13,6 +18,10 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Collection;
+import java.util.UUID;
 
 /**
  * View manager of IHM Main: loads the FXML screens, switches the displayed screen
@@ -41,6 +50,74 @@ public class IHMMainManager {
     private Scene primaryScene;
     /** Controller of the main view (header and users panel) while it is displayed, null otherwise. */
     private MainController main_controller;
+
+    private final InterfaceDataCallsIHMMain dataNotifications = new DataCallsIHMMainImpl(this);
+    private final InterfaceCommCallsIHMMain commNotifications = new CommCallsIHMMainImpl(this);
+    // UI state only. Data and COM retain responsibility for storage and network indexes.
+    private final Map<UUID, VideoLight> displayedVideos = new LinkedHashMap<>();
+    private Alert remoteProfileDialog;
+
+    public InterfaceDataCallsIHMMain getInterfaceForData() { return dataNotifications; }
+    public InterfaceCommCallsIHMMain getInterfaceForComm() { return commNotifications; }
+
+    List<VideoLight> getDisplayedVideos() { return List.copyOf(displayedVideos.values()); }
+
+    void refreshUsers() {
+        if (main_controller != null) main_controller.refreshView();
+    }
+
+    void addVideos(Collection<VideoLight> videos) {
+        for (VideoLight video : videos) {
+            if (video != null && video.getVideoId() != null) displayedVideos.put(video.getVideoId(), video);
+        }
+        refreshVideos();
+    }
+
+    void replaceVideos(Collection<VideoLight> videos) {
+        displayedVideos.clear();
+        addVideos(videos);
+    }
+
+    void removeVideo(UUID id) {
+        displayedVideos.remove(id);
+        refreshVideos();
+    }
+
+    void removeUserVideos(UUID userId) {
+        displayedVideos.values().removeIf(video -> video.getOwner() != null
+                && userId.equals(video.getOwner().getUuid()));
+        refreshVideos();
+    }
+
+    private void refreshVideos() {
+        HomeController home = getController(HomeController.class);
+        if (main_controller != null && home != null) home.refreshView();
+    }
+
+    /** Displays only the received profile fields, never credentials or local collections. */
+    void displayRemoteProfile(UserFull profile) {
+        if (remoteProfileDialog == null) {
+            remoteProfileDialog = new Alert(Alert.AlertType.INFORMATION);
+            remoteProfileDialog.setTitle("Profil utilisateur");
+            if (primaryScene != null && primaryScene.getWindow() != null) {
+                remoteProfileDialog.initOwner(primaryScene.getWindow());
+            }
+        }
+        if (profile == null || profile.getSharedInfo() == null) {
+            remoteProfileDialog.setHeaderText("Profil indisponible");
+            remoteProfileDialog.setContentText("Le profil demandé n'a pas été fourni.");
+        } else {
+            remoteProfileDialog.setHeaderText(profile.getSharedInfo().getPseudo());
+            remoteProfileDialog.setContentText("Prénom : " + profileField(profile.getFirstName())
+                    + "\nNom : " + profileField(profile.getLastName())
+                    + "\nDate de naissance : " + profileField(profile.getBirthDate()));
+        }
+        remoteProfileDialog.show();
+    }
+
+    private static String profileField(Object value) {
+        return value == null || value.toString().isBlank() ? "Non renseigné" : value.toString();
+    }
 
     public void setIData(InterfaceIhmMainCallsDataClient dataCalls) {
         this.dataCalls = dataCalls;
@@ -81,6 +158,10 @@ public class IHMMainManager {
     public void changeView(String fxmlPath) {
         LoadedView view = loadView(fxmlPath);
         primaryScene.setRoot(view.root());
+        if (view.controller() instanceof LoginController) {
+            displayedVideos.clear();
+            if (remoteProfileDialog != null) remoteProfileDialog.close();
+        }
         main_controller = view.controller() instanceof MainController main ? main : null;
         view.controller().refreshView();
     }
