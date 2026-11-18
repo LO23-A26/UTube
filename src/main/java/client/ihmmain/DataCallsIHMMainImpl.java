@@ -1,17 +1,17 @@
 package client.ihmmain;
 
-import common.dataclasses.UserFull;
-import common.dataclasses.UserLight;
-import common.dataclasses.VideoLight;
-import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
-import javafx.application.Platform;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
+import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
+import javafx.application.Platform;
 
 /** Receives Data notifications without implementing persistence or network behavior. */
 public final class DataCallsIHMMainImpl implements InterfaceDataCallsIHMMain {
@@ -38,7 +38,7 @@ public final class DataCallsIHMMainImpl implements InterfaceDataCallsIHMMain {
         Platform.runLater(() -> {
             // Data is the source of truth for connected users, as in the user-panel integration.
             manager.refreshUsers();
-            manager.replaceVideos(copy);
+            manager.addVideos(copy);
         });
     }
 
