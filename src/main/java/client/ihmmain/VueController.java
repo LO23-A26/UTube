@@ -17,7 +17,6 @@ public class VueController extends Controller {
         refreshView();
     }
 
-
     @Override
     public void refreshView() {
         statusLabel.setText("Bienvenue sur UTube");
@@ -28,7 +27,6 @@ public class VueController extends Controller {
     private void openHome() {
         view_manager.showHome();
     }
-
 
     /** "Se déconnecter" in the header: back to the login screen (01). */
     @FXML
