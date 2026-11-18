@@ -59,7 +59,6 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param comment The comment object to be added.
      */
     public void addComment(Comment comment){
-
         VideoFull videoFull = data_client_core.getVideoById(comment.getVideoId());
         if(videoFull != null){
             videoFull.addComment(comment);
@@ -73,7 +72,17 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @param comment The comment object containing updated data.
      */
-    public void editComment(Comment comment){}
+    public void editComment(Comment comment){
+        VideoFull videoFull = data_client_core.getVideoById(comment.getVideoId());
+        if(videoFull != null){
+            Comment old_comment = videoFull.editComment(comment);
+            if(old_comment == null){
+                throw new EditCommentFailed("Can't find the comment");
+            }
+        }else{
+            throw new EditCommentFailed("Can't find the video");
+        }
+    }
 
     /**
      * Adds a rating to a video.
@@ -87,7 +96,6 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         }else{
             throw new AddRatingFailed("Can't find the video");
         }
-
     }
 
     /**
@@ -95,7 +103,17 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @param rating The rating object containing updated data.
      */
-    public void editRating(Rating rating){}
+    public void editRating(Rating rating){
+        VideoFull videoFull = data_client_core.getVideoById(rating.getVideoId());
+        if(videoFull != null){
+            Rating old_rating = videoFull.editRating(rating);
+            if(old_rating == null){
+                throw new EditRatingFailed("Can't find the comment");
+            }
+        }else{
+            throw new EditRatingFailed("Can't find the video");
+        }
+    }
 
     /**
      * Deletes a comment from a video based on video ID and author ID.
