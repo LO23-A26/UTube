@@ -59,7 +59,13 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param comment The comment object to be added.
      */
     public void addComment(Comment comment){
-        data_client_core.getVideoById(comment.getVideoId()).addComment(comment);
+
+        VideoFull videoFull = data_client_core.getVideoById(comment.getVideoId());
+        if(videoFull != null){
+            videoFull.addComment(comment);
+        }else{
+            throw new AddCommentFailed("Can't find the video");
+        }
     }
 
     /**
@@ -75,7 +81,13 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param rating The rating object to be added.
      */
     public void addRating(Rating rating){
-        data_client_core.getVideoById(rating.getVideoId()).addRating(rating);
+        VideoFull videoFull = data_client_core.getVideoById(rating.getVideoId());
+        if(videoFull != null){
+            videoFull.addRating(rating);
+        }else{
+            throw new AddCommentFailed("Can't find the video");
+        }
+
     }
 
     /**
@@ -91,7 +103,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_id The UUID of the video.
      * @param author_uid The UUID of the comment's author.
      */
-    public void deleteComment(UUID video_id, UUID author_uid){}
+    public void deleteComment(UUID video_id, UUID author_uid){
+
+    }
 
     /**
      * Deletes a rating from a video.

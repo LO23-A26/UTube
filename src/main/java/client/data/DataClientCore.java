@@ -68,7 +68,7 @@ public class DataClientCore {
      * @return the videofull
      */
     public VideoFull getVideoById(UUID video_id){
-        return this.user.getUploadedVideos().get(video_id);
+        return this.user.getUploadedVideos().getOrDefault(video_id,null);
     }
 
 	public void setImplInterfaceForICS(IhmShareCallsDataClientImpl impl_interface_for_ICS) {
