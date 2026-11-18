@@ -12,7 +12,7 @@ import javafx.scene.layout.StackPane;
  */
 public class IHMMainCallsIHMShareImpl implements InterfaceIHMMainCallsIHMShare {
 
-    private IHMShareCore core;
+    private final IHMShareCore core;
 
     /**
      * Class constructor. Keep a pointer to IHMShareCore object

@@ -46,11 +46,6 @@ public class CommunicationCallsIHMShareImpl implements InterfaceCommunicationCal
      */
     @Override
     public void downloadDone(String video_path) {
-        Platform.runLater(() -> {
-            DisplayVideoController controller = core.getControllerDisplayVideo();
-            if (controller != null) {
-                controller.downloadDone(video_path);
-            }
-        });
+        Platform.runLater(() -> core.getDownloadVideo().downloadDone(video_path));
     }
 }

@@ -13,6 +13,13 @@ import java.util.Set;
 public interface InterfaceIhmMainCallsDataClient {
 
     /**
+     * Gets the currently connected user.
+     *
+     * @return The full profile of the connected user, or null if none.
+     */
+    public UserFull getUser();
+
+    /**
      * Exports profile data to a specified path.
      *
      * @param destination_path The string path where data should be exported.
