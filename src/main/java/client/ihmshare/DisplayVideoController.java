@@ -1,5 +1,17 @@
 package client.ihmshare;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import common.dataclasses.Comment;
 import common.dataclasses.Rating;
 import common.dataclasses.UserLight;
@@ -17,18 +29,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Controller of the video detail view: screens 05 (not downloaded), 05b (downloaded)
@@ -150,6 +150,9 @@ public class DisplayVideoController extends ShareController {
 
     // ---------- Display ----------
 
+    /**
+     * Refresh the FXML view
+     */
     @Override
     public void refreshView() {
         if (video == null) {
@@ -165,12 +168,17 @@ public class DisplayVideoController extends ShareController {
         description_box.setVisible(false);
         description_box.setManaged(false);
 
-        displayState(state());
+        displayState(getState());
         displayAverage();
         displayMyRating();
         displayReviews();
     }
 
+    /**
+     * Set the display of the video state and action button
+     * 
+     * @param state (State) the state of the video (NOT_DOWNLAODED, DOWNLOADED, OWNER)
+     */
     private void displayState(State state) {
         show(download_button, state == State.NOT_DOWNLOADED);
         show(play_button, state != State.NOT_DOWNLOADED);
@@ -192,8 +200,11 @@ public class DisplayVideoController extends ShareController {
         }
     }
 
+    /**
+     * Display the average rate and the number of ratings and comments
+     */
     private void displayAverage() {
-        Map<UUID, Rating> ratings = ratings();
+        Map<UUID, Rating> ratings = getRatings();
         Map<UUID, Comment> comments = comments();
         double average = ratings.values().stream().mapToInt(Rating::getValue).average().orElse(0);
         average_stars.getChildren().setAll(stars((int) Math.round(average), 18));
@@ -201,6 +212,9 @@ public class DisplayVideoController extends ShareController {
         count_label.setText("· " + ratings.size() + " notes · " + comments.size() + " commentaires");
     }
 
+    /**
+     * Display the rating of the user
+     */
     private void displayMyRating() {
         my_rating_stars.getChildren().clear();
         for (int i = 1; i <= MAX_RATING; i++) {
@@ -215,12 +229,14 @@ public class DisplayVideoController extends ShareController {
         }
     }
 
-    /** Reviews list: the review of the user first ("Mon avis"), then one row per author. */
+    /** 
+     * Display the list of reviews, starting with the user one
+     */
     private void displayReviews() {
         reviews_box.getChildren().clear();
-        Map<UUID, Rating> ratings = ratings();
+        Map<UUID, Rating> ratings = getRatings();
         Map<UUID, Comment> comments = comments();
-        UserLight me = currentUser();
+        UserLight me = getCurrentUser();
         Set<UUID> authors = new LinkedHashSet<>();
         if (me != null && (ratings.containsKey(me.getUuid()) || comments.containsKey(me.getUuid()))) {
             authors.add(me.getUuid());
@@ -233,6 +249,15 @@ public class DisplayVideoController extends ShareController {
         show(no_review_label, authors.isEmpty());
     }
 
+    /**
+     * Create a row for reviews
+     * 
+     * @param author (UUID) the author of the comment
+     * @param rating (Rating) the rate given by the author (or null if the autor give only a comment)
+     * @param comment (Comment) the comment given by the author (or null if the autor give only a rating)
+     * @param me (UserLight) the user
+     * @return (Node) fxml object corresponding to the review
+     */
     private Node reviewRow(UUID author, Rating rating, Comment comment, UserLight me) {
         boolean mine = me != null && me.getUuid().equals(author);
         UserLight user = rating != null ? rating.getAuthor() : comment.getAuthor();
@@ -250,7 +275,7 @@ public class DisplayVideoController extends ShareController {
         if (mine) {
             title.getChildren().add(action("Modifier", this::editMyReview));
             title.getChildren().add(action("Supprimer", this::deleteMyReview));
-        } else if (state() == State.OWNER) {
+        } else if (getState() == State.OWNER) {
             title.getChildren().add(action("Supprimer", () -> deleteReview(author)));
         }
 
@@ -270,6 +295,9 @@ public class DisplayVideoController extends ShareController {
 
     // ---------- Actions ----------
 
+    /**
+     * "Retour" : go to the previous scene
+     */
     @FXML
     private void goBack() {
         core.goBack();
@@ -309,7 +337,7 @@ public class DisplayVideoController extends ShareController {
     /** "Noter" (sequences "Ajout note" and "Modification note"). */
     @FXML
     private void rateVideo() {
-        UserLight me = currentUser();
+        UserLight me = getCurrentUser();
         InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
         if (selected_rating == 0) {
             showError("Choisissez une note entre 1 et 5 étoiles.");
@@ -320,19 +348,19 @@ public class DisplayVideoController extends ShareController {
             return;
         }
         Rating rating = new Rating(me, video.getVideoId(), LocalDate.now(), selected_rating);
-        if (ratings().containsKey(me.getUuid())) {
+        if (getRatings().containsKey(me.getUuid())) {
             comm.editRating(rating, video.getOwner());
         } else {
             comm.addRating(rating, video.getOwner());
         }
-        ratings().put(me.getUuid(), rating);
+        getRatings().put(me.getUuid(), rating);
         refreshView();
     }
 
     /** "Publier" (sequences "Ajout commentaire" and "Modification commentaire"). */
     @FXML
     private void commentVideo() {
-        UserLight me = currentUser();
+        UserLight me = getCurrentUser();
         InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
         String text = comment_field.getText().strip();
         if (text.isEmpty()) {
@@ -361,7 +389,7 @@ public class DisplayVideoController extends ShareController {
 
     /** "Supprimer" on "Mon avis" (sequences "Suppression commentaire" and "Suppression note"). */
     private void deleteMyReview() {
-        UserLight me = currentUser();
+        UserLight me = getCurrentUser();
         InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
         if (me == null || comm == null) {
             showError("La suppression n'est pas disponible pour le moment.");
@@ -370,7 +398,7 @@ public class DisplayVideoController extends ShareController {
         if (!confirm("Supprimer votre avis ?", "Votre note et votre commentaire seront retirés de la vidéo.", "Supprimer")) {
             return;
         }
-        Rating rating = ratings().remove(me.getUuid());
+        Rating rating = getRatings().remove(me.getUuid());
         Comment comment = comments().remove(me.getUuid());
         if (rating != null) {
             comm.deleteRating(rating, video.getOwner());
@@ -383,7 +411,10 @@ public class DisplayVideoController extends ShareController {
         refreshView();
     }
 
-    /** "Supprimer" on the review of someone else: only for the owner (05c, use case 4.2.6bis). */
+    /**
+     * "Supprimer" on the review of someone else: only for the owner (05c, use case 4.2.6bis).
+     * @param author (UUID) the UUID of the review author
+     */
     private void deleteReview(UUID author) {
         InterfaceIhmShareCallsDataClient data = core.getInterfaceFromData();
         if (data == null) {
@@ -396,7 +427,7 @@ public class DisplayVideoController extends ShareController {
         if (comments().remove(author) != null) {
             data.deleteComment(video.getVideoId(), author);
         }
-        if (ratings().remove(author) != null) {
+        if (getRatings().remove(author) != null) {
             data.deleteRating(video.getVideoId(), author);
         }
         refreshView();
@@ -404,8 +435,13 @@ public class DisplayVideoController extends ShareController {
 
     // ---------- Helpers ----------
 
-    State state() {
-        UserLight me = currentUser();
+    /**
+     * Getter of the video state
+     * 
+     * @return (State) the video state
+     */
+    State getState() {
+        UserLight me = getCurrentUser();
         if (me != null && video.getOwner() != null && me.getUuid().equals(video.getOwner().getUuid())) {
             return State.OWNER;
         }
@@ -417,19 +453,29 @@ public class DisplayVideoController extends ShareController {
 
     /** Fills "Ma note" and "Mon commentaire" with the existing review of the user. */
     private void initMyReview() {
-        UserLight me = currentUser();
-        Rating rating = me == null ? null : ratings().get(me.getUuid());
+        UserLight me = getCurrentUser();
+        Rating rating = me == null ? null : getRatings().get(me.getUuid());
         Comment comment = me == null ? null : comments().get(me.getUuid());
         selected_rating = rating == null ? 0 : rating.getValue();
         comment_field.setText(comment == null ? "" : comment.getText());
     }
 
-    private UserLight currentUser() {
+    /**
+     * Getter of the current user
+     * 
+     * @return (UserLight) the current user
+     */
+    private UserLight getCurrentUser() {
         InterfaceIhmShareCallsDataClient data = core == null ? null : core.getInterfaceFromData();
         return data == null ? null : data.getUser();
     }
 
-    private Map<UUID, Rating> ratings() {
+    /**
+     * Getter for ratings
+     * 
+     * @return (Map<UUID, Rating>) list of ratings
+     */
+    private Map<UUID, Rating> getRatings() {
         if (video_full == null) {
             return new HashMap<>();
         }
@@ -439,6 +485,11 @@ public class DisplayVideoController extends ShareController {
         return video_full.getRatings();
     }
 
+    /**
+     * Getter for comments
+     * 
+     * @return (Map<UUID, Comment>) list of comments
+     */
     private Map<UUID, Comment> comments() {
         if (video_full == null) {
             return new HashMap<>();
@@ -449,7 +500,13 @@ public class DisplayVideoController extends ShareController {
         return video_full.getComments();
     }
 
-    /** "Créateur : X · Tags : [a] [b]" */
+    /**
+     * Create a string with video infos
+     * "Créateur : X · Tags : [a] [b]"
+     * 
+     * @param video (VideoLight) the video
+     * @return (String) formatted string with video infos 
+     */
     static String infoText(VideoLight video) {
         List<String> parts = new ArrayList<>();
         if (video.getCreator() != null && !video.getCreator().isBlank()) {
@@ -461,6 +518,13 @@ public class DisplayVideoController extends ShareController {
         return String.join("  ·  ", parts);
     }
 
+    /**
+     * Create the stars fxml for ratings
+     * 
+     * @param filled (int) the number of full star
+     * @param size (double) the size of stars
+     * @return (HBox) fxml object corresponding to the rate 
+     */
     static HBox stars(int filled, double size) {
         HBox box = new HBox(2);
         box.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
@@ -470,6 +534,13 @@ public class DisplayVideoController extends ShareController {
         return box;
     }
 
+    /**
+     * Create a star
+     * 
+     * @param full (boolean) true if the star is fully filled
+     * @param size (double) size of the star
+     * @return (ImageView) fxml object corresponding to 
+     */
     private static ImageView star(boolean full, double size) {
         String icon = full ? "/assets/icons/etoile-pleine.png" : "/assets/icons/etoile-vide.png";
         ImageView star = new ImageView(new Image(DisplayVideoController.class.getResource(icon).toExternalForm()));
@@ -479,6 +550,11 @@ public class DisplayVideoController extends ShareController {
         return star;
     }
 
+    /**
+     * Create an avatar
+     * 
+     * @return (Label) fxml object corresponding to the avatar
+     */
     private static Label avatar() {
         Label avatar = new Label();
         avatar.getStyleClass().add("avatar");
@@ -487,12 +563,25 @@ public class DisplayVideoController extends ShareController {
         return avatar;
     }
 
+    /**
+     * Create a label
+     * 
+     * @param text (String) text to show in the label
+     * @return (Label) fxml object corresponding to the label
+     */
     private static Label smallLabel(String text) {
         Label label = new Label(text);
         label.getStyleClass().add("text-small");
         return label;
     }
 
+    /**
+     * Create an action hyperlink
+     * 
+     * @param text (String) text to show
+     * @param action (Runnable) action to do onclick
+     * @return (Hyperlink) fxml object corresponding to the link
+     */
     private static Hyperlink action(String text, Runnable action) {
         Hyperlink link = new Hyperlink(text);
         link.getStyleClass().add("secondary");
@@ -500,6 +589,12 @@ public class DisplayVideoController extends ShareController {
         return link;
     }
 
+    /**
+     * Change an fxml Node visibility
+     * 
+     * @param node (Node) the fxml node to change
+     * @param visible (boolean) the visibility 
+     */
     private static void show(Node node, boolean visible) {
         node.setVisible(visible);
         node.setManaged(visible);
