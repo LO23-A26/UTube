@@ -10,7 +10,8 @@ import common.interfaces.IHMShare.InterfaceDataCallsIHMShare;
  */
 public class DataCallsIHMShareImpl implements InterfaceDataCallsIHMShare {
 
-    private IHMShareCore core;
+    @SuppressWarnings("unused")
+    private final IHMShareCore core;
 
     /**
      * Class constructor. Keep a pointer to IHMShareCore object
