@@ -1,11 +1,16 @@
 package client.ihmmain;
 
 import common.dataclasses.UserFull;
+import common.dataclasses.VideoLight;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Set;
 
 /**
  * Displays the selected user's profile in the content area of the main view.
@@ -16,6 +21,7 @@ import java.time.Period;
 public class UserDetailController extends Controller {
 
     private static final int INITIALS_LENGTH = 2;
+    private static final int CARD_SPACING = 6;
 
     @FXML
     private Label avatar_label;
@@ -23,6 +29,10 @@ public class UserDetailController extends Controller {
     private Label pseudo_label;
     @FXML
     private Label identity_label;
+    @FXML
+    private TilePane videos_container;
+    @FXML
+    private Label empty_label;
 
     private UserFull profile;
 
@@ -47,6 +57,43 @@ public class UserDetailController extends Controller {
         avatar_label.setText(pseudo.substring(0, Math.min(INITIALS_LENGTH, pseudo.length())).toUpperCase());
         identity_label.setText(formatIdentity(profile.getFirstName(), profile.getLastName(),
                 profile.getBirthDate(), LocalDate.now()));
+        displayVideos(profile.getSharedVideos());
+    }
+
+    /**
+     * Replaces the displayed video cards and shows an empty message when needed.
+     *
+     * @param videos the shared videos to display, or null if none are available
+     */
+    private void displayVideos(Set<VideoLight> videos) {
+        videos_container.getChildren().clear();
+        if (videos == null || videos.isEmpty()) {
+            empty_label.setVisible(true);
+            return;
+        }
+        empty_label.setVisible(false);
+        for (VideoLight video : videos) {
+            videos_container.getChildren().add(createVideoCard(video));
+        }
+    }
+
+    /**
+     * Creates a card showing a shared video's title and tags.
+     *
+     * @param video the video to display
+     * @return the video card
+     */
+    private static VBox createVideoCard(VideoLight video) {
+        Label title = new Label(video.getTitle());
+        title.getStyleClass().add("label-strong");
+        title.setStyle("-fx-font-size: 15px;");
+        title.setTooltip(new Tooltip(video.getTitle()));
+        Label tags = new Label("Tags : " + HomeController.formatTags(video.getTags()));
+        tags.getStyleClass().add("text-small");
+        // TODO: VideoLight has no rating; omit the mockup's "★ x/5" line until the team decides its source.
+        VBox card = new VBox(CARD_SPACING, title, tags);
+        card.getStyleClass().add("card");
+        return card;
     }
 
     /**
