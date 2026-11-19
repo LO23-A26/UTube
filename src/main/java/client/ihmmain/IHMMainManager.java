@@ -37,6 +37,8 @@ public class IHMMainManager {
     public static final String HOME_VIEW = "/client/ihmmain/home-view.fxml";
     public static final String PROFILE_VIEW = "/client/ihmmain/profile-view.fxml";
     public static final String CREATE_PROFILE_VIEW = "/client/ihmmain/create-profile-view.fxml";
+    /** Path of the user detail screen displayed in the main view. */
+    public static final String USER_DETAIL_VIEW = "/client/ihmmain/user-detail-view.fxml";
     public static final String STYLESHEET = "/assets/styles/utube.css";
 
 
@@ -199,6 +201,16 @@ public class IHMMainManager {
         LoadedView view = loadView(fxml_path);
         main_controller.setContent(view.root());
         view.controller().refreshView();
+    }
+
+    /**
+     * Opens the user detail screen and displays the selected profile.
+     *
+     * @param profile the user profile to display
+     */
+    public void showUserDetail(UserFull profile) {
+        showContent(USER_DETAIL_VIEW);
+        getController(UserDetailController.class).displayProfile(profile);
     }
 
     /** Gives access to the already created controller of a screen, to communicate between screens. */
