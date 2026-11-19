@@ -16,7 +16,7 @@ public class NotifyDisconnectionMessage implements ClientMessage {
     @Override
     public void handle(CommClientController controller) {
         // this client can no longer be contacted directly
-        controller.removeClient(userId);
+        controller.clientConnectionsManager.removeClient(userId);
         // TODO: remove the user (and their videos) from the local index through the
         // data client, once the data team has provided a method taking a UUID.
         System.out.println("[Comm] user disconnected: " + userId);   // TEMP

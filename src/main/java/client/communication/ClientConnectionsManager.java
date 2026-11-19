@@ -21,7 +21,7 @@ public class ClientConnectionsManager {
      *
      * @param client the client to remember
      */
-    public void connectNewClient(RemoteClient client) {
+    public void addClient(RemoteClient client) {
         if (client == null || client.getUuid() == null || client.getIP() == null) {
             return;
         }
@@ -34,7 +34,7 @@ public class ClientConnectionsManager {
      * @param uuid the UUID of the client to forget
      * @return true if the client was known, that is if this call actually forgot it
      */
-    public boolean disconnectClient(UUID uuid) {
+    public boolean removeClient(UUID uuid) {
         if (uuid == null) {
             return false;
         }

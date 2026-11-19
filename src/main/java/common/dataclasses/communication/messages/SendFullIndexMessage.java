@@ -28,7 +28,7 @@ public class SendFullIndexMessage implements ClientMessage {
     @Override
     public void handle(CommClientController controller) {
         for (RemoteClient peer : peers) {
-            controller.addClient(peer.getIP(), peer.getPort(), peer.getUuid());
+            controller.clientConnectionsManager.addClient(peer);
         }
 
         System.getLogger(SendFullIndexMessage.class.getName()).log(System.Logger.Level.DEBUG,
