@@ -1,12 +1,16 @@
 package client.ihmmain;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
@@ -123,7 +127,7 @@ public class MainController extends Controller {
         }
     }
 
-    private static HBox createUserRow(String pseudo) {
+    private HBox createUserRow(String pseudo) {
         Label avatar = new Label(pseudo.substring(0, Math.min(2, pseudo.length())).toUpperCase());
         avatar.getStyleClass().add("avatar");
         avatar.setMinSize(32, 32);
@@ -133,6 +137,35 @@ public class MainController extends Controller {
         online.setStyle("-fx-font-style: italic;");
         HBox row = new HBox(avatar, new Label(pseudo), online);
         row.getStyleClass().add("user-row");
+        row.setOnMouseClicked(event -> openUserDetail(pseudo));
+        row.setCursor(Cursor.HAND);
         return row;
+    }
+
+    /**
+     * Opens the user detail screen for the selected user.
+     *
+     * @param pseudo the selected user's pseudo
+     */
+    private void openUserDetail(String pseudo) {
+        viewManager.showUserDetail(createPlaceholderProfile(pseudo));
+    }
+
+    /**
+     * Creates a placeholder profile with three shared videos.
+     *
+     * @param pseudo the user's pseudo
+     * @return the placeholder profile
+     */
+    private static UserFull createPlaceholderProfile(String pseudo) {
+        // TODO: Replace with getIData().requestRemoteProfile(owner, getIData().getUser().getSharedInfo()) once Data
+        // implements it and Comm can register the IHM-Main callback; the profile will then arrive through displayRemoteProfile.
+        String first_name = pseudo.substring(0, 1).toUpperCase() + pseudo.substring(1);
+        UserFull profile = new UserFull(pseudo, "", first_name, "Martin", LocalDate.of(2004, 5, 12));
+        profile.setSharedVideos(Set.of(
+                new VideoLight(profile.getSharedInfo(), "Présentation UTube", pseudo, Set.of("lo23", "projet")),
+                new VideoLight(profile.getSharedInfo(), "Git : le rebase", pseudo, Set.of("git", "tuto")),
+                new VideoLight(profile.getSharedInfo(), "Recette de crêpes", pseudo, Set.of("cuisine"))));
+        return profile;
     }
 }
