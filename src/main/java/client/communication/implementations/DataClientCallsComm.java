@@ -1,5 +1,6 @@
 package client.communication.implementations;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
@@ -27,9 +28,18 @@ public class DataClientCallsComm implements InterfaceDataCallsComm {
         this.commClientController = commClientController;
     }
 
+    // connects the client to the server and send its profile
     @Override
     public void sendProfileInfo(String ip_address, int port, List<VideoLight> video_list, String pseudo) { // Should send a video Set instead
-        // Create hard coded config for now
+        // listening for the other clients first so that we know the port to announce to the server
+        int listeningPort;
+        try {
+            listeningPort = commClientController.startClientListeningService();
+        } catch (IOException ex) {
+            System.err.println("[DataClientCallsComm] Cannot listen for the other clients: " + ex.getMessage());
+            return;
+        }
+
         InetAddress server_ip;
         try {
             server_ip = InetAddress.getByName(ip_address);
@@ -41,11 +51,10 @@ public class DataClientCallsComm implements InterfaceDataCallsComm {
         
         // creates socket with server and sends UUID
         commClientController.initializeServerConnexion(config);
-        // Send profile to server
+        // Send profile to server with the port on which the other clients can reach
         ServerMessage message = new ConnectionRequestMessage( 
             commClientController.interfaceCommDataClient.getMyProfile().getSharedInfo(),
-            ip_address,
-            port,
+            listeningPort,
             new HashSet<>(video_list)  // Temporary conversion waiting for parameter type to change
         );
         commClientController.serverConnection.sendMessage(message); 

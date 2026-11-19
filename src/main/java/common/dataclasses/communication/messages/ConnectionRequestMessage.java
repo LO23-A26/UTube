@@ -15,15 +15,13 @@ import server.communication.CommServerController;
 public class ConnectionRequestMessage implements ServerMessage {
     private final UserLight new_user;
     private final Set<VideoLight> new_user_videos;
-    private final String new_user_ip; // will be used in the new user notification
     private final int new_user_port;
 
     /**
      * Constructor
      */
-    public ConnectionRequestMessage(UserLight new_user, String new_user_ip, int new_user_port, Set<VideoLight> new_user_videos) {
+    public ConnectionRequestMessage(UserLight new_user, int new_user_port, Set<VideoLight> new_user_videos) {
         this.new_user = new_user;
-        this.new_user_ip = new_user_ip;
         this.new_user_port = new_user_port;
         this.new_user_videos = new_user_videos;
     }
@@ -37,15 +35,15 @@ public class ConnectionRequestMessage implements ServerMessage {
     @Override
     public void handle(CommServerController controller, ActiveClient sender) {
 
-        // Remembers where the client listens for the other clients
-        if (new_user_ip != null && !new_user_ip.isBlank()) {
-            try {
-                InetAddress ip = InetAddress.getByName(new_user_ip);
-                sender.setRemoteClient(new RemoteClient(ip, new_user_port, new_user.getUuid()));
-            } catch (UnknownHostException ex) {
-                System.getLogger(ConnectionRequestMessage.class.getName()).log(System.Logger.Level.WARNING,
-                        "IP address missing or not valid " + new_user.getUuid() + " : " + new_user_ip);
-            }
+        // the IP address of the new client is the one the server sees on the connection
+        String new_user_ip = sender.getIpAddress();
+
+        try {
+            InetAddress ip = InetAddress.getByName(new_user_ip);
+            sender.setRemoteClient(new RemoteClient(ip, new_user_port, new_user.getUuid()));
+        } catch (UnknownHostException ex) {
+            System.getLogger(ConnectionRequestMessage.class.getName()).log(System.Logger.Level.WARNING,
+                    "IP address not valid " + new_user.getUuid() + " : " + new_user_ip);
         }
 
         Index index = controller.interfaceCommServerCallsDataServer.registerUserAndGetIndexStructure(new_user, new_user_videos);
