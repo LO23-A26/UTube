@@ -7,6 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
 <!-- Mockup v2 · 11 Détail utilisateur, displayed in the content area of main-view.fxml -->
@@ -30,5 +31,9 @@
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
         </HBox>
+        <Label text="Vidéos partagées" styleClass="section-title"/>
+        <TilePane fx:id="videos_container" hgap="16" vgap="16" prefColumns="4" prefTileWidth="222"/>
+        <Label fx:id="empty_label" text="Aucune vidéo partagée." styleClass="text-secondary"
+               visible="false" managed="${empty_label.visible}"/>
     </VBox>
 </ScrollPane>
