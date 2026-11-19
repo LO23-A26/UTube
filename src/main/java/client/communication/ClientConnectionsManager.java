@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import common.dataclasses.communication.messages.DownloadVideoRequestMessage;
+
 /**
  * The other clients connected (P2P)
  */
@@ -52,5 +54,15 @@ public class ClientConnectionsManager {
             return null;
         }
         return availableClients.get(uuid);
+    }
+
+    public void openConnectionToClient(RemoteClient client) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'openConnectionToClient'");
+    }
+
+    public void sendToClient(RemoteClient client, DownloadVideoRequestMessage videoDownloadRequestMessage) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'sendToClient'");
     }
 }

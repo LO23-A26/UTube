@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.util.UUID;
 import java.io.IOException;
 
+import common.dataclasses.communication.messages.DownloadVideoRequestMessage;
 import common.interfaces.IHMShare.InterfaceCommunicationCallsIHMShare;
 import common.interfaces.comm.*;
 import common.interfaces.data.InterfaceCommClientCallsDataClient;
@@ -109,6 +110,23 @@ public class CommClientController {
             clientListeningService.startListening();
         }
         return clientListeningService.getPort();
+    }
+
+    /**
+     * Requests a video download from another client :
+     *  - opens the connection with the client
+     *  - sends the request to the client
+     * @param videoId
+     * @param clientId
+     */
+    public void requestVideoDownloadFromClient(UUID videoId, UUID clientId) {
+        RemoteClient client = clientConnectionsManager.getClient(clientId);
+        if (client == null) {
+            System.err.println("[CommClientController] Cannot request video download: client with UUID " + clientId + " is not known.");
+            return;
+        }
+        clientConnectionsManager.openConnectionToClient(client);
+        clientConnectionsManager.sendToClient(client, new DownloadVideoRequestMessage());
     }
 
     /**
