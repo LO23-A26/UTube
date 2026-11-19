@@ -2,6 +2,7 @@ package client.communication;
 
 import java.net.InetAddress;
 import java.util.UUID;
+import java.io.IOException;
 
 import common.interfaces.IHMShare.InterfaceCommunicationCallsIHMShare;
 import common.interfaces.comm.*;
@@ -18,6 +19,7 @@ import client.communication.implementations.*;
  */
 public class CommClientController {
     private final ClientConnectionsManager clientConnectionsManager; // the other clients, available for a direct connection
+    private ClientListeningService clientListeningService;
     public ServerConnection serverConnection;
 
     /**
@@ -95,6 +97,18 @@ public class CommClientController {
     public void initializeServerConnexion(ServerConfig config) {
         this.serverConnection = new ServerConnection(config, this);
         serverConnection.start();
+    }
+
+    /**
+     * Starts listening for direct connections from the other clients
+     * @return the port on which this client listens for the other clients
+     */
+    public int startClientListeningService() throws IOException {
+        if (clientListeningService == null) {
+            clientListeningService = new ClientListeningService(this);
+            clientListeningService.startListening();
+        }
+        return clientListeningService.getPort();
     }
 
     /**

@@ -18,22 +18,23 @@ import common.dataclasses.communication.messages.ShareVideoMessage;
  * Launches a communication client with mocked modules, to test the client-server or client-client exchanges by hand
  * Program arguments: name port [mode] [delay]
  * - name:  pseudo of the user (Anna, Bob, etc)
- * - port:  port announced to the server, where the other clients can reach this client
- * - mode:  optional action to perform: "share", "delete" or "leave"
- * - delay: optional, seconds to wait before the action, to let the other clients connect (default: 5)
+ * - port:  no longer used
+ * - mode:  (optional) action to perform: "share", "delete" or "leave"
+ * - delay: (optional) seconds to wait before the action, to let the other clients connect
  */
-
-
 
 public class ClientLauncher {
 
+    // address of the server started by ServerLauncher
+    private static final String SERVER_IP = "127.0.0.1";
+    private static final int SERVER_PORT = 9000;
+
     public static void main(String[] args) throws InterruptedException {
         String name = args.length > 0 ? args[0] : "John Doe";
-        int port    = args.length > 1 ? Integer.parseInt(args[1]) : 9999;
         String mode = args.length > 2 ? args[2] : "";
         int delay   = args.length > 3 ? Integer.parseInt(args[3]) : 5; // optional: seconds to wait before the share/delete/leave action
 
-        System.out.println("[ClientLauncher:" + name + "] Starting on port " + port);
+        System.out.println("[ClientLauncher:" + name + "] Starting ");
 
         CommClientController controller = new CommClientController();
         controller.setInterfaceCommIHMShare(new MockCommunicationCallsIHMShare());
@@ -46,7 +47,7 @@ public class ClientLauncher {
         videos.add(new VideoLight(owner, name + " - video 1", name, Set.of("test", "comm")));
         videos.add(new VideoLight(owner, name + " - video 2", name, Set.of("test")));
 
-        controller.getDataCallsComm().sendProfileInfo("127.0.0.1", port, videos, name);
+        controller.getDataCallsComm().sendProfileInfo(SERVER_IP, SERVER_PORT, videos, name);
         startDisplayingKnownClients(name, controller, dataMock);
 
         if (mode.equals("share")) {
