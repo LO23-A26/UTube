@@ -11,6 +11,7 @@ class IHMMainManagerTest {
         assertNotNull(IHMMainManager.class.getResource(IHMMainManager.MAIN_VIEW));
         assertNotNull(IHMMainManager.class.getResource(IHMMainManager.LOGIN_VIEW));
         assertNotNull(IHMMainManager.class.getResource(IHMMainManager.HOME_VIEW));
+        assertNotNull(IHMMainManager.class.getResource(IHMMainManager.USER_DETAIL_VIEW));
         assertNotNull(IHMMainManager.class.getResource(IHMMainManager.STYLESHEET));
     }
 }
