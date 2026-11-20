@@ -1,6 +1,7 @@
 package client.communication.implementations;
 
 import java.io.IOException;
+import static java.lang.System.Logger.Level.ERROR;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
@@ -21,6 +22,8 @@ import common.interfaces.comm.InterfaceDataCallsComm;
  */
 public class DataClientCallsComm implements InterfaceDataCallsComm {
 
+    private static final System.Logger logger = System.getLogger(DataClientCallsComm.class.getName());
+
     private final CommClientController commClientController;
 
     // Constructor, takes in the comm client controller
@@ -36,7 +39,7 @@ public class DataClientCallsComm implements InterfaceDataCallsComm {
         try {
             listeningPort = commClientController.startClientListeningService();
         } catch (IOException ex) {
-            System.err.println("[DataClientCallsComm] Cannot listen for the other clients: " + ex.getMessage());
+            logger.log(ERROR, "Cannot listen for the other clients: ", ex);
             return;
         }
 
@@ -44,7 +47,7 @@ public class DataClientCallsComm implements InterfaceDataCallsComm {
         try {
             server_ip = InetAddress.getByName(ip_address);
         } catch (UnknownHostException ex) {
-            System.getLogger(DataClientCallsComm.class.getName()).log(System.Logger.Level.ERROR, (String) "Ip invalide", ex);
+            logger.log(ERROR, "Ip invalide", ex);
             return;
         }
         ServerConfig config = new ServerConfig(server_ip, port);

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.INFO;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,6 +22,7 @@ import java.util.concurrent.Semaphore;
 public class NewConnectionListeningThread extends Thread {
 
     public int port = 9000;
+    private static final System.Logger logger = System.getLogger(NewConnectionListeningThread.class.getName());
 
     private final ConnectionsManager connectionsManager;
     private final CommServerController serverController;
@@ -46,7 +49,7 @@ public class NewConnectionListeningThread extends Thread {
             serverSocket.bind(new InetSocketAddress(port), BACKLOG);
 
             try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-                System.out.println("Listening on " + serverSocket.getLocalSocketAddress());
+                logger.log(INFO, "Listening on {0}", serverSocket.getLocalSocketAddress());
 
                 while (true) {
                     Socket socket = serverSocket.accept();
@@ -54,7 +57,7 @@ public class NewConnectionListeningThread extends Thread {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Unable to start listening thread: " + e.getMessage());
+            logger.log(ERROR, "Unable to start listening thread: {0}", e.getMessage());
         }
     }
 
@@ -89,6 +92,7 @@ public class NewConnectionListeningThread extends Thread {
      * Recieves the first message (the UUID of the client) and starts the
      * handeling loop for this client
      */
+    @SuppressWarnings("ConvertToTryWithResources")
     private void handleNewConnection(Socket socket) {
         ObjectOutputStream writer;
         ObjectInputStream reader;
@@ -97,7 +101,7 @@ public class NewConnectionListeningThread extends Thread {
             writer.flush();
             reader = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
-            System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            logger.log(ERROR, (String) null, ex);
             closeQuietly(socket);
             return;
         }
@@ -107,16 +111,16 @@ public class NewConnectionListeningThread extends Thread {
         try {
             uuid = (UUID) reader.readObject(); // Est ce qu'on reçoit l'UUID comme ça ou dans un autre message ?
             if (uuid == null) {
-                System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) "UUID sent is null. Closing connection");
+                logger.log(ERROR, "UUID sent is null. Closing connection");
                 socket.close();
                 return;
             }
         } catch (ClassNotFoundException ex) {
-            System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) "Object sent at initialization was not a UUID", ex);
+            logger.log(System.Logger.Level.ERROR, "Object sent at initialization was not a UUID", ex);
             closeQuietly(socket);
             return;
         } catch (IOException ex) {
-            System.getLogger(NewConnectionListeningThread.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            logger.log(ERROR, (String) null, ex);
             closeQuietly(socket);
             return;
         }
