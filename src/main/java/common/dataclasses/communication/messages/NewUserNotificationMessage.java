@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import client.communication.CommClientController;
+import client.communication.RemoteClient;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.ClientMessage;
@@ -43,7 +44,7 @@ public class NewUserNotificationMessage implements ClientMessage {
             return;
         }
         
-        controller.addClient(ip, new_user_port, new_user.getUuid());
+        controller.clientConnectionsManager.addClient(new RemoteClient(ip, new_user_port, new_user.getUuid()));
         controller.interfaceCommDataClient.saveNewUser(this.new_user,new ArrayList<>(this.new_user_videos));
 
     }

@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import common.dataclasses.communication.messages.DownloadVideoRequestMessage;
+
 /**
  * The other clients connected (P2P)
  */
@@ -21,7 +23,7 @@ public class ClientConnectionsManager {
      *
      * @param client the client to remember
      */
-    public void connectNewClient(RemoteClient client) {
+    public void addClient(RemoteClient client) {
         if (client == null || client.getUuid() == null || client.getIP() == null) {
             return;
         }
@@ -34,7 +36,7 @@ public class ClientConnectionsManager {
      * @param uuid the UUID of the client to forget
      * @return true if the client was known, that is if this call actually forgot it
      */
-    public boolean disconnectClient(UUID uuid) {
+    public boolean removeClient(UUID uuid) {
         if (uuid == null) {
             return false;
         }
@@ -52,5 +54,15 @@ public class ClientConnectionsManager {
             return null;
         }
         return availableClients.get(uuid);
+    }
+
+    public void openConnectionToClient(RemoteClient client) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'openConnectionToClient'");
+    }
+
+    public void sendToClient(RemoteClient client, DownloadVideoRequestMessage videoDownloadRequestMessage) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'sendToClient'");
     }
 }

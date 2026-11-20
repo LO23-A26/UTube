@@ -89,7 +89,7 @@ public class ClientLauncher {
                     if (uuid.equals(dataMock.getMyUuid())) {
                         return;
                     }
-                    RemoteClient remote = controller.getClient(uuid);
+                    RemoteClient remote = controller.clientConnectionsManager.getClient(uuid);
                     text.append("\n   - ").append(pseudo).append(" -> ").append(remote == null
                             ? "forgotten"
                             : remote.getIP().getHostAddress() + ":" + remote.getPort());
