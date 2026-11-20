@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import client.communication.CommClientController;
-import client.communication.RemoteClient;
 import comm_integration_tests.mock_implementations.MockCommClientCallsDataClient;
 import comm_integration_tests.mock_implementations.MockCommunicationCallsIHMShare;
 import common.dataclasses.UserLight;
@@ -89,10 +88,7 @@ public class ClientLauncher {
                     if (uuid.equals(dataMock.getMyUuid())) {
                         return;
                     }
-                    RemoteClient remote = controller.clientConnectionsManager.getClient(uuid);
-                    text.append("\n   - ").append(pseudo).append(" -> ").append(remote == null
-                            ? "forgotten"
-                            : remote.getIP().getHostAddress() + ":" + remote.getPort());
+                    text.append("\n").append("   - ").append(pseudo).append(" -> ").append(controller.clientConnectionsManager.getClientString(uuid));
                 });
                 System.out.println(text);
             }
