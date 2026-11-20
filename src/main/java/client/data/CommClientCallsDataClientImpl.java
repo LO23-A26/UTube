@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 /**
  * Implementation of the Comm Client calls Dataclient interface
@@ -148,7 +149,8 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @param video_id The UUID of the video.
      * @param requester_id The UUID of the user requesting the video.
-     * @return Byte array containing video data.
+     * @return Byte array containing serialized video object and mp4
+     * byte array look like : mp4_bytes -> arbitrary_separator_of_1000_bytes_of_value_-128 -> video_object_bytes
      */
     public byte[] askVideo(UUID video_id, UUID requester_id){
 
@@ -166,7 +168,8 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
             throw new RuntimeException("Error : the path of the video is not supported.");
         }
 
-        // Serialisation of mp4 and v
+        // Serialization of mp4 and video object
+        // 1) Serialization of mp4
         File file = new File(v.getFilePath());
         byte[] mp4_bytes;
         try {
@@ -176,6 +179,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
             throw new RuntimeException(e);
         }
 
+        // 2) Serialization of video object
         String video_title = v.getSharedInfo().getTitle();
 
         FileOutputStream fos;
@@ -214,17 +218,16 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         int length_mp4_bytes = mp4_bytes.length;
         int length_object_bytes = video_object_bytes.length;
 
-
+        // Final tab with both mp4 and VideoFull object
         byte[] video_object_and_mp4_bytes = new byte[length_mp4_bytes + length_object_bytes + 100];
         for (int i = 0 ; i < length_mp4_bytes ; i++){
             video_object_and_mp4_bytes[i] = mp4_bytes[i];
         }
-
-        // Separateur arbitraire : 100 * "-128"
-        for (int i = length_mp4_bytes ; i < length_mp4_bytes + 100 ; i++){
+        // Arbitrary separator : 1000 bytes of value -128
+        for (int i = length_mp4_bytes ; i < length_mp4_bytes + 1000 ; i++){
             video_object_and_mp4_bytes[i] = -128;
         }
-        for (int i = length_mp4_bytes + 100 ; i < length_object_bytes ; i++){
+        for (int i = length_mp4_bytes + 1000 ; i < length_object_bytes ; i++){
             video_object_and_mp4_bytes[i] = video_object_bytes[i];
         }
 
@@ -238,12 +241,121 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @return VideoLight object representing the saved video.
      */
     public VideoLight saveVideo(byte[] video_file){
-        // Il faut changer l'id du VideoFull (generation aleatoire)
-        // Download video: save la video dans le dossier local de l'user (voir ProfileSaver)
-        // Deserialiser et telecharger le path
-        // Deserialiser l'id
-        // SaveLocally(VideoFull video) ?
-        return null;
+
+        // Recovery of mp4 bytes and video object bytes in 2 tables
+        byte[] mp4_bytes;
+        byte[] video_object_bytes;
+
+        // Finding of the separator location
+        int start = 0;
+        int start_separatory = 0;
+        boolean check = false;
+        for (int i = 0 ; i < video_file.length ; i++){
+            if (video_file[i] == -128){
+                start = i;
+                check = true;
+                for (int j = start ; j < start + 1000 ; j++){
+                    if (video_file[j] != -128){
+                        check = false;
+                    }
+                }
+                if (check){
+                    start_separatory = start;
+                    break;
+                }
+            }
+        }
+
+        // Filling of the 2 tables
+        mp4_bytes = new byte[start_separatory];
+        video_object_bytes = new byte[video_file.length - 1000 - start_separatory];
+
+        for (int i = 0 ; i < start_separatory ; i++){
+            mp4_bytes[i] = video_file[i];
+        }
+
+        for (int i = 0 ; i < video_file.length - 1000 - start_separatory ; i++){
+            video_object_bytes[i] = video_file[i + start_separatory + 1000];
+        }
+
+        // Deserialization and saving of the video object
+        FileOutputStream file_containing_video_object_bytes;
+        try {
+            file_containing_video_object_bytes = new FileOutputStream("video_object_bytes.txt");
+        }
+        catch(FileNotFoundException e){
+            throw new RuntimeException(e);
+        }
+
+        try {
+            file_containing_video_object_bytes.write(video_object_bytes);
+        }
+        catch(IOException e){
+            throw new RuntimeException(e);
+        }
+
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream("video_object_bytes.txt");
+        }
+        catch (FileNotFoundException e){
+            throw new RuntimeException(e);
+        }
+
+        ObjectInputStream objectInputStream;
+        try {
+            objectInputStream = new ObjectInputStream(fileInputStream);
+        }
+        catch(IOException e){
+            throw new RuntimeException(e);
+        }
+
+        VideoFull deserialized_video;
+        try {
+            deserialized_video = (VideoFull) objectInputStream.readObject();
+        }
+        catch (ClassNotFoundException | IOException e){
+            throw new RuntimeException(e);
+        }
+
+        String outputFilePath = ProfileSaver.user_dir + deserialized_video.getSharedInfo().getTitle() + ".mp4";
+
+        // Creation of the corresponding VideoLight object
+        VideoLight saved_video = new VideoLight(
+                UUID.randomUUID(),
+                data_client_core.getUser().getSharedInfo(),
+                deserialized_video.getSharedInfo().getTitle(),
+                deserialized_video.getSharedInfo().getCreator(),
+                deserialized_video.getSharedInfo().getTags()
+        );
+
+        // Creation of new VideoFull object from deserialized one and VideoLight new object
+        VideoFull saved_video_full = new VideoFull(
+                saved_video,
+                outputFilePath,
+                deserialized_video.getVideoFormat(),
+                deserialized_video.getRatings(),
+                deserialized_video.getComments()
+        );
+
+        data_client_core.saveLocally(saved_video_full);
+
+        // Deserialization and saving of the mp4
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(outputFilePath);
+        }
+        catch (FileNotFoundException e){
+            throw new RuntimeException(e);
+        }
+        try {
+            fos.write(mp4_bytes);
+        }
+        catch (IOException e){
+            throw new RuntimeException(e);
+        }
+
+        return saved_video;
     }
 
     /**
