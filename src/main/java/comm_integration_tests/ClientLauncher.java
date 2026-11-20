@@ -19,7 +19,7 @@ import comm_integration_tests.messages.TestMessage;
  * Program arguments: name port [mode] [delay]
  * - name:  pseudo of the user (Anna, Bob, etc)
  * - port:  no longer used
- * - mode:  (optional) action to perform: "share", "delete", "leave" or "message"
+ * - mode:  (optional) action to perform: "share", "delete", "details", "leave" or "message"
  * - delay: (optional) seconds to wait before the action, to let the other clients connect
  */
 
@@ -71,6 +71,9 @@ public class ClientLauncher {
                 controller.clientConnectionsManager.sendToClient(uuid, new TestMessage(name));
                 System.out.println("[ClientLauncher:" + name + "] Message sent to " + pseudo);
             });
+        } else if (mode.equals("details")) {
+            Thread.sleep(delay * 1000L);
+            askDetailsOfAVideo(name, controller, dataMock);
         } else if (args.length > 2 && args[2].equals("leave")) {
             Thread.sleep(delay * 1000L);
             controller.serverConnection.disconnect();
@@ -80,6 +83,24 @@ public class ClientLauncher {
 
 
         Thread.currentThread().join();
+    }
+
+    /**
+     * asks the first other known client for the details of a video (giveDetailsRequest)
+     * the details are then displayed by the mock of IHM Share
+     */
+    private static void askDetailsOfAVideo(String name, CommClientController controller, MockCommClientCallsDataClient dataMock) {
+        for (var user : dataMock.getKnownUsers().entrySet()) {
+            if (!user.getKey().equals(dataMock.getMyUuid())) {
+                UserLight me = new UserLight(dataMock.getMyUuid(), name, null);
+                UserLight owner = new UserLight(user.getKey(), user.getValue(), null);
+                UUID videoId = UUID.randomUUID();
+                System.out.println("[ClientLauncher:" + name + "] Asking " + user.getValue() + " for the details of video " + videoId);
+                controller.getDataCallsComm().giveDetailsRequest(me, owner, videoId);
+                return;
+            }
+        }
+        System.out.println("[ClientLauncher:" + name + "] No other client known: start another one first");
     }
 
     /**
