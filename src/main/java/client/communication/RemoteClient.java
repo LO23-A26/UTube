@@ -74,7 +74,7 @@ public class RemoteClient implements Serializable { // Other clients connected t
      * @param socket
      * @param clientController
      */
-    public synchronized void connect(Socket socket, CommClientController clientController) {
+    public synchronized void initiateConnection(Socket socket) {
         if (socket == null) {
             return;
         }
@@ -145,6 +145,18 @@ public class RemoteClient implements Serializable { // Other clients connected t
             disconnect();
         }
     }
+
+    /**
+     * Setter for the client controller. 
+     * Must be called inside of ClientConnectionsManager.addClient()
+     * @see ClientConnectionsManager#addClient(RemoteClient)
+     * @param clientController
+     */
+    public void setClientController(CommClientController clientController) {
+        this.clientController = clientController;
+    }
+
+    
 
     /**
      * Starts the receiving thread that listens for messages from the remote client.
