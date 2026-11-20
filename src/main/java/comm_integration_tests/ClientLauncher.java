@@ -12,13 +12,14 @@ import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.messages.DeleteVideoMessage;
 import common.dataclasses.communication.messages.ShareVideoMessage;
+import comm_integration_tests.messages.TestMessage;
 
 /**
  * Launches a communication client with mocked modules, to test the client-server or client-client exchanges by hand
  * Program arguments: name port [mode] [delay]
  * - name:  pseudo of the user (Anna, Bob, etc)
  * - port:  no longer used
- * - mode:  (optional) action to perform: "share", "delete" or "leave"
+ * - mode:  (optional) action to perform: "share", "delete", "leave" or "message"
  * - delay: (optional) seconds to wait before the action, to let the other clients connect
  */
 
@@ -59,6 +60,17 @@ public class ClientLauncher {
             UUID videoId = UUID.randomUUID();
             controller.serverConnection.sendMessage(new DeleteVideoMessage(videoId));
             System.out.println("[ClientLauncher:" + name + "] DeleteVideoMessage sent: " + videoId);
+        } else if (mode.equals("message")) {
+            Thread.sleep(delay * 1000L); // let the other clients connect
+            // open a direct connection to every known client and send it a test message
+            dataMock.getKnownUsers().forEach((uuid, pseudo) -> {
+                if (uuid.equals(dataMock.getMyUuid())) {
+                    return;
+                }
+                controller.clientConnectionsManager.openConnectionToClient(uuid);
+                controller.clientConnectionsManager.sendToClient(uuid, new TestMessage(name));
+                System.out.println("[ClientLauncher:" + name + "] Message sent to " + pseudo);
+            });
         } else if (args.length > 2 && args[2].equals("leave")) {
             Thread.sleep(delay * 1000L);
             controller.serverConnection.disconnect();
