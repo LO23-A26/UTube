@@ -3,6 +3,7 @@ package client.communication;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import static java.lang.System.Logger.Level.ERROR;
 import java.net.Socket;
 import java.util.Map;
 import java.util.UUID;
@@ -14,6 +15,8 @@ import common.dataclasses.communication.ClientMessage;
  * The other clients connected (P2P)
  */
 public class ClientConnectionsManager {
+
+    private static final System.Logger logger = System.getLogger(ClientConnectionsManager.class.getName());
 
     // available clients by their user uuid
     private final Map<UUID, RemoteClient> availableClients;
@@ -103,10 +106,9 @@ public class ClientConnectionsManager {
         try {
             Socket socket = new Socket(client.getIP(), client.getPort());
             client.initiateConnection(socket);
-        } catch (IOException e) {
-            System.err.println("[ClientConnectionsManager] Could not open connection to "
-                    + client.getIP().getHostAddress() + ":" + client.getPort()
-                    + ": " + e.getMessage());
+        } catch (IOException ex) {
+            logger.log(ERROR, "Could not open connection to "
+                + client.getIP().getHostAddress() + ":" + client.getPort(), ex);
         }
     }
 

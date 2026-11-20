@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.INFO;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -11,16 +12,16 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import common.dataclasses.communication.ClientMessage;
-
 /**
  * Service that listens for peer-to-peer connections from the other clients
  * Gives the client its own listening port on which the other clients can connect directly
  */
 public class ClientListeningService extends Thread {
+    
+    private static final System.Logger logger = System.getLogger(ClientListeningService.class.getName());
+
     private final CommClientController clientController; 
     private ServerSocket listeningSocket;
-    private static final System.Logger logger = System.getLogger(ClientListeningService.class.getName());
 
     // constructor
     public ClientListeningService(CommClientController clientController) {
@@ -35,7 +36,7 @@ public class ClientListeningService extends Thread {
     public int startListening() throws IOException {
         listeningSocket = new ServerSocket(0);
         start();
-        System.out.println("[ClientListeningService] Listening for the other clients on port " + getPort());
+        logger.log(INFO, "[ClientListeningService] Listening for the other clients on port {0}", getPort());
         return getPort();
     }
 
@@ -53,10 +54,10 @@ public class ClientListeningService extends Thread {
                 Socket peerSocket = listeningSocket.accept(); // blocks until another client connects
                 executor.submit(() -> handleConnection(peerSocket));
             }
-        } catch (SocketException e) {
-            System.out.println("[ClientListeningService] Stopped listening for the other clients");
-        } catch (IOException e) {
-            System.err.println("[ClientListeningService] Listening stopped unexpectedly: " + e.getMessage());
+        } catch (SocketException ex) {
+            logger.log(ERROR, "Stopped listening for the other clients", ex);
+        } catch (IOException ex) {
+            logger.log(ERROR, "Listening stopped unexpectedly: ", ex);
         }
     }
 
@@ -104,8 +105,8 @@ public class ClientListeningService extends Thread {
         }
         try {
             listeningSocket.close();
-        } catch (IOException e) {
-            System.err.println("[ClientListeningService] Error while closing the listening socket: " + e.getMessage());
+        } catch (IOException ex) {
+            logger.log(ERROR, "Error while closing the listening socket:", ex);
         }
     }
 
