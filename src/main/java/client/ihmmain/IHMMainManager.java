@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.IHMMain.InterfaceCommCallsIHMMain;
 import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
@@ -54,16 +55,33 @@ public class IHMMainManager {
     private final InterfaceDataCallsIHMMain data_notifications = new DataCallsIHMMainImpl(this);
     private final InterfaceCommCallsIHMMain comm_notifications = new CommCallsIHMMainImpl(this);
     // UI state only. Data and COM retain responsibility for storage and network indexes.
+    // Both maps are filled by the notifications of Data/COM and only touched on the JavaFX thread.
+    private final Map<UUID, UserLight> displayed_users = new LinkedHashMap<>();
     private final Map<UUID, VideoLight> displayed_videos = new LinkedHashMap<>();
     private Alert remote_profile_dialog;
 
     public InterfaceDataCallsIHMMain getInterfaceForData() { return data_notifications; }
     public InterfaceCommCallsIHMMain getInterfaceForComm() { return comm_notifications; }
 
+    List<UserLight> getDisplayedUsers() { return List.copyOf(displayed_users.values()); }
+
     List<VideoLight> getDisplayedVideos() { return List.copyOf(displayed_videos.values()); }
 
+    void addUsers(Collection<UserLight> users) {
+        for (UserLight user : users) {
+            if (user != null && user.getUuid() != null) displayed_users.put(user.getUuid(), user);
+        }
+        refreshUsers();
+    }
+
+    void removeUser(UUID id) {
+        displayed_users.remove(id);
+        refreshUsers();
+    }
+
+    /** Redraws the users panel of the main view, if it is displayed. */
     void refreshUsers() {
-        if (main_controller != null) main_controller.refreshView();
+        if (main_controller != null) main_controller.refreshUserList();
     }
 
     void addVideos(Collection<VideoLight> videos) {
@@ -159,6 +177,7 @@ public class IHMMainManager {
         LoadedView view = loadView(fxmlPath);
         primary_scene.setRoot(view.root());
         if (view.controller() instanceof LoginController) {
+            displayed_users.clear();
             displayed_videos.clear();
             if (remote_profile_dialog != null) remote_profile_dialog.close();
         }

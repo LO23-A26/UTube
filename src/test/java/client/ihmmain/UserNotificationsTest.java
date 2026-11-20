@@ -1,7 +1,6 @@
 package client.ihmmain;
 
 import common.dataclasses.UserLight;
-import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -10,7 +9,6 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -42,7 +40,8 @@ class UserNotificationsTest {
         assertFalse(Platform.isFxApplicationThread());
         callbacks.notifyNewUser(new UserLight("alice"), List.of());
         callbacks.refreshFullDisplay(List.of(), List.of());
-        callbacks.refreshUserList(null);
+        callbacks.refreshUserList(new UserLight("bob"));
+        callbacks.refreshUserList(null); // no user to remove: nothing to refresh
         callbacks.displayNewVideo(null);
         callbacks.refreshSharedVideos(Set.of());
         fx(() -> {
@@ -52,20 +51,16 @@ class UserNotificationsTest {
         });
     }
 
-    @Test void notificationsRefreshDataUsersBeforeAndAfterMainViewLoads() throws Exception {
-        IHMMainManager manager = new IHMMainManager();
-        AtomicReference<List<UserLight>> users = new AtomicReference<>(List.of(new UserLight("alice")));
-        InterfaceIhmMainCallsDataClient data = (InterfaceIhmMainCallsDataClient) Proxy.newProxyInstance(
-                InterfaceIhmMainCallsDataClient.class.getClassLoader(),
-                new Class<?>[]{InterfaceIhmMainCallsDataClient.class}, (proxy, method, args) -> {
-                    assertEquals("getConnectedUsers", method.getName());
-                    assertTrue(Platform.isFxApplicationThread());
-                    return users.get();
-                });
-        manager.setIData(data);
+    @Test void usersComeFromTheNotificationsBeforeAndAfterMainViewLoads() throws Exception {
+        IHMMainManager manager = new IHMMainManager(); // no Data interface: the panel must not need it
         DataCallsIHMMainImpl callbacks = new DataCallsIHMMainImpl(manager);
-        // A network notification before the main view must be harmless.
-        callbacks.refreshFullDisplay(List.of(), List.of());
+        UserLight alice = new UserLight("alice");
+        UserFull bob_profile = new UserFull("bob", "secret", "Bob", "Test", null);
+        UserLight bob = bob_profile.getSharedInfo();
+        UserLight carol = new UserLight("carol");
+
+        // A notification received before the main view is kept and displayed once the view loads.
+        callbacks.refreshFullDisplay(List.of(alice), List.of());
         Stage stage = fx(() -> {
             Stage window = new Stage();
             manager.start(window);
@@ -75,16 +70,19 @@ class UserNotificationsTest {
             return window;
         });
         try {
-            // The display reads Data, not the notification arguments, and replaces existing rows.
-            users.set(List.of(new UserLight("bob"), new UserLight("carol")));
-            callbacks.notifyNewUser(new UserLight("not-the-data-source"), List.of());
-            fx(() -> { assertEquals(List.of("bob", "carol"), displayedUsers(stage)); return null; });
-            callbacks.refreshFullDisplay(List.of(), List.of());
-            fx(() -> { assertEquals(List.of("bob", "carol"), displayedUsers(stage)); return null; });
-            users.set(List.of());
-            callbacks.refreshUserList(new UserLight("bob"));
-            fx(() -> { assertTrue(displayedUsers(stage).isEmpty()); return null; });
-            fx(() -> { manager.changeView(IHMMainManager.LOGIN_VIEW); return null; });
+            callbacks.notifyNewUser(bob, List.of());
+            callbacks.notifyNewUser(bob, List.of()); // same user twice: no duplicate row
+            fx(() -> { assertEquals(List.of("alice", "bob"), displayedUsers(stage)); return null; });
+            // refreshFullDisplay adds users, like videos: users already displayed are kept.
+            callbacks.refreshFullDisplay(List.of(carol), List.of());
+            fx(() -> { assertEquals(List.of("alice", "bob", "carol"), displayedUsers(stage)); return null; });
+            callbacks.refreshUserList(bob);
+            fx(() -> { assertEquals(List.of("alice", "carol"), displayedUsers(stage)); return null; });
+            fx(() -> {
+                manager.changeView(IHMMainManager.LOGIN_VIEW);
+                assertTrue(manager.getDisplayedUsers().isEmpty());
+                return null;
+            });
             callbacks.notifyNewUser(new UserLight("late"), List.of());
             fx(() -> { assertNotNull(stage.getScene().lookup("#connectButton")); return null; });
         } finally {
