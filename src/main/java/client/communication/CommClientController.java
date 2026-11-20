@@ -119,13 +119,8 @@ public class CommClientController {
      * @param clientId
      */
     public void requestVideoDownloadFromClient(UUID videoId, UUID clientId) {
-        RemoteClient client = clientConnectionsManager.getClient(clientId);
-        if (client == null) {
-            System.err.println("[CommClientController] Cannot request video download: client with UUID " + clientId + " is not known.");
-            return;
-        }
-        clientConnectionsManager.openConnectionToClient(client);
-        clientConnectionsManager.sendToClient(client, new DownloadVideoRequestMessage());
+        clientConnectionsManager.openConnectionToClient(clientId);
+        clientConnectionsManager.sendToClient(clientId, new DownloadVideoRequestMessage());
     }
 
     /**

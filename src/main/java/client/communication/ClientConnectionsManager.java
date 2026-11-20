@@ -64,18 +64,27 @@ public class ClientConnectionsManager {
      * @param uuid the UUID of the client
      * @return the client, or null if it is not known (it is not connected, or its address was not announced)
      */
-    public RemoteClient getClient(UUID uuid) {
+    private RemoteClient getClient(UUID uuid) {
         if (uuid == null) {
             return null;
         }
         return availableClients.get(uuid);
     }
 
+    public String getClientString(UUID uuid) {
+        RemoteClient remote = this.getClient(uuid);
+        String text = (remote == null
+                ? "forgotten"
+                : remote.getIP().getHostAddress() + ":" + remote.getPort());
+        return text;
+    }
+
     /**
      * Opens a connection to a remote client, if it is known and not already connected.
      * @param client the remote client to connect to
      */
-    public void openConnectionToClient(RemoteClient client) {
+    public void openConnectionToClient(UUID uuid) {
+        RemoteClient client = this.getClient(uuid);
         if (client == null) {
             return;
         }
@@ -98,7 +107,9 @@ public class ClientConnectionsManager {
      * @param client the remote client to send the message to
      * @param message the message to send
      */
-    public void sendToClient(RemoteClient client, ClientMessage message) {
+    public void sendToClient(UUID uuid, ClientMessage message) {
+        
+        RemoteClient client = this.getClient(uuid);
         if (client == null || message == null) {
             return;
         }
