@@ -2,6 +2,7 @@ package comm_integration_tests.mock_implementations;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,6 +10,7 @@ import common.dataclasses.Comment;
 import common.dataclasses.Rating;
 import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
+import common.dataclasses.VideoFormat;
 import common.dataclasses.VideoFull;
 import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceCommClientCallsDataClient;
@@ -38,8 +40,11 @@ public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDa
 
     @Override
     public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id) {
-        System.out.println("[MockCommClientCallsDataClient] giveDetailsAccess for video " + video_id);
-        return null;
+        System.out.println("[MockCommClientCallsDataClient] giveDetailsAccess for video " + video_id
+                + ", asked by " + requester_profile);
+        UserLight owner = new UserLight(fixedRequesterUuid, pseudo, null);
+        return new VideoFull(owner, pseudo + " - details of video " + video_id, pseudo, Set.of("test"),
+                "videos/" + video_id + ".mp4", VideoFormat.mp4);
     }
 
     @Override
