@@ -19,11 +19,12 @@ import java.util.concurrent.Semaphore;
 
 public class NewConnectionListeningThread extends Thread {
 
+    public int port = 9000;
+
     private final ConnectionsManager connectionsManager;
     private final CommServerController serverController;
     private Semaphore connectionLimit;
 
-    private static final int PORT = 9000;
     private static final int BACKLOG = 1024;
     private static final int MAX_CONNECTIONS = 10_000;
     private static final int READ_TIMEOUT_MS = (int) Duration.ofSeconds(30).toMillis();
@@ -42,7 +43,7 @@ public class NewConnectionListeningThread extends Thread {
 
         try (ServerSocket serverSocket = new ServerSocket()) {
             serverSocket.setReuseAddress(true);
-            serverSocket.bind(new InetSocketAddress(PORT), BACKLOG);
+            serverSocket.bind(new InetSocketAddress(port), BACKLOG);
 
             try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
                 System.out.println("Listening on " + serverSocket.getLocalSocketAddress());
