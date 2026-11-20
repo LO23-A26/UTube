@@ -79,7 +79,7 @@ class IncomingInterfacesTest {
         manager.getInterfaceForData().notifyNewUser(alice.getSharedInfo(), List.of(first));
         manager.getInterfaceForData().displayNewVideo(second);
         fx(() -> { assertEquals(List.of(alice.getSharedInfo()), manager.getDisplayedUsers()); return null; });
-        manager.getInterfaceForData().refreshUserList(alice);
+        manager.getInterfaceForData().refreshUserList(alice.getSharedInfo());
         fx(() -> {
             assertTrue(manager.getDisplayedUsers().isEmpty());
             assertEquals(List.of(second), manager.getDisplayedVideos());
