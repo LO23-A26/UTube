@@ -1,10 +1,12 @@
 package client.communication;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import common.dataclasses.communication.messages.DownloadVideoRequestMessage;
+import common.dataclasses.communication.ClientMessage;
 
 /**
  * The other clients connected (P2P)
@@ -13,9 +15,15 @@ public class ClientConnectionsManager {
 
     // available clients by their user uuid
     private final Map<UUID, RemoteClient> availableClients;
+    private final CommClientController clientController;
+
+    public ClientConnectionsManager(CommClientController clientController) {
+        this.availableClients = new ConcurrentHashMap<>();
+        this.clientController = clientController;
+    }
 
     public ClientConnectionsManager() {
-        this.availableClients = new ConcurrentHashMap<>();
+        this(null);
     }
 
     /**
@@ -40,6 +48,13 @@ public class ClientConnectionsManager {
         if (uuid == null) {
             return false;
         }
+
+        // if client is connected, disconnect it first
+        RemoteClient client = availableClients.get(uuid);
+        if (client != null && client.isConnected()) {
+            client.disconnect();
+        }
+
         return availableClients.remove(uuid) != null;
     }
 
@@ -56,13 +71,37 @@ public class ClientConnectionsManager {
         return availableClients.get(uuid);
     }
 
+    /**
+     * Opens a connection to a remote client, if it is known and not already connected.
+     * @param client the remote client to connect to
+     */
     public void openConnectionToClient(RemoteClient client) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'openConnectionToClient'");
+        if (client == null) {
+            return;
+        }
+        if (client.isConnected()) {
+            return;
+        }
+
+        try {
+            Socket socket = new Socket(client.getIP(), client.getPort());
+            client.connect(socket, clientController);
+        } catch (IOException e) {
+            System.err.println("[ClientConnectionsManager] Could not open connection to "
+                    + client.getIP().getHostAddress() + ":" + client.getPort()
+                    + ": " + e.getMessage());
+        }
     }
 
-    public void sendToClient(RemoteClient client, DownloadVideoRequestMessage videoDownloadRequestMessage) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sendToClient'");
+    /**
+     * Sends a message to a remote client, if it is known and connected.
+     * @param client the remote client to send the message to
+     * @param message the message to send
+     */
+    public void sendToClient(RemoteClient client, ClientMessage message) {
+        if (client == null || message == null) {
+            return;
+        }
+        client.sendMessage(message);
     }
 }

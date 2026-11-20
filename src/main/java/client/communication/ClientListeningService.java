@@ -9,6 +9,8 @@ import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import common.dataclasses.communication.ClientMessage;
+
 /**
  * Service that listens for peer-to-peer connections from the other clients
  * Gives the client its own listening port on which the other clients can connect directly
@@ -61,10 +63,16 @@ public class ClientListeningService extends Thread {
             out.flush();
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
-            Object message = in.readObject();
-            System.out.println("[ClientListeningService] Received " + message.getClass().getSimpleName()
-                    + " from another client (" + socket.getInetAddress().getHostAddress() + ")");
-            // TODO (#88): answer the video requests
+            Object message;
+            while ((message = in.readObject()) != null) {
+                if (message instanceof ClientMessage clientMessage) {
+                    clientMessage.handle(clientController);
+                } else {
+                    System.out.println("[ClientListeningService] Received unsupported object "
+                            + message.getClass().getSimpleName()
+                            + " from another client (" + socket.getInetAddress().getHostAddress() + ")");
+                }
+            }
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("[ClientListeningService] Error with a connection from another client: " + e.getMessage());
         } finally {

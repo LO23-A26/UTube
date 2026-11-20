@@ -1,6 +1,5 @@
 package client.communication;
 
-import java.net.InetAddress;
 import java.util.UUID;
 import java.io.IOException;
 
@@ -147,6 +146,6 @@ public class CommClientController {
         this.ihmShareCallsComm = new IHMShareCallsComm(this);
         this.dataClientCallsComm = new DataClientCallsComm(this);
 
-        this.clientConnectionsManager = new ClientConnectionsManager();
+        this.clientConnectionsManager = new ClientConnectionsManager(this);
     }
 }
