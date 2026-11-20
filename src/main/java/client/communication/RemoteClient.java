@@ -166,20 +166,22 @@ public class RemoteClient implements Serializable { // Other clients connected t
     private void receiveLoop() {
         try {
             while (isConnected()) {
-                Object message = objectInputStream.readObject();
-                handleMessage(message);
+                handleMessage((ClientMessage) objectInputStream.readObject());
             }
         } catch (EOFException e) {
-            disconnect();
+            // fermeture normale
+            System.out.println("[RemoteClient] Connection closed by "
+                    + ip.getHostAddress() + ":" + port);
+        } catch (ClassNotFoundException | ClassCastException e) {
+            System.err.println("[RemoteClient] Invalid message from "
+                    + ip.getHostAddress() + ":" + port + ": " + e);
         } catch (IOException e) {
             if (isConnected()) {
-                System.err.println("[RemoteClient] Receive error from "
-                        + ip.getHostAddress() + ":" + port + ": " + e.getMessage());
+                System.err.println("[RemoteClient] Socket error from "
+                        + ip.getHostAddress() + ":" + port + ": " + e);
             }
+        } finally {
             disconnect();
-        } catch (ClassNotFoundException e) {
-            System.err.println("[RemoteClient] Unknown received object type: "
-                    + e.getMessage());
         }
     }
 
@@ -188,15 +190,10 @@ public class RemoteClient implements Serializable { // Other clients connected t
      * It uses the handle() method in the client messages
      * @param message the received message
      */
-    private void handleMessage(Object message) {
-        if (message instanceof ClientMessage clientMessage) {
+    private void handleMessage(ClientMessage message) {
             if (clientController == null) {
                 throw new IllegalStateException("RemoteClient received a ClientMessage but no CommClientController was provided");
             }
-            clientMessage.handle(clientController);
-        } else {
-            System.out.println("[RemoteClient] Received unsupported object "
-                    + message.getClass().getSimpleName() + " from " + uuid);
-        }
+            message.handle(clientController);
     }
 }
