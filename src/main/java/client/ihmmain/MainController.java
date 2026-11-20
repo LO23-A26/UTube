@@ -57,6 +57,14 @@ public class MainController extends Controller {
         home_tab.setSelected(true);
     }
 
+    /** Avatar of the header: opens the "Mon profil" screen (mockup 12) in the content area. */
+    @FXML
+    private void showProfile() {
+        viewManager.showContent(IHMMainManager.PROFILE_VIEW);
+        // No tab of the header matches the profile screen
+        home_tab.setSelected(false);
+    }
+
     @FXML
     private void openDownloads(){
         InterfaceIHMMainCallsIHMShare share_calls = viewManager.getIShare();
