@@ -180,41 +180,19 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         }
 
         // 2) Serialization of video object
-        String video_title = v.getSharedInfo().getTitle();
-
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(video_title + ".txt");
-        }
-        catch (FileNotFoundException e){
-            throw new RuntimeException(e);
-        }
-
-        ObjectOutputStream oos;
-        try{
-            oos = new ObjectOutputStream(fos);
-        }
-        catch (IOException e){
-            throw new RuntimeException(e);
-        }
-
-        try {
-            oos.writeObject(v);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         byte[] video_object_bytes;
-        ByteArrayOutputStream video_object_byte_array_output_stream;
+        ObjectOutputStream out;
         try {
-            video_object_byte_array_output_stream = new ByteArrayOutputStream();
-            video_object_byte_array_output_stream.writeTo(oos);
-            video_object_bytes = video_object_byte_array_output_stream.toByteArray();
-        }
-        catch (IOException e){
-            throw new RuntimeException(e);
+            out = new ObjectOutputStream(bos);
+            out.writeObject(v);
+            out.flush();
+            video_object_bytes = bos.toByteArray();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
 
+        // Recover length of 2 bytes array
         int length_mp4_bytes = mp4_bytes.length;
         int length_object_bytes = video_object_bytes.length;
 
@@ -246,7 +224,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         byte[] mp4_bytes;
         byte[] video_object_bytes;
 
-        // Finding of the separator location
+        // Finding of the separator location in the array video_file
         int start = 0;
         int start_separatory = 0;
         boolean check = false;
@@ -279,48 +257,26 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         }
 
         // Deserialization and saving of the video object
-        FileOutputStream file_containing_video_object_bytes;
+        ByteArrayInputStream bis = new ByteArrayInputStream(video_object_bytes);
+        ObjectInput in;
         try {
-            file_containing_video_object_bytes = new FileOutputStream("video_object_bytes.txt");
+            in = new ObjectInputStream(bis);
         }
-        catch(FileNotFoundException e){
-            throw new RuntimeException(e);
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
-
-        try {
-            file_containing_video_object_bytes.write(video_object_bytes);
-        }
-        catch(IOException e){
-            throw new RuntimeException(e);
-        }
-
-        FileInputStream fileInputStream;
-        try {
-            fileInputStream = new FileInputStream("video_object_bytes.txt");
-        }
-        catch (FileNotFoundException e){
-            throw new RuntimeException(e);
-        }
-
-        ObjectInputStream objectInputStream;
-        try {
-            objectInputStream = new ObjectInputStream(fileInputStream);
-        }
-        catch(IOException e){
-            throw new RuntimeException(e);
-        }
-
         VideoFull deserialized_video;
         try {
-            deserialized_video = (VideoFull) objectInputStream.readObject();
+            deserialized_video = (VideoFull) in.readObject();
         }
-        catch (ClassNotFoundException | IOException e){
+        catch (Exception e){
             throw new RuntimeException(e);
         }
 
+        // New path for the mp4
         String outputFilePath = ProfileSaver.user_dir + deserialized_video.getSharedInfo().getTitle() + ".mp4";
 
-        // Creation of the corresponding VideoLight object
+        // Creation of the corresponding VideoLight object with new UUID and new owner
         VideoLight saved_video = new VideoLight(
                 UUID.randomUUID(),
                 data_client_core.getUser().getSharedInfo(),
