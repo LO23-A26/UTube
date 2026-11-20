@@ -3,9 +3,11 @@ package client.communication;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import static java.lang.System.Logger.Level.ERROR;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,8 +18,9 @@ import common.dataclasses.communication.ClientMessage;
  * Gives the client its own listening port on which the other clients can connect directly
  */
 public class ClientListeningService extends Thread {
-    private final CommClientController clientController; // used later to answer the video requests
+    private final CommClientController clientController; 
     private ServerSocket listeningSocket;
+    private static final System.Logger logger = System.getLogger(ClientListeningService.class.getName());
 
     // constructor
     public ClientListeningService(CommClientController clientController) {
@@ -57,32 +60,41 @@ public class ClientListeningService extends Thread {
         }
     }
 
+    @SuppressWarnings("ConvertToTryWithResources")
     private void handleConnection(Socket socket) {
+        ObjectOutputStream writer;
+        ObjectInputStream reader;
         try {
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            out.flush();
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-
-            Object message;
-            while ((message = in.readObject()) != null) {
-                if (message instanceof ClientMessage clientMessage) {
-                    clientMessage.handle(clientController);
-                } else {
-                    System.out.println("[ClientListeningService] Received unsupported object "
-                            + message.getClass().getSimpleName()
-                            + " from another client (" + socket.getInetAddress().getHostAddress() + ")");
-                }
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("[ClientListeningService] Error with a connection from another client: " + e.getMessage());
-        } finally {
-            // close connection
-            try {
-                socket.close();
-            } catch (IOException ignored) {
-                // rien
-            }
+            writer = new ObjectOutputStream(socket.getOutputStream());
+            writer.flush();
+            reader = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException ex) {
+            logger.log(ERROR, (String) null, ex);
+            return;
         }
+
+        // Lecture du premier message := l'UUID du client
+        UUID uuid;
+        try {
+            uuid = (UUID) reader.readObject(); 
+            if (uuid == null) {
+                logger.log(ERROR, "UUID sent is null. Closing connection");
+                socket.close();
+                return;
+            }
+        } catch (ClassNotFoundException ex) {
+            logger.log(ERROR, "Object sent at initialization was not a UUID", ex);
+            closeQuietly(socket);
+            return;
+        } catch (IOException ex) {
+            logger.log(ERROR, "null", ex);
+            closeQuietly(socket);
+            return;
+        }
+
+        // Adding streams and socket to the RemoteClient object in the manager
+        // And starts the listening thread for the remoteClient
+        clientController.clientConnectionsManager.receiveConnectionFromClient(uuid, socket, reader, writer);
     }
 
     // Closing the listening socket
@@ -97,4 +109,10 @@ public class ClientListeningService extends Thread {
         }
     }
 
+    private static void closeQuietly(Socket socket) {
+        try {
+            socket.close();
+        } catch (IOException ignored) {
+        }
+    }
 }

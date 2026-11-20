@@ -1,6 +1,8 @@
 package client.communication;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Map;
 import java.util.UUID;
@@ -106,6 +108,16 @@ public class ClientConnectionsManager {
                     + client.getIP().getHostAddress() + ":" + client.getPort()
                     + ": " + e.getMessage());
         }
+    }
+
+    /**
+     * Registers the socket initiated by another client by the listening thread
+     * @param uuid
+     * @param socket
+     */
+    public void receiveConnectionFromClient(UUID uuid, Socket socket, ObjectInputStream reader, ObjectOutputStream writer) {
+        RemoteClient client = getClient(uuid); 
+        client.registerConnection(socket, reader, writer);
     }
 
     /**

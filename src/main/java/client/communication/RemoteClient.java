@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import static java.lang.System.Logger.Level.ERROR;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.UUID;
+
 import common.dataclasses.communication.ClientMessage;
 
 /**
@@ -17,7 +19,11 @@ import common.dataclasses.communication.ClientMessage;
  * When not connected, it can be sent to share the information about a remote client.
  * When connected, it holds itself the socket to the client.
  */
-public class RemoteClient implements Serializable { // Other clients connected to the server
+public class RemoteClient implements Serializable { 
+
+    private static final System.Logger logger = System.getLogger(RemoteClient.class.getName());
+    
+    // Other clients connected to the server
     private final UUID uuid;
     private final InetAddress ip;
     private final int port;
@@ -83,7 +89,6 @@ public class RemoteClient implements Serializable { // Other clients connected t
         }
 
         this.socket = socket;
-        this.clientController = clientController;
         try {
             // Each side creates ObjectOutputStream first and flushes it before
             // creating ObjectInputStream. This is required to avoid a stream
@@ -92,6 +97,7 @@ public class RemoteClient implements Serializable { // Other clients connected t
             objectOutputStream.flush();
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             isConnected = true;
+            objectOutputStream.writeObject(uuid); // tells the other client who we are
             startReceiving();
         } catch (IOException e) {
             isConnected = false;
@@ -104,6 +110,25 @@ public class RemoteClient implements Serializable { // Other clients connected t
             System.err.println("[RemoteClient] Could not connect to "
                     + ip.getHostAddress() + ":" + port + ": " + e.getMessage());
         }
+    }
+
+    /**
+     * 
+     * @param socket
+     * @param reader
+     * @param writer
+     */
+    public synchronized void registerConnection(Socket socket, ObjectInputStream reader, ObjectOutputStream writer) {
+        if (isConnected()) {
+            logger.log(ERROR, "client is already connected via a socket. Can't add another.");
+            return;
+        }
+
+        this.socket = socket;
+        this.objectInputStream = reader;
+        this.objectOutputStream = writer;
+        isConnected = true;
+        startReceiving();
     }
 
     /**
