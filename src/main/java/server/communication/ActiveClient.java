@@ -4,6 +4,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.INFO;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.Objects;
@@ -18,6 +20,9 @@ import common.dataclasses.communication.ServerMessage;
  * An active client connected to the server.
  */
 public class ActiveClient {
+
+    private static final System.Logger logger = System.getLogger(ActiveClient.class.getName());
+
     private final UUID uuid;
     private final String ipAddress;
     private final int port;
@@ -139,12 +144,12 @@ public class ActiveClient {
                 } catch (SocketTimeoutException timeout) {
                     // Socket timeout is expected when no client data arrives; keep waiting.
                 } catch (ClassNotFoundException ex) {
-                    System.getLogger(ActiveClient.class.getName()).log(System.Logger.Level.ERROR, (String) "Recieved object is not of class ServerMessage", ex);
+                    logger.log(ERROR,"Recieved object is not of class ServerMessage", ex);
                 } 
             }
-        } catch (IOException e) {
+        } catch (IOException ex) {
             if (connected.get()) {
-                System.err.println("Read error from client " + uuid + ": " + e.getMessage());
+                logger.log(ERROR, "Read error from client " + uuid, ex);
             }
         } finally {
             close();
@@ -154,7 +159,7 @@ public class ActiveClient {
     private void handleMessage(ServerMessage message) {
         // Il faudra call le handler dans le message une fois qu'on a une classe message
         // v1 avec du texte pr l'instant : on affiche la ligne recue et on repond "OK ..." pour verifier que la connexion marche.
-        System.out.println("received from " + uuid + " : " + message);
+        logger.log(INFO, "received from {0} : {1}", new Object[]{uuid, message});
         message.handle(this.serverController, this);
         
     }
