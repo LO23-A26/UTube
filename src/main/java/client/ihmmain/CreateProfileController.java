@@ -9,6 +9,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.scene.control.DatePicker;
+import common.dataclasses.UserFull;
 
 import java.io.File;
 
@@ -96,10 +97,30 @@ public class CreateProfileController extends Controller {
         errorLabel.setVisible(error != null);
 
         if (error == null) {
-            /*
-             * TODO: create the user profile and save it through Data.
-             * The Data interface must first be aligned with the UserFull model not UserLight.
-             */
+
+            UserFull profile;
+
+            if (avatarPath != null) {
+                profile = new UserFull(
+                        pseudoField.getText().strip(),
+                        avatarPath,
+                        passwordField.getText(),
+                        firstNameField.getText().strip(),
+                        lastNameField.getText().strip(),
+                        birthDatePicker.getValue()
+                );
+            } else {
+                profile = new UserFull(
+                        pseudoField.getText().strip(),
+                        passwordField.getText(),
+                        firstNameField.getText().strip(),
+                        lastNameField.getText().strip(),
+                        birthDatePicker.getValue()
+                );
+            }
+
+            viewManager.getIData().saveLocalProfile(profile);
+
             viewManager.changeView(IHMMainManager.LOGIN_VIEW);
         }
     }
