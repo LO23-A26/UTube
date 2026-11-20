@@ -67,7 +67,7 @@ public class DataClientCallsComm implements InterfaceDataCallsComm {
 
     @Override
     public void giveDetailsRequest(UserLight requester_profile, UserLight owner_profile, UUID video) {
-        throw new UnsupportedOperationException("Unimplemented method 'giveDetailsRequest'");
+        commClientController.requestVideoDetailsFromClient(requester_profile, owner_profile, video);
     }
     
 }
