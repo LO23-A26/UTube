@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.INFO;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.UUID;
@@ -99,7 +100,7 @@ public class RemoteClient implements Serializable {
             isConnected = true;
             objectOutputStream.writeObject(uuid); // tells the other client who we are
             startReceiving();
-        } catch (IOException e) {
+        } catch (IOException ex) {
             isConnected = false;
             objectInputStream = null;
             objectOutputStream = null;
@@ -107,8 +108,8 @@ public class RemoteClient implements Serializable {
                 socket.close();
             } catch (IOException ignored) {
             }
-            System.err.println("[RemoteClient] Could not connect to "
-                    + ip.getHostAddress() + ":" + port + ": " + e.getMessage());
+            logger.log(ERROR, "Could not connect to "
+                    + ip.getHostAddress() + ":" + port, ex);
         }
     }
 
@@ -157,16 +158,15 @@ public class RemoteClient implements Serializable {
      */
     public synchronized void sendMessage(ClientMessage message) {
         if (!isConnected()) {
-            System.err.println("[RemoteClient] Cannot send message to "
-                    + ip.getHostAddress() + ":" + port + ": not connected");
+            logger.log(INFO, "Cannot send message to {0}:{1}: not connected", new Object[]{ip.getHostAddress(), port});
             return;
         }
         try {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
-        } catch (IOException e) {
-            System.err.println("[RemoteClient] Could not send message to "
-                    + ip.getHostAddress() + ":" + port + ": " + e.getMessage());
+        } catch (IOException ex) {
+            logger.log(ERROR, "Could not send message to "
+                    + ip.getHostAddress() + ":" + port, ex);
             disconnect();
         }
     }
@@ -207,15 +207,12 @@ public class RemoteClient implements Serializable {
             }
         } catch (EOFException e) {
             // fermeture normale
-            System.out.println("[RemoteClient] Connection closed by "
-                    + ip.getHostAddress() + ":" + port);
-        } catch (ClassNotFoundException | ClassCastException e) {
-            System.err.println("[RemoteClient] Invalid message from "
-                    + ip.getHostAddress() + ":" + port + ": " + e);
-        } catch (IOException e) {
+            logger.log(INFO, "Connection closed by{0}:{1}", new Object[]{ip.getHostAddress(), port});
+        } catch (ClassNotFoundException | ClassCastException ex) {
+            logger.log(ERROR, String.format("Invalid message from %s:%d", ip.getHostAddress(), port), ex);
+        } catch (IOException ex) {
             if (isConnected()) {
-                System.err.println("[RemoteClient] Socket error from "
-                        + ip.getHostAddress() + ":" + port + ": " + e);
+                logger.log(ERROR, String.format("Socket error from %s:%d", ip.getHostAddress(), port), ex);
             }
         } finally {
             disconnect();
