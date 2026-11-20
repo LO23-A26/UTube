@@ -35,6 +35,7 @@ public class ClientConnectionsManager {
         if (client == null || client.getUuid() == null || client.getIP() == null) {
             return;
         }
+        client.setClientController(clientController);
         availableClients.put(client.getUuid(), client);
     }
 
@@ -99,7 +100,7 @@ public class ClientConnectionsManager {
 
         try {
             Socket socket = new Socket(client.getIP(), client.getPort());
-            client.connect(socket, clientController);
+            client.initiateConnection(socket);
         } catch (IOException e) {
             System.err.println("[ClientConnectionsManager] Could not open connection to "
                     + client.getIP().getHostAddress() + ":" + client.getPort()
