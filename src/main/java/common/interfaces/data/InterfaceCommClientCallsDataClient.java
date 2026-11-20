@@ -147,6 +147,8 @@ public interface InterfaceCommClientCallsDataClient {
      */
     public void removeUser(UserFull user_profile);
 
+    public void removeUserById(UUID user_id);
+
     /**
      * Removes a shared video.
      *
