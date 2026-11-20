@@ -34,6 +34,7 @@ public class IHMMainManager {
     public static final String LOGIN_VIEW = "/client/ihmmain/login-view.fxml";
     public static final String MAIN_VIEW = "/client/ihmmain/main-view.fxml";
     public static final String HOME_VIEW = "/client/ihmmain/home-view.fxml";
+    public static final String CREATE_PROFILE_VIEW = "/client/ihmmain/create-profile-view.fxml";
     public static final String STYLESHEET = "/assets/styles/utube.css";
 
 
