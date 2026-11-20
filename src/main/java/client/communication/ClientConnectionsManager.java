@@ -71,12 +71,17 @@ public class ClientConnectionsManager {
         return availableClients.get(uuid);
     }
 
+    /**
+     * Returns a string representation of the client, for logging purposes.
+     * For now just the IP address and port, or "forgotten" if the client is not known.
+     * @param uuid
+     * @return
+     */
     public String getClientString(UUID uuid) {
         RemoteClient remote = this.getClient(uuid);
-        String text = (remote == null
+        return (remote == null
                 ? "forgotten"
                 : remote.getIP().getHostAddress() + ":" + remote.getPort());
-        return text;
     }
 
     /**
@@ -86,7 +91,7 @@ public class ClientConnectionsManager {
     public void openConnectionToClient(UUID uuid) {
         RemoteClient client = this.getClient(uuid);
         if (client == null) {
-            return;
+            throw new IllegalArgumentException("Client with UUID " + uuid + " is not known");
         }
         if (client.isConnected()) {
             return;
