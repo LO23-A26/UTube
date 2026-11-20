@@ -3,6 +3,8 @@ package client.communication;
 import java.util.UUID;
 import java.io.IOException;
 
+import common.dataclasses.UserLight;
+import common.dataclasses.communication.messages.VideoDetailsRequestMessage;
 import common.dataclasses.communication.messages.DownloadVideoRequestMessage;
 import common.interfaces.IHMShare.InterfaceCommunicationCallsIHMShare;
 import common.interfaces.comm.*;
@@ -121,6 +123,21 @@ public class CommClientController {
     public void requestVideoDownloadFromClient(UUID videoId, UUID clientId) {
         clientConnectionsManager.openConnectionToClient(clientId);
         clientConnectionsManager.sendToClient(clientId, new DownloadVideoRequestMessage());
+    }
+
+    /**
+     * Requests the details of a video from the client of its owner
+     * @param requester the user who wants to see the details
+     * @param owner the owner of the video
+     * @param videoId the video whose details are requested
+     */
+    public void requestVideoDetailsFromClient(UserLight requester, UserLight owner, UUID videoId) {
+        if (owner == null || owner.getUuid() == null) {
+            return;
+        }
+        UUID ownerId = owner.getUuid();
+        clientConnectionsManager.openConnectionToClient(ownerId);
+        clientConnectionsManager.sendToClient(ownerId, new VideoDetailsRequestMessage(videoId, requester));
     }
 
     /**
