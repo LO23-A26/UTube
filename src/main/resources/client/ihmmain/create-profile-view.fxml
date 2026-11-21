@@ -98,11 +98,11 @@
         </GridPane>
 
         <!-- Error message -->
-        <Label fx:id="errorLabel"
+        <Label fx:id="error_label"
                styleClass="text-secondary"
                wrapText="true"
                visible="false"
-               managed="${errorLabel.visible}"/>
+               managed="${error_label.visible}"/>
 
         <!-- Actions -->
         <HBox alignment="CENTER_RIGHT" spacing="12">
