@@ -89,37 +89,50 @@ public class CreateProfileController extends Controller {
     @FXML
     private void createProfile() {
         String error = validate(
-                pseudoField.getText(),
-                passwordField.getText()
+                pseudo_field.getText(),
+                password_field.getText()
         );
 
-        errorLabel.setText(error);
-        errorLabel.setVisible(error != null);
+        error_label.setText(error);
+        error_label.setVisible(error != null);
 
         if (error == null) {
 
+            if (viewManager.getIData() == null) {
+                error_label.setText("Le service de création de profil est indisponible.");
+                error_label.setVisible(true);
+                return;
+            }
+
             UserFull profile;
 
-            if (avatarPath != null) {
+            if (avatar_path != null) {
                 profile = new UserFull(
-                        pseudoField.getText().strip(),
-                        avatarPath,
-                        passwordField.getText(),
-                        firstNameField.getText().strip(),
-                        lastNameField.getText().strip(),
-                        birthDatePicker.getValue()
+                        pseudo_field.getText().strip(),
+                        avatar_path,
+                        password_field.getText(),
+                        first_name_field.getText().strip(),
+                        last_name_field.getText().strip(),
+                        birth_date_picker.getValue()
                 );
             } else {
                 profile = new UserFull(
-                        pseudoField.getText().strip(),
-                        passwordField.getText(),
-                        firstNameField.getText().strip(),
-                        lastNameField.getText().strip(),
-                        birthDatePicker.getValue()
+                        pseudo_field.getText().strip(),
+                        password_field.getText(),
+                        first_name_field.getText().strip(),
+                        last_name_field.getText().strip(),
+                        birth_date_picker.getValue()
                 );
             }
 
-            viewManager.getIData().saveLocalProfile(profile);
+            try {
+                viewManager.getIData().saveLocalProfile(profile);
+            } catch (RuntimeException e) {
+                // Data could not save the profile (avatar copy or profile file): stay on the form
+                error_label.setText("Impossible d'enregistrer le profil.");
+                error_label.setVisible(true);
+                return;
+            }
 
             viewManager.changeView(IHMMainManager.LOGIN_VIEW);
         }
