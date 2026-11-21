@@ -73,9 +73,9 @@
             <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
                 <Label text="Nom"
                        styleClass="field-label"
-                       labelFor="$lastNameField"/>
+                       labelFor="$last_name_field"/>
                 <Label text="(optionnel)" styleClass="text-secondary"/>
-                <TextField fx:id="lastNameField"/>
+                <TextField fx:id="last_name_field"/>
             </VBox>
 
             <!-- First name -->
