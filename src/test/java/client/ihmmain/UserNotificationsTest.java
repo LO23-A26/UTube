@@ -1,5 +1,6 @@
 package client.ihmmain;
 
+import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
