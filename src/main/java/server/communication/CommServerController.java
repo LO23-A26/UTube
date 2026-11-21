@@ -61,12 +61,34 @@ public class CommServerController {
 
     /**
      * Starts the server: begins listening for new connections(the external interface must have been set first)
+     * @param port The port to listen on.
+     * @deprecated Use start(int port) instead to specify the listening port.
      */
+    @Deprecated (since = "Use start(int port) instead to specify the listening port.")
     public void start() {
         if (this.interfaceCommServerCallsDataServer == null) {
             throw new IllegalStateException("CommServerController is not initialized. Please set the required interface before starting.");
         }
         newConnectionListeningThread.start();
+    }
+
+    /**
+     * Starts the server: begins listening for new connections(the external interface must have been set first)
+     * @param port The port to listen on.
+     */
+    public void start(int port) {
+        if (this.interfaceCommServerCallsDataServer == null) {
+            throw new IllegalStateException("CommServerController is not initialized. Please set the required interface before starting.");
+        }
+        newConnectionListeningThread.port = port;
+        start();
+    }
+
+    /**
+     * Stops the server: stops listening for new connections.
+     */
+    public void stop() {
+        newConnectionListeningThread.interrupt();
     }
 
     /**

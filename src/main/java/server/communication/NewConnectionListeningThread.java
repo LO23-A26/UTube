@@ -19,11 +19,12 @@ import java.util.concurrent.Semaphore;
 
 public class NewConnectionListeningThread extends Thread {
 
+    public int port = 9000;
+
     private final ConnectionsManager connectionsManager;
     private final CommServerController serverController;
     private Semaphore connectionLimit;
 
-    private static final int PORT = 9000;
     private static final int BACKLOG = 1024;
     private static final int MAX_CONNECTIONS = 10_000;
     private static final int READ_TIMEOUT_MS = (int) Duration.ofSeconds(30).toMillis();
@@ -42,14 +43,14 @@ public class NewConnectionListeningThread extends Thread {
 
         try (ServerSocket serverSocket = new ServerSocket()) {
             serverSocket.setReuseAddress(true);
-            serverSocket.bind(new InetSocketAddress(PORT), BACKLOG);
+            serverSocket.bind(new InetSocketAddress(port), BACKLOG);
 
             try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
                 System.out.println("Listening on " + serverSocket.getLocalSocketAddress());
 
                 while (true) {
                     Socket socket = serverSocket.accept();
-                    create_and_start_connection_thread(socket, executor);
+                    createAndStartConnectionThread(socket, executor);
                 }
             }
         } catch (IOException e) {
@@ -63,7 +64,7 @@ public class NewConnectionListeningThread extends Thread {
         socket.setKeepAlive(true);            // OS-level dead peer detection; not a heartbeat substitute
     }
 
-    private void create_and_start_connection_thread(Socket socket, ExecutorService executor) {
+    private void createAndStartConnectionThread(Socket socket, ExecutorService executor) {
         if (!connectionLimit.tryAcquire()) {
             reject(socket);
             return;
@@ -73,7 +74,7 @@ public class NewConnectionListeningThread extends Thread {
             configure(socket);
             executor.execute(() -> {
                 try {
-                    handle_new_connection(socket);
+                    handleNewConnection(socket);
                 } finally {
                     connectionLimit.release();
                 }
@@ -88,7 +89,7 @@ public class NewConnectionListeningThread extends Thread {
      * Recieves the first message (the UUID of the client) and starts the
      * handeling loop for this client
      */
-    private void handle_new_connection(Socket socket) {
+    private void handleNewConnection(Socket socket) {
         ObjectOutputStream writer;
         ObjectInputStream reader;
         try {
