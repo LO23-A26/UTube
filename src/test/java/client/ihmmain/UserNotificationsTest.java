@@ -1,6 +1,5 @@
 package client.ihmmain;
 
-import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -41,7 +40,7 @@ class UserNotificationsTest {
         assertFalse(Platform.isFxApplicationThread());
         callbacks.notifyNewUser(new UserLight("alice"), List.of());
         callbacks.refreshFullDisplay(List.of(), List.of());
-        callbacks.refreshUserList(new UserFull("bob", "secret", "Bob", "Test", null));
+        callbacks.refreshUserList(new UserLight("bob"));
         callbacks.refreshUserList(null); // no user to remove: nothing to refresh
         callbacks.displayNewVideo(null);
         callbacks.refreshSharedVideos(Set.of());
@@ -77,7 +76,7 @@ class UserNotificationsTest {
             // refreshFullDisplay adds users, like videos: users already displayed are kept.
             callbacks.refreshFullDisplay(List.of(carol), List.of());
             fx(() -> { assertEquals(List.of("alice", "bob", "carol"), displayedUsers(stage)); return null; });
-            callbacks.refreshUserList(bob_profile);
+            callbacks.refreshUserList(bob);
             fx(() -> { assertEquals(List.of("alice", "carol"), displayedUsers(stage)); return null; });
             fx(() -> {
                 manager.changeView(IHMMainManager.LOGIN_VIEW);
