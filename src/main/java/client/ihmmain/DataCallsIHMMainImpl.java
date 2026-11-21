@@ -1,17 +1,17 @@
 package client.ihmmain;
 
-import common.dataclasses.UserFull;
-import common.dataclasses.UserLight;
-import common.dataclasses.VideoLight;
-import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
-import javafx.application.Platform;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
+import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
+import javafx.application.Platform;
 
 /** Receives Data notifications without implementing persistence or network behavior. */
 public final class DataCallsIHMMainImpl implements InterfaceDataCallsIHMMain {
@@ -26,27 +26,30 @@ public final class DataCallsIHMMainImpl implements InterfaceDataCallsIHMMain {
     }
 
     @Override public void notifyNewUser(UserLight user, List<VideoLight> videos) {
-        List<VideoLight> copy = snapshot(videos);
+        List<UserLight> users_copy = user == null ? List.of() : List.of(user);
+        List<VideoLight> videos_copy = snapshot(videos);
         Platform.runLater(() -> {
-            manager.refreshUsers();
-            manager.addVideos(copy);
+            manager.addUsers(users_copy);
+            manager.addVideos(videos_copy);
         });
     }
 
     @Override public void refreshFullDisplay(List<UserLight> users, List<VideoLight> videos) {
-        List<VideoLight> copy = snapshot(videos);
+        // Same behaviour for users and videos: added to the display (see addVideos), never replaced.
+        List<UserLight> users_copy = snapshot(users);
+        List<VideoLight> videos_copy = snapshot(videos);
         Platform.runLater(() -> {
-            // Data is the source of truth for connected users, as in the user-panel integration.
-            manager.refreshUsers();
-            manager.replaceVideos(copy);
+            manager.addUsers(users_copy);
+            manager.addVideos(videos_copy);
         });
     }
 
-    @Override public void refreshUserList(UserFull user) {
+    @Override public void refreshUserList(UserFull user) { // user is the disconnected user
         UUID id = user == null || user.getSharedInfo() == null ? null : user.getSharedInfo().getUuid();
+        if (id == null) return;
         Platform.runLater(() -> {
-            manager.refreshUsers();
-            if (id != null) manager.removeUserVideos(id);
+            manager.removeUser(id);
+            manager.removeUserVideos(id);
         });
     }
 
@@ -54,8 +57,8 @@ public final class DataCallsIHMMainImpl implements InterfaceDataCallsIHMMain {
         Platform.runLater(() -> manager.addVideos(video == null ? List.of() : List.of(video)));
     }
 
-    @Override public void refreshSharedVideos(Set<VideoLight> videos) {
+    @Override public void refreshSharedVideos(Set<VideoLight> videos) { //The set contains all the catalog held by data
         List<VideoLight> copy = snapshot(videos);
-        Platform.runLater(() -> manager.replaceVideos(copy));
+        Platform.runLater(() -> manager.replaceVideos(copy)); //As it replaces all the videos by the current list held by data there's no problem as long as data uses FIFO
     }
 }
