@@ -4,6 +4,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.INFO;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
@@ -12,6 +14,9 @@ import common.dataclasses.communication.ServerMessage;
 import common.dataclasses.communication.messages.DisconnectionRequestMessage;
 
 public class ServerConnection extends Thread {
+
+    private static final System.Logger logger = System.getLogger(ServerConnection.class.getName());
+
     @SuppressWarnings("unused")
     private final ServerConfig serverConfig;
     private Socket serverSocket; // connection socket between client and server
@@ -38,7 +43,7 @@ public class ServerConnection extends Thread {
             this.inFromServer = new ObjectInputStream(this.serverSocket.getInputStream());
             this.outToServer.writeObject(controller.interfaceCommDataClient.askRequesterId());
         } catch (IOException ex) {
-            System.getLogger(ServerConnection.class.getName()).log(System.Logger.Level.ERROR, "Connexion with server failed", ex);
+            logger.log(ERROR, "Connexion with server failed", ex);
         }
     }
 
@@ -46,7 +51,7 @@ public class ServerConnection extends Thread {
         try {
             this.outToServer.writeObject(message);
         } catch (IOException ex) {
-            System.getLogger(ServerConnection.class.getName()).log(System.Logger.Level.ERROR, "Message could not be sent", ex);
+            logger.log(ERROR, "Message could not be sent", ex);
         }
     }
 
@@ -63,11 +68,11 @@ public class ServerConnection extends Thread {
                     // pas de timeout configuré côté client, par sécurité
                 }
             }
-        } catch (EOFException e) {
-            System.out.println("[ServerConnection] Server closed the connection");
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (EOFException ex) {
+            logger.log(INFO, "Server closed the connection", ex);
+        } catch (IOException | ClassNotFoundException ex) {
             if (!serverSocket.isClosed()) {
-                System.err.println("[ServerConnection] Read error: " + e.getMessage());
+                logger.log(ERROR, "IO Error in server : ", ex);
             }
         } finally {
             try { serverSocket.close(); } catch (IOException ignored) { }
