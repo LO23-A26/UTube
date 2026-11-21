@@ -91,9 +91,9 @@
             <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="2">
                 <Label text="Date de naissance"
                        styleClass="field-label"
-                       labelFor="$birthDatePicker"/>
+                       labelFor="$birth_date_picker"/>
                 <Label text="(optionnel)" styleClass="text-secondary"/>
-                <DatePicker fx:id="birthDatePicker"/>
+                <DatePicker fx:id="birth_date_picker"/>
             </VBox>
         </GridPane>
 
