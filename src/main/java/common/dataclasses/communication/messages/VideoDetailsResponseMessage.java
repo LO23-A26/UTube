@@ -24,6 +24,8 @@ public class VideoDetailsResponseMessage implements ClientMessage {
     public void handle(CommClientController controller) {
         if (details != null) {
             controller.interfaceCommIHMShare.displayVideoDetails(details);
+        } else {
+            throw new IllegalStateException("Received null details in VideoDetailsResponseMessage");
         }
     }
 }

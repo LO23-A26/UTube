@@ -30,12 +30,12 @@ public class VideoDetailsRequestMessage implements ClientMessage {
     @Override
     public void handle(CommClientController controller) {
         if (requester == null || requester.getUuid() == null) {
-            return;
+            throw new IllegalArgumentException("Requester cannot be null and must have a valid UUID");
         }
 
         VideoFull details = controller.interfaceCommDataClient.giveDetailsAccess(requester, videoId);
         if (details == null) {
-            return;
+            throw new IllegalStateException("No details found for video with ID: " + videoId);
         }
 
         UUID requesterId = requester.getUuid();
