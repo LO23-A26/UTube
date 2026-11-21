@@ -56,8 +56,8 @@ public class NewConnectionListeningThread extends Thread {
                     create_and_start_connection_thread(socket, executor);
                 }
             }
-        } catch (IOException e) {
-            logger.log(ERROR, "Unable to start listening thread: {0}", e.getMessage());
+        } catch (IOException ex) {
+            logger.log(ERROR, "Unable to start listening thread", ex);
         }
     }
 
@@ -83,6 +83,7 @@ public class NewConnectionListeningThread extends Thread {
                 }
             });
         } catch (IOException | RejectedExecutionException startupFailure) {
+            logger.log(ERROR, "Unable to start or schedule a client connection", startupFailure);
             connectionLimit.release();
             closeQuietly(socket);
         }
@@ -101,7 +102,7 @@ public class NewConnectionListeningThread extends Thread {
             writer.flush();
             reader = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
-            logger.log(ERROR, (String) null, ex);
+            logger.log(ERROR, "Could not initialize communication streams for a new connection", ex);
             closeQuietly(socket);
             return;
         }
@@ -120,7 +121,7 @@ public class NewConnectionListeningThread extends Thread {
             closeQuietly(socket);
             return;
         } catch (IOException ex) {
-            logger.log(ERROR, (String) null, ex);
+            logger.log(ERROR, "Could not read the UUID sent during connection initialization", ex);
             closeQuietly(socket);
             return;
         }

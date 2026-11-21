@@ -205,9 +205,9 @@ public class RemoteClient implements Serializable {
             while (isConnected()) {
                 handleMessage((ClientMessage) objectInputStream.readObject());
             }
-        } catch (EOFException e) {
+        } catch (EOFException ex) {
             // fermeture normale
-            logger.log(INFO, "Connection closed by{0}:{1}", new Object[]{ip.getHostAddress(), port});
+            logger.log(INFO, "Connection closed by {0}:{1}", new Object[]{ip.getHostAddress(), port});
         } catch (ClassNotFoundException | ClassCastException ex) {
             logger.log(ERROR, String.format("Invalid message from %s:%d", ip.getHostAddress(), port), ex);
         } catch (IOException ex) {
