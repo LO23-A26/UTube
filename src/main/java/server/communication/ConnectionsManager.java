@@ -1,6 +1,7 @@
 package server.communication;
 
 import java.io.IOException;
+import static java.lang.System.Logger.Level.ERROR;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,8 @@ import client.communication.RemoteClient;
 import common.dataclasses.communication.ClientMessage;
 
 public class ConnectionsManager {
+
+    private static final System.Logger logger = System.getLogger(ConnectionsManager.class.getName());
 
     // map of clients by uuid
     private final Map<UUID, ActiveClient> clients;
@@ -45,7 +48,8 @@ public class ConnectionsManager {
 
         try {
             client.send(message);
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            logger.log(ERROR, "Could not send message to client " + uuid, ex);
             client.close();
         }
     }
@@ -64,7 +68,8 @@ public class ConnectionsManager {
             }
             try {
                 client.send(message);
-            } catch (IOException e) {
+            } catch (IOException ex) {
+                logger.log(ERROR, "Could not broadcast message to client " + client.getUuid(), ex);
                 client.close();
             }
         }
@@ -74,7 +79,8 @@ public class ConnectionsManager {
         for (ActiveClient client : clients.values()) {
             try {
                 client.send(message);
-            } catch (IOException e) {
+            } catch (IOException ex) {
+                logger.log(ERROR, "Could not broadcast message to client " + client.getUuid(), ex);
                 client.close();
             }
         }
