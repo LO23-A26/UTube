@@ -19,27 +19,27 @@ import java.io.File;
 public class CreateProfileController extends Controller {
 
     @FXML
-    private Circle avatarPreview;
+    private Circle avatar_preview;
 
     @FXML
-    private TextField pseudoField;
+    private TextField pseudo_field;
 
     @FXML
-    private PasswordField passwordField;
+    private PasswordField password_field;
 
     @FXML
-    private TextField lastNameField;
+    private TextField last_name_field;
 
     @FXML
-    private TextField firstNameField;
+    private TextField first_name_field;
 
     @FXML
-    private DatePicker birthDatePicker;
+    private DatePicker birth_date_picker;
 
     @FXML
-    private Label errorLabel;
+    private Label error_label;
 
-    private String avatarPath;
+    private String avatar_path;
 
     @Override
     public void refreshView() {
