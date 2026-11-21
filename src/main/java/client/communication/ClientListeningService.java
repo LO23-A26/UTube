@@ -70,7 +70,7 @@ public class ClientListeningService extends Thread {
             writer.flush();
             reader = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
-            logger.log(ERROR, (String) null, ex);
+            logger.log(ERROR, "Could not initialize communication streams for an incoming peer connection", ex);
             return;
         }
 
@@ -88,7 +88,7 @@ public class ClientListeningService extends Thread {
             closeQuietly(socket);
             return;
         } catch (IOException ex) {
-            logger.log(ERROR, "null", ex);
+            logger.log(ERROR, "Could not read the UUID sent during peer connection initialization", ex);
             closeQuietly(socket);
             return;
         }
