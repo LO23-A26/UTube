@@ -43,7 +43,7 @@ public class CreateProfileController extends Controller {
 
     @Override
     public void refreshView() {
-        errorLabel.setVisible(false);
+        error_label.setVisible(false);
     }
 
     /**
