@@ -36,7 +36,7 @@
 
         <!-- Avatar -->
         <HBox alignment="CENTER_LEFT" spacing="16">
-            <Circle fx:id="avatarPreview"
+            <Circle fx:id="avatar_preview"
                     radius="36"
                     fill="#E6E7E3"
                     stroke="#D9DBE0"
