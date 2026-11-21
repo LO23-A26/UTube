@@ -51,10 +51,10 @@ public class CreateProfileController extends Controller {
      */
     @FXML
     private void chooseAvatar() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choisir un avatar");
+        FileChooser file_chooser = new FileChooser();
+        file_chooser.setTitle("Choisir un avatar");
 
-        fileChooser.getExtensionFilters().add(
+        file_chooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter(
                         "Images",
                         "*.png",
@@ -63,15 +63,15 @@ public class CreateProfileController extends Controller {
                 )
         );
 
-        File selectedFile = fileChooser.showOpenDialog(
-                pseudoField.getScene().getWindow()
+        File selected_file = file_chooser.showOpenDialog(
+                pseudo_field.getScene().getWindow()
         );
 
-        if (selectedFile != null) {
-            avatarPath = selectedFile.getAbsolutePath();
+        if (selected_file != null) {
+            avatar_path = selected_file.getAbsolutePath();
 
-            Image avatar = new Image(selectedFile.toURI().toString());
-            avatarPreview.setFill(new ImagePattern(avatar));
+            Image avatar = new Image(selected_file.toURI().toString());
+            avatar_preview.setFill(new ImagePattern(avatar));
         }
     }
 
