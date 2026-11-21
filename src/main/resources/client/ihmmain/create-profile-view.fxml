@@ -82,9 +82,9 @@
             <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <Label text="Prénom"
                        styleClass="field-label"
-                       labelFor="$firstNameField"/>
+                       labelFor="$first_name_field"/>
                 <Label text="(optionnel)" styleClass="text-secondary"/>
-                <TextField fx:id="firstNameField"/>
+                <TextField fx:id="first_name_field"/>
             </VBox>
 
             <!-- Date of birth -->
