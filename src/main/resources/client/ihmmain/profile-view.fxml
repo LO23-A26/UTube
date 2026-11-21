@@ -29,7 +29,7 @@
 
             <!-- Avatar -->
             <VBox spacing="12" alignment="TOP_CENTER" minWidth="130">
-                <Circle fx:id="avatarPreview"
+                <Circle fx:id="avatar_preview"
                         radius="56"
                         fill="#E6E7E3"
                         stroke="#D9DBE0"
@@ -51,54 +51,54 @@
                 <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
                     <Label text="Pseudo"
                            styleClass="field-label"
-                           labelFor="$pseudoField"/>
-                    <TextField fx:id="pseudoField"/>
+                           labelFor="$pseudo_field"/>
+                    <TextField fx:id="pseudo_field"/>
                 </VBox>
 
                 <!-- Password -->
                 <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
                     <Label text="Mot de passe"
                            styleClass="field-label"
-                           labelFor="$passwordField"/>
+                           labelFor="$password_field"/>
                     <Label text="(laisser vide pour ne pas le changer)" styleClass="text-secondary"/>
-                    <PasswordField fx:id="passwordField"/>
+                    <PasswordField fx:id="password_field"/>
                 </VBox>
 
                 <!-- Name -->
                 <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
                     <Label text="Nom"
                            styleClass="field-label"
-                           labelFor="$lastNameField"/>
+                           labelFor="$last_name_field"/>
                     <Label text="(optionnel)" styleClass="text-secondary"/>
-                    <TextField fx:id="lastNameField"/>
+                    <TextField fx:id="last_name_field"/>
                 </VBox>
 
                 <!-- First name -->
                 <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <Label text="Prénom"
                            styleClass="field-label"
-                           labelFor="$firstNameField"/>
+                           labelFor="$first_name_field"/>
                     <Label text="(optionnel)" styleClass="text-secondary"/>
-                    <TextField fx:id="firstNameField"/>
+                    <TextField fx:id="first_name_field"/>
                 </VBox>
 
                 <!-- Date of birth -->
                 <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="2">
                     <Label text="Date de naissance"
                            styleClass="field-label"
-                           labelFor="$birthDatePicker"/>
+                           labelFor="$birth_date_picker"/>
                     <Label text="(optionnel)" styleClass="text-secondary"/>
-                    <DatePicker fx:id="birthDatePicker" promptText="jj/mm/aaaa" maxWidth="Infinity"/>
+                    <DatePicker fx:id="birth_date_picker" promptText="jj/mm/aaaa" maxWidth="Infinity"/>
                 </VBox>
             </GridPane>
         </HBox>
 
         <!-- Error message -->
-        <Label fx:id="errorLabel"
+        <Label fx:id="error_label"
                styleClass="text-secondary"
                wrapText="true"
                visible="false"
-               managed="${errorLabel.visible}"/>
+               managed="${error_label.visible}"/>
 
         <!-- Actions -->
         <HBox alignment="CENTER_RIGHT" spacing="12">

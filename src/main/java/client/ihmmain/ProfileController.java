@@ -23,35 +23,35 @@ import java.time.LocalDate;
 public class ProfileController extends Controller {
 
     @FXML
-    private Circle avatarPreview;
+    private Circle avatar_preview;
 
     @FXML
-    private TextField pseudoField;
+    private TextField pseudo_field;
 
     @FXML
-    private PasswordField passwordField;
+    private PasswordField password_field;
 
     @FXML
-    private TextField lastNameField;
+    private TextField last_name_field;
 
     @FXML
-    private TextField firstNameField;
+    private TextField first_name_field;
 
     @FXML
-    private DatePicker birthDatePicker;
+    private DatePicker birth_date_picker;
 
     @FXML
-    private Label errorLabel;
+    private Label error_label;
 
     /** Local profile given by Data, edited then sent back to Data. Null if Data does not provide it. */
     private UserFull profile;
 
-    private String avatarPath;
+    private String avatar_path;
 
     @Override
     public void refreshView() {
-        errorLabel.setVisible(false);
-        passwordField.clear();
+        error_label.setVisible(false);
+        password_field.clear();
 
         InterfaceIhmMainCallsDataClient data = viewManager.getIData();
         profile = data == null ? null : data.getUser();
@@ -60,15 +60,15 @@ public class ProfileController extends Controller {
             return;
         }
 
-        UserLight sharedInfo = profile.getSharedInfo();
-        pseudoField.setText(sharedInfo == null || sharedInfo.getPseudo() == null ? "" : sharedInfo.getPseudo());
-        lastNameField.setText(profile.getLastName() == null ? "" : profile.getLastName());
-        firstNameField.setText(profile.getFirstName() == null ? "" : profile.getFirstName());
-        birthDatePicker.setValue(profile.getBirthDate());
+        UserLight shared_info = profile.getSharedInfo();
+        pseudo_field.setText(shared_info == null || shared_info.getPseudo() == null ? "" : shared_info.getPseudo());
+        last_name_field.setText(profile.getLastName() == null ? "" : profile.getLastName());
+        first_name_field.setText(profile.getFirstName() == null ? "" : profile.getFirstName());
+        birth_date_picker.setValue(profile.getBirthDate());
 
-        avatarPath = sharedInfo == null ? null : sharedInfo.getAvatarPath();
-        if (avatarPath != null && new File(avatarPath).isFile()) {
-            displayAvatar(new File(avatarPath));
+        avatar_path = shared_info == null ? null : shared_info.getAvatarPath();
+        if (avatar_path != null && new File(avatar_path).isFile()) {
+            displayAvatar(new File(avatar_path));
         }
     }
 
@@ -77,10 +77,10 @@ public class ProfileController extends Controller {
      */
     @FXML
     private void chooseAvatar() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choisir un avatar");
+        FileChooser file_chooser = new FileChooser();
+        file_chooser.setTitle("Choisir un avatar");
 
-        fileChooser.getExtensionFilters().add(
+        file_chooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter(
                         "Images",
                         "*.png",
@@ -89,19 +89,19 @@ public class ProfileController extends Controller {
                 )
         );
 
-        File selectedFile = fileChooser.showOpenDialog(
-                pseudoField.getScene().getWindow()
+        File selected_file = file_chooser.showOpenDialog(
+                pseudo_field.getScene().getWindow()
         );
 
-        if (selectedFile != null) {
-            avatarPath = selectedFile.getAbsolutePath();
-            displayAvatar(selectedFile);
+        if (selected_file != null) {
+            avatar_path = selected_file.getAbsolutePath();
+            displayAvatar(selected_file);
         }
     }
 
-    private void displayAvatar(File avatarFile) {
-        Image avatar = new Image(avatarFile.toURI().toString());
-        avatarPreview.setFill(new ImagePattern(avatar));
+    private void displayAvatar(File avatar_file) {
+        Image avatar = new Image(avatar_file.toURI().toString());
+        avatar_preview.setFill(new ImagePattern(avatar));
     }
 
     /**
@@ -109,7 +109,7 @@ public class ProfileController extends Controller {
      */
     @FXML
     private void cancel() {
-        viewManager.showContent(IHMMainManager.HOME_VIEW);
+        viewManager.getController(MainController.class).backToHome();
     }
 
     /**
@@ -118,8 +118,8 @@ public class ProfileController extends Controller {
     @FXML
     private void saveProfile() {
         String error = validate(
-                pseudoField.getText(),
-                birthDatePicker.getValue()
+                pseudo_field.getText(),
+                birth_date_picker.getValue()
         );
 
         if (error == null && profile == null) {
@@ -131,45 +131,45 @@ public class ProfileController extends Controller {
             return;
         }
 
-        UserLight sharedInfo = profile.getSharedInfo();
-        sharedInfo.setPseudo(pseudoField.getText().strip());
-        if (avatarPath != null && !avatarPath.equals(sharedInfo.getAvatarPath())) {
-            sharedInfo.setAvatarPath(avatarPath);
-            sharedInfo.setAvatar(avatarPath);
+        UserLight shared_info = profile.getSharedInfo();
+        shared_info.setPseudo(pseudo_field.getText().strip());
+        if (avatar_path != null && !avatar_path.equals(shared_info.getAvatarPath())) {
+            shared_info.setAvatarPath(avatar_path);
+            shared_info.setAvatar(avatar_path);
         }
-        profile.setLastName(lastNameField.getText().strip());
-        profile.setFirstName(firstNameField.getText().strip());
-        profile.setBirthDate(birthDatePicker.getValue());
+        profile.setLastName(last_name_field.getText().strip());
+        profile.setFirstName(first_name_field.getText().strip());
+        profile.setBirthDate(birth_date_picker.getValue());
         // An empty password field means that the password is not changed
-        if (!passwordField.getText().isEmpty()) {
-            profile.setPassword(passwordField.getText());
+        if (!password_field.getText().isEmpty()) {
+            profile.setPassword(password_field.getText());
         }
 
         try {
             viewManager.getIData().updateLocalProfile(profile);
         } catch (RuntimeException e) {
-            displayError("Enregistrement impossible : " + e.getMessage());
+            displayError("Impossible d'enregistrer le profil.");
             return;
         }
 
-        viewManager.showContent(IHMMainManager.HOME_VIEW);
+        viewManager.getController(MainController.class).backToHome();
     }
 
     private void displayError(String message) {
-        errorLabel.setText(message);
-        errorLabel.setVisible(true);
+        error_label.setText(message);
+        error_label.setVisible(true);
     }
 
     /**
      * Returns the error message to display, or null if the input is valid.
      * The password is optional here: when it is left empty, it is not changed.
      */
-    static String validate(String pseudo, LocalDate birthDate) {
+    static String validate(String pseudo, LocalDate birth_date) {
         if (pseudo == null || pseudo.isBlank()) {
             return "Le pseudo est obligatoire.";
         }
 
-        if (birthDate != null && birthDate.isAfter(LocalDate.now())) {
+        if (birth_date != null && birth_date.isAfter(LocalDate.now())) {
             return "La date de naissance ne peut pas être dans le futur.";
         }
 

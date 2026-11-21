@@ -65,6 +65,12 @@ public class MainController extends Controller {
         home_tab.setSelected(false);
     }
 
+    /** Back to the home screen from a screen without a tab (Mon profil...): also reselects the "Accueil" tab. */
+    void backToHome() {
+        viewManager.showContent(IHMMainManager.HOME_VIEW);
+        home_tab.setSelected(true);
+    }
+
     @FXML
     private void openDownloads(){
         InterfaceIHMMainCallsIHMShare share_calls = viewManager.getIShare();
