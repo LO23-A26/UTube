@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.INFO;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
@@ -68,7 +69,7 @@ public class ServerConnection extends Thread {
                 }
             }
         } catch (EOFException ex) {
-            logger.log(java.lang.System.Logger.Level.INFO, "Server closed the connection", ex);
+            logger.log(INFO, "Server closed the connection", ex);
         } catch (IOException | ClassNotFoundException ex) {
             if (!serverSocket.isClosed()) {
                 logger.log(ERROR, "IO Error in server : ", ex);

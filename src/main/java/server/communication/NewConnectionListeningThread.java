@@ -117,7 +117,7 @@ public class NewConnectionListeningThread extends Thread {
                 return;
             }
         } catch (ClassNotFoundException ex) {
-            logger.log(System.Logger.Level.ERROR, "Object sent at initialization was not a UUID", ex);
+            logger.log(ERROR, "Object sent at initialization was not a UUID", ex);
             closeQuietly(socket);
             return;
         } catch (IOException ex) {
