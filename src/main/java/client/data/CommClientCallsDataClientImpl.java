@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.time.LocalDateTime;
 
 /**
  * Implementation of the Comm Client calls Dataclient interface
@@ -150,11 +149,11 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_id The UUID of the video.
      * @param requester_id The UUID of the user requesting the video.
      * @return Byte array containing serialized video object and mp4
-     * byte array look like : mp4_bytes -> arbitrary_separator_of_1000_bytes_of_value_-128 -> video_object_bytes
+     * Byte array look like : mp4 bytes + arbitrary separator of 1000 bytes of value -128 + video object bytes
      */
     public byte[] askVideo(UUID video_id, UUID requester_id){
 
-        // Recover the video thanks to video_id
+        // Recover the video object thanks to video_id
         VideoFull v;
         try {
             v = data_client_core.getUser().getUploadedVideos().get(video_id);
@@ -197,7 +196,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         int length_object_bytes = video_object_bytes.length;
 
         // Final tab with both mp4 and VideoFull object
-        byte[] video_object_and_mp4_bytes = new byte[length_mp4_bytes + length_object_bytes + 100];
+        byte[] video_object_and_mp4_bytes = new byte[length_mp4_bytes + length_object_bytes + 1000];
         for (int i = 0 ; i < length_mp4_bytes ; i++){
             video_object_and_mp4_bytes[i] = mp4_bytes[i];
         }
@@ -213,6 +212,34 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
     }
 
     /**
+     * Find the beginning of the separatory in a byte array.
+     *
+     * @param byte_array The byte array in which we search the separatory.
+     * @return int representing the location of the separatory in the array
+     */
+    public int findSeparatory(byte[] byte_array){
+        int start = 0;
+        int start_separatory = 0;
+        boolean check = false;
+        for (int i = 0 ; i < byte_array.length ; i++){
+            if (byte_array[i] == -128){
+                start = i;
+                check = true;
+                for (int j = start ; j < start + 1000 ; j++){
+                    if (byte_array[j] != -128){
+                        check = false;
+                    }
+                }
+                if (check){
+                    start_separatory = start;
+                    break;
+                }
+            }
+        }
+        return start_separatory;
+    }
+
+    /**
      * Saves a video file to the system.
      *
      * @param video_file The byte array of the video file data.
@@ -225,24 +252,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         byte[] video_object_bytes;
 
         // Finding of the separator location in the array video_file
-        int start = 0;
-        int start_separatory = 0;
-        boolean check = false;
-        for (int i = 0 ; i < video_file.length ; i++){
-            if (video_file[i] == -128){
-                start = i;
-                check = true;
-                for (int j = start ; j < start + 1000 ; j++){
-                    if (video_file[j] != -128){
-                        check = false;
-                    }
-                }
-                if (check){
-                    start_separatory = start;
-                    break;
-                }
-            }
-        }
+        int start_separatory = findSeparatory(video_file);
 
         // Filling of the 2 tables
         mp4_bytes = new byte[start_separatory];
@@ -274,7 +284,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         }
 
         // New path for the mp4
-        String outputFilePath = ProfileSaver.user_dir + deserialized_video.getSharedInfo().getTitle() + ".mp4";
+        String outputFilePath = ProfileSaver.user_dir + deserialized_video.getSharedInfo().getTitle() + "." + deserialized_video.getVideoFormat();
 
         // Creation of the corresponding VideoLight object with new UUID and new owner
         VideoLight saved_video = new VideoLight(
