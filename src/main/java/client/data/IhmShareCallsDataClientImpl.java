@@ -12,6 +12,7 @@ import java.util.UUID;
 /**
  * Implementation of the IHM Share calls Dataclient interface.
  *
+ * @author Florian Goutard
  * @version 1.0
  */
 public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataClient {
