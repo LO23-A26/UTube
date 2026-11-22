@@ -205,7 +205,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param user_profile The full user profile to remove.
      */
     public void removeUser(UserFull user_profile){
-        data_client_core.getInterfaceFromICM().refreshUserList(user_profile);
+        data_client_core.getInterfaceFromICM().refreshUserList(user_profile.getSharedInfo());
     }
 
     /**
