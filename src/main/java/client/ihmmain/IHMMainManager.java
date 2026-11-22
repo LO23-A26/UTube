@@ -1,6 +1,17 @@
 package client.ihmmain;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.IHMMain.InterfaceCommCallsIHMMain;
 import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
@@ -13,16 +24,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Collection;
-import java.util.UUID;
-
 /**
  * View manager of IHM Main: loads the FXML screens, switches the displayed screen
  * and gives each {@link Controller} access to the interfaces of the other modules
@@ -34,6 +35,8 @@ public class IHMMainManager {
     public static final String LOGIN_VIEW = "/client/ihmmain/login-view.fxml";
     public static final String MAIN_VIEW = "/client/ihmmain/main-view.fxml";
     public static final String HOME_VIEW = "/client/ihmmain/home-view.fxml";
+    public static final String PROFILE_VIEW = "/client/ihmmain/profile-view.fxml";
+    public static final String CREATE_PROFILE_VIEW = "/client/ihmmain/create-profile-view.fxml";
     public static final String STYLESHEET = "/assets/styles/utube.css";
 
 
@@ -44,47 +47,64 @@ public class IHMMainManager {
      * controllers.get(LoginController.class)
      */
     private final Map<Class<? extends Controller>, Controller> controllers = new HashMap<>();
-    private InterfaceIhmMainCallsDataClient dataCalls;
-    private InterfaceIHMMainCallsComm commCalls;
-    private InterfaceIHMMainCallsIHMShare shareCalls;
-    private Scene primaryScene;
+    private InterfaceIhmMainCallsDataClient data_calls;
+    private InterfaceIHMMainCallsComm comm_calls;
+    private InterfaceIHMMainCallsIHMShare share_calls;
+    private Scene primary_scene;
     /** Controller of the main view (header and users panel) while it is displayed, null otherwise. */
     private MainController main_controller;
 
-    private final InterfaceDataCallsIHMMain dataNotifications = new DataCallsIHMMainImpl(this);
-    private final InterfaceCommCallsIHMMain commNotifications = new CommCallsIHMMainImpl(this);
+    private final InterfaceDataCallsIHMMain data_notifications = new DataCallsIHMMainImpl(this);
+    private final InterfaceCommCallsIHMMain comm_notifications = new CommCallsIHMMainImpl(this);
     // UI state only. Data and COM retain responsibility for storage and network indexes.
-    private final Map<UUID, VideoLight> displayedVideos = new LinkedHashMap<>();
-    private Alert remoteProfileDialog;
+    // Both maps are filled by the notifications of Data/COM and only touched on the JavaFX thread.
+    private final Map<UUID, UserLight> displayed_users = new LinkedHashMap<>();
+    private final Map<UUID, VideoLight> displayed_videos = new LinkedHashMap<>();
+    private Alert remote_profile_dialog;
 
-    public InterfaceDataCallsIHMMain getInterfaceForData() { return dataNotifications; }
-    public InterfaceCommCallsIHMMain getInterfaceForComm() { return commNotifications; }
+    public InterfaceDataCallsIHMMain getInterfaceForData() { return data_notifications; }
+    public InterfaceCommCallsIHMMain getInterfaceForComm() { return comm_notifications; }
 
-    List<VideoLight> getDisplayedVideos() { return List.copyOf(displayedVideos.values()); }
+    List<UserLight> getDisplayedUsers() { return List.copyOf(displayed_users.values()); }
 
+    List<VideoLight> getDisplayedVideos() { return List.copyOf(displayed_videos.values()); }
+
+    void addUsers(Collection<UserLight> users) {
+        for (UserLight user : users) {
+            if (user != null && user.getUuid() != null) displayed_users.put(user.getUuid(), user);
+        }
+        refreshUsers();
+    }
+
+    void removeUser(UUID id) {
+        displayed_users.remove(id);
+        refreshUsers();
+    }
+
+    /** Redraws the users panel of the main view, if it is displayed. */
     void refreshUsers() {
-        if (main_controller != null) main_controller.refreshView();
+        if (main_controller != null) main_controller.refreshUserList();
     }
 
     void addVideos(Collection<VideoLight> videos) {
         for (VideoLight video : videos) {
-            if (video != null && video.getVideoId() != null) displayedVideos.put(video.getVideoId(), video);
+            if (video != null && video.getVideoId() != null) displayed_videos.put(video.getVideoId(), video);
         }
         refreshVideos();
     }
 
     void replaceVideos(Collection<VideoLight> videos) {
-        displayedVideos.clear();
+        displayed_videos.clear();
         addVideos(videos);
     }
 
     void removeVideo(UUID id) {
-        displayedVideos.remove(id);
+        displayed_videos.remove(id);
         refreshVideos();
     }
 
     void removeUserVideos(UUID userId) {
-        displayedVideos.values().removeIf(video -> video.getOwner() != null
+        displayed_videos.values().removeIf(video -> video.getOwner() != null
                 && userId.equals(video.getOwner().getUuid()));
         refreshVideos();
     }
@@ -96,60 +116,60 @@ public class IHMMainManager {
 
     /** Displays only the received profile fields, never credentials or local collections. */
     void displayRemoteProfile(UserFull profile) {
-        if (remoteProfileDialog == null) {
-            remoteProfileDialog = new Alert(Alert.AlertType.INFORMATION);
-            remoteProfileDialog.setTitle("Profil utilisateur");
-            if (primaryScene != null && primaryScene.getWindow() != null) {
-                remoteProfileDialog.initOwner(primaryScene.getWindow());
+        if (remote_profile_dialog == null) {
+            remote_profile_dialog = new Alert(Alert.AlertType.INFORMATION);
+            remote_profile_dialog.setTitle("Profil utilisateur");
+            if (primary_scene != null && primary_scene.getWindow() != null) {
+                remote_profile_dialog.initOwner(primary_scene.getWindow());
             }
         }
         if (profile == null || profile.getSharedInfo() == null) {
-            remoteProfileDialog.setHeaderText("Profil indisponible");
-            remoteProfileDialog.setContentText("Le profil demandé n'a pas été fourni.");
+            remote_profile_dialog.setHeaderText("Profil indisponible");
+            remote_profile_dialog.setContentText("Le profil demandé n'a pas été fourni.");
         } else {
-            remoteProfileDialog.setHeaderText(profile.getSharedInfo().getPseudo());
-            remoteProfileDialog.setContentText("Prénom : " + profileField(profile.getFirstName())
+            remote_profile_dialog.setHeaderText(profile.getSharedInfo().getPseudo());
+            remote_profile_dialog.setContentText("Prénom : " + profileField(profile.getFirstName())
                     + "\nNom : " + profileField(profile.getLastName())
                     + "\nDate de naissance : " + profileField(profile.getBirthDate()));
         }
-        remoteProfileDialog.show();
+        remote_profile_dialog.show();
     }
 
     private static String profileField(Object value) {
         return value == null || value.toString().isBlank() ? "Non renseigné" : value.toString();
     }
 
-    public void setIData(InterfaceIhmMainCallsDataClient dataCalls) {
-        this.dataCalls = dataCalls;
+    public void setIData(InterfaceIhmMainCallsDataClient data_calls) {
+        this.data_calls = data_calls;
     }
 
-    public void setIComm(InterfaceIHMMainCallsComm commCalls) {
-        this.commCalls = commCalls;
+    public void setIComm(InterfaceIHMMainCallsComm comm_calls) {
+        this.comm_calls = comm_calls;
     }
 
-    public void setIShare(InterfaceIHMMainCallsIHMShare shareCalls) {
-        this.shareCalls = shareCalls;
+    public void setIShare(InterfaceIHMMainCallsIHMShare share_calls) {
+        this.share_calls = share_calls;
     }
 
     public InterfaceIhmMainCallsDataClient getIData() {
-        return dataCalls;
+        return data_calls;
     }
 
     public InterfaceIHMMainCallsComm getIComm() {
-        return commCalls;
+        return comm_calls;
     }
 
     public InterfaceIHMMainCallsIHMShare getIShare() {
-        return shareCalls;
+        return share_calls;
     }
 
     /** Builds the main window and displays the login screen. */
     public void start(Stage stage) {
         LoadedView view = loadView(LOGIN_VIEW);
-        primaryScene = new Scene(view.root(), 1280, 800);
-        primaryScene.getStylesheets().add(IHMMainManager.class.getResource(STYLESHEET).toExternalForm());
+        primary_scene = new Scene(view.root(), 1280, 800);
+        primary_scene.getStylesheets().add(IHMMainManager.class.getResource(STYLESHEET).toExternalForm());
         stage.setTitle("UTube");
-        stage.setScene(primaryScene);
+        stage.setScene(primary_scene);
         stage.show();
         view.controller().refreshView();
     }
@@ -157,10 +177,11 @@ public class IHMMainManager {
     /** Replaces the displayed screen with the one given by {@code fxmlPath}. */
     public void changeView(String fxmlPath) {
         LoadedView view = loadView(fxmlPath);
-        primaryScene.setRoot(view.root());
+        primary_scene.setRoot(view.root());
         if (view.controller() instanceof LoginController) {
-            displayedVideos.clear();
-            if (remoteProfileDialog != null) remoteProfileDialog.close();
+            displayed_users.clear();
+            displayed_videos.clear();
+            if (remote_profile_dialog != null) remote_profile_dialog.close();
         }
         main_controller = view.controller() instanceof MainController main ? main : null;
         view.controller().refreshView();
