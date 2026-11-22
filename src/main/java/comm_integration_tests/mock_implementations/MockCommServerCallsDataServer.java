@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
@@ -17,14 +18,33 @@ public class MockCommServerCallsDataServer implements InterfaceCommServerCallsDa
         return new ArrayList<>();
     }
 
+    public Index registerUserAndGetIndexStructure(UserLight new_user, Set<VideoLight> new_videos){
+        return new Index();
+    }
+
     @Override
     public void removeUser(UUID user_id) {
         System.out.println("[MockCommServerCallsDataServer] removeUser: " + user_id);
     }
 
     @Override
+    public void removeUser(UserLight user_profile, List<VideoLight> video_list) {
+        InterfaceCommServerCallsDataServer.super.removeUser(user_profile, video_list);
+    }
+
+    @Override
+    public void removeVideo(UUID video_id) {
+
+    }
+
+    @Override
     public void deleteIndex(UUID video_id) {
         System.out.println("[MockCommServerCallsDataServer] deleteIndex: " + video_id);
+    }
+
+    @Override
+    public void addOrUpdateVideo(VideoLight video_info) {
+
     }
 
     @Override

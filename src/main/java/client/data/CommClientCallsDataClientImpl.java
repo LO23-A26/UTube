@@ -21,8 +21,9 @@ import java.util.UUID;
  */
 public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDataClient {
 
-    private DataClientCore data_client_core;
-    
+    private final DataClientCore data_client_core;
+
+    public CommClientCallsDataClientImpl(DataClientCore data_client_core) { this.data_client_core = data_client_core; }
 
     /**
      * Gives details access for a specific video to a requester.
@@ -131,6 +132,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @return UUID representing the requester.
      */
+    @Override 
     public UUID askRequesterId(){
         if (data_client_core == null) {
             System.err.println("askRequesterId : DataClientCore non branché");
@@ -187,7 +189,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @return UserFull object representing the current user.
      */
     public UserFull getMyProfile(){
-        return null;
+        return data_client_core.getUser();
     }
 
     /**
@@ -223,12 +225,5 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         return data_client_core;
     }
 
-    /**
-     * Sets the Data client core used by this implementation.
-     *
-     * @param data_client_core The Data client core to use.
-     */
-    public void setDataClientCore(DataClientCore data_client_core) {
-        this.data_client_core = data_client_core;
-    }
+
 }
