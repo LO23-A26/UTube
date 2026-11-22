@@ -29,10 +29,7 @@ public class DataClientCore {
     private final CommClientCallsDataClientImpl impl_interface_for_comm;
     private InterfaceDataCallsIHMMain interface_from_ICM;
     private InterfaceDataCallsComm interface_from_Comm;
-
-    // A VERIFIER AVEC LES MODULES CONCERNÉS
     private IhmShareCallsDataClientImpl impl_interface_for_ICS;
-    private CommClientCallsDataClientImpl impl_interface_for_CC;
 
     public DataClientCore() {
         this.list_video = new HashSet<>();
@@ -40,10 +37,8 @@ public class DataClientCore {
         this.profileSaver = new ProfileSaver();
 
         this.impl_interface_for_ICS = new IhmShareCallsDataClientImpl(this);
-        this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl();
-        this.impl_interface_for_ICM.setDataClientCore(this);
-        this.impl_interface_for_CC = new CommClientCallsDataClientImpl();
-        this.impl_interface_for_CC.setDataClientCore(this);
+        this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl(this);
+        this.impl_interface_for_comm = new CommClientCallsDataClientImpl(this);
     }
 
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
@@ -56,23 +51,13 @@ public class DataClientCore {
     public InterfaceDataCallsComm getInterfaceFromComm() {
         return interface_from_Comm;
     }
-    
     public IhmShareCallsDataClientImpl getImplInterfaceForICS() {
     return impl_interface_for_ICS;
 }
-    public CommClientCallsDataClientImpl getImplInterfaceForCC() { return impl_interface_for_CC; }
-
-
 
 	public void setImplInterfaceForICS(IhmShareCallsDataClientImpl impl_interface_for_ICS) {
 		this.impl_interface_for_ICS = impl_interface_for_ICS;
 	}
-
-    public DataClientCore() {
-        this.profileSaver = new ProfileSaver();
-        this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl(this);
-        this.impl_interface_for_comm = new CommClientCallsDataClientImpl(this);
-    }
 
     public void setInterfaceFromICM(InterfaceDataCallsIHMMain interface_from_ICM) {
         this.interface_from_ICM = interface_from_ICM;

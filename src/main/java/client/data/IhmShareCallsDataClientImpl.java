@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataClient {
 
-    private DataClientCore data_client_core;
+    private final DataClientCore data_client_core;
 
     public IhmShareCallsDataClientImpl(DataClientCore data_client_core) {
         this.data_client_core = data_client_core;
@@ -120,12 +120,4 @@ public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataCl
         return data_client_core;
     }
 
-    /**
-     * Sets the Data client core used by this implementation.
-     *
-     * @param data_client_core The Data client core to use.
-     */
-    public void setDataClientCore(DataClientCore data_client_core) {
-        this.data_client_core = data_client_core;
-    }
 }

@@ -28,8 +28,23 @@ public class MockCommServerCallsDataServer implements InterfaceCommServerCallsDa
     }
 
     @Override
+    public void removeUser(UserLight user_profile, List<VideoLight> video_list) {
+        InterfaceCommServerCallsDataServer.super.removeUser(user_profile, video_list);
+    }
+
+    @Override
+    public void removeVideo(UUID video_id) {
+
+    }
+
+    @Override
     public void deleteIndex(UUID video_id) {
         System.out.println("[MockCommServerCallsDataServer] deleteIndex: " + video_id);
+    }
+
+    @Override
+    public void addOrUpdateVideo(VideoLight video_info) {
+
     }
 
     @Override

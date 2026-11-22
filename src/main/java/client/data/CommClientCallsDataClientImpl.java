@@ -23,7 +23,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
 
     private final DataClientCore data_client_core;
 
-    public void setDataClientCore(DataClientCore data_client_core) { this.data_client_core = data_client_core; }
+    public CommClientCallsDataClientImpl(DataClientCore data_client_core) { this.data_client_core = data_client_core; }
 
     /**
      * Gives details access for a specific video to a requester.
@@ -224,12 +224,5 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         return data_client_core;
     }
 
-    /**
-     * Sets the Data client core used by this implementation.
-     *
-     * @param data_client_core The Data client core to use.
-     */
-    public void setDataClientCore(DataClientCore data_client_core) {
-        this.data_client_core = data_client_core;
-    }
+
 }
