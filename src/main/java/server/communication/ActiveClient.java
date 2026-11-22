@@ -4,12 +4,15 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.INFO;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import client.communication.RemoteClient;
 import common.dataclasses.communication.ClientMessage;
 import common.dataclasses.communication.ServerMessage;
 
@@ -17,9 +20,13 @@ import common.dataclasses.communication.ServerMessage;
  * An active client connected to the server.
  */
 public class ActiveClient {
+
+    private static final System.Logger logger = System.getLogger(ActiveClient.class.getName());
+
     private final UUID uuid;
     private final String ipAddress;
     private final int port;
+    private volatile RemoteClient remoteClient;
 
     private final Socket socket;
     private final ObjectInputStream in; // Ici mettre des ObjectStreams ? 
@@ -75,6 +82,22 @@ public class ActiveClient {
     }
 
     /**
+     * Returns where the client listens for the other clients
+     * @return the card of the client or null if not announced yet
+     */
+    public RemoteClient getRemoteClient() {
+        return remoteClient;
+    }
+
+    /**
+     * Remembers where the client listens for the other clients
+     * @param remoteClient the card built from the address announced by the client.
+     */
+    public void setRemoteClient(RemoteClient remoteClient) {
+        this.remoteClient = remoteClient;
+    }
+
+    /**
      * Sends a message to the client.
      * @param message the message to send.
      * @throws IOException 
@@ -85,7 +108,9 @@ public class ActiveClient {
         }
 
         synchronized (out) {
+            out.reset();
             out.writeObject(message);
+            out.flush();
         }
     }
 
@@ -119,12 +144,12 @@ public class ActiveClient {
                 } catch (SocketTimeoutException timeout) {
                     // Socket timeout is expected when no client data arrives; keep waiting.
                 } catch (ClassNotFoundException ex) {
-                    System.getLogger(ActiveClient.class.getName()).log(System.Logger.Level.ERROR, (String) "Recieved object is not of class ServerMessage", ex);
+                    logger.log(ERROR,"Recieved object is not of class ServerMessage", ex);
                 } 
             }
-        } catch (IOException e) {
+        } catch (IOException ex) {
             if (connected.get()) {
-                System.err.println("Read error from client " + uuid + ": " + e.getMessage());
+                logger.log(ERROR, "Read error from client " + uuid, ex);
             }
         } finally {
             close();
@@ -134,8 +159,8 @@ public class ActiveClient {
     private void handleMessage(ServerMessage message) {
         // Il faudra call le handler dans le message une fois qu'on a une classe message
         // v1 avec du texte pr l'instant : on affiche la ligne recue et on repond "OK ..." pour verifier que la connexion marche.
-        System.out.println("received from " + uuid + " : " + message);
-        message.handle(this.serverController);
+        logger.log(INFO, "received from {0} : {1}", new Object[]{uuid, message});
+        message.handle(this.serverController, this);
         
     }
     

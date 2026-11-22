@@ -12,14 +12,25 @@ import common.interfaces.data.InterfaceCommServerCallsDataServer;
 
 public class MockCommServerCallsDataServer implements InterfaceCommServerCallsDataServer {
 
+    private final Index index = new Index();
+
     @Override
-    public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
-        System.out.println("[MockCommServerCallsDataServer] registerUserAndGetIndex: " + new_user + " / " + new_videos.size());
-        return new ArrayList<>();
+    public synchronized Index registerUserAndGetIndexStructure(UserLight new_user, Set<VideoLight> new_videos) {
+        System.out.println("[MockCommServerCallsDataServer] registerUserAndGetIndexStructure: "
+                + new_user + " / " + (new_videos == null ? 0 : new_videos.size()) + " videos");
+
+        index.addUser(new_user);
+        if (new_videos != null) {
+            for (VideoLight video : new_videos) {
+                index.addVideo(video);
+            }
+        }
+        return index;
     }
 
-    public Index registerUserAndGetIndexStructure(UserLight new_user, Set<VideoLight> new_videos){
-        return new Index();
+    @Override
+    public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
+        return new ArrayList<>();
     }
 
     @Override
