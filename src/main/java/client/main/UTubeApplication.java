@@ -1,9 +1,10 @@
 package client.main;
 
-import client.data.IhmMainCallsDataClientImpl;
+import client.communication.CommClientController;
+import client.data.DataClientCore;
 import client.ihmmain.IHMMainManager;
-import client.ihmshare.IHMShareCore;
 import javafx.application.Application;
+import javafx.scene.chart.PieChart;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -12,27 +13,36 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 
 /**
- * Point d'entrée JavaFX du client UTube : démarre l'application, construit les
- * managers des différents modules et laisse l'{@link IHMMainManager} gérer
- * l'affichage des vues FXML.
+ * JavaFX entry point of the UTube client: starts the application, builds the
+ * managers of the modules and lets the {@link IHMMainManager} handle the
+ * display of the FXML views.
  */
 public class UTubeApplication extends Application {
+
+    // Preserve the resource constants used by develop's existing tests.
+    public static final String MAIN_VIEW = IHMMainManager.MAIN_VIEW;
+    public static final String LOGIN_VIEW = IHMMainManager.LOGIN_VIEW;
+    public static final String STYLESHEET = IHMMainManager.STYLESHEET;
 
     @Override
     public void start(Stage stage) {
         loadFonts();
-        IHMMainManager view_manager = new IHMMainManager(new IhmMainCallsDataClientImpl());
+        IHMMainManager viewManager = new IHMMainManager();
+        DataClientCore dataClientCore = new DataClientCore();
+        dataClientCore.setInterfaceFromICM(viewManager.getInterfaceForData());
+        CommClientController commClientController = new CommClientController();
 
-        // IHM-Share displays its screens through the same view manager
-        IHMShareCore ihm_share_core = new IHMShareCore();
-        ihm_share_core.setViewManager(view_manager);
-        view_manager.setInterfaceCallsShare(ihm_share_core.getInterfaceForIHMMain());
-        // TODO: ihm_share_core.setInterfaceFromData(...) / setInterfaceFromCommunication(...) once implemented
+        viewManager.setIData(dataClientCore.getImplInterfaceForICM());
+        viewManager.setIComm(commClientController.getIhmMainCallsComm());
 
-        view_manager.start(stage);
+        dataClientCore.setInterfaceFromComm(commClientController.getDataCallsComm());
+
+        commClientController.setInterfaceCommDataClient(dataClientCore.getImplInterfaceForComm());
+
+        viewManager.start(stage);
     }
 
-    /** Les @font-face du CSS échouent si le chemin du projet contient un espace : on charge les polices ici. */
+    /** The CSS @font-face rules fail if the project path contains a space, so the fonts are loaded here. */
     private static void loadFonts() {
         for (String font : new String[]{"Regular", "Italic", "Medium", "SemiBold"}) {
             try (InputStream in = UTubeApplication.class.getResourceAsStream("/assets/fonts/IBMPlexSans-" + font + ".ttf")) {

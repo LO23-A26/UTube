@@ -1,17 +1,16 @@
 package client.ihmmain;
 
 /**
- * Common base of every controller loaded by the {@link IHMMainManager} (fig. 6.4),
- * for both IHM-Main and IHM-Share views.
+ * Common base class of all the IHM Main controllers.
  */
 public abstract class Controller {
 
-    protected IHMMainManager view_manager;
+    protected IHMMainManager viewManager;
 
-    void setViewManager(IHMMainManager view_manager) {
-        this.view_manager = view_manager;
+    void setViewManager(IHMMainManager viewManager) {
+        this.viewManager = viewManager;
     }
 
-    /** Called by the {@link IHMMainManager} each time the view is displayed (first time and on "Retour"). */
+    /** Called by the {@link IHMMainManager} right after the view is displayed. */
     public abstract void refreshView();
 }

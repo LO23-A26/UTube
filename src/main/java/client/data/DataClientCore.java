@@ -1,9 +1,14 @@
 package client.data;
 
-import common.dataclasses.*;
-import common.interfaces.comm.InterfaceData_calls_Comm;
-
 import java.util.Set;
+
+import common.dataclasses.ContactList;
+import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
+import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
+import common.interfaces.comm.InterfaceDataCallsComm;
+
 
 /**
  * @author Lucas Dompnier
@@ -16,23 +21,34 @@ public class DataClientCore {
     private Set<UserLight> connected_user;
     private ProfileSaver profileSaver;
     private ContactList contact_lists;
-    private IhmMainCallsDataClientImpl impl_interface_for_ICM;
-    private InterfaceData_calls_Comm interface_from_Comm;
-
-    public InterfaceData_calls_Comm getInterfaceFromComm() {
-        return interface_from_Comm;
-    }
-
-    public void setInterfaceFromComm(InterfaceData_calls_Comm interface_from_Comm) {
-        this.interface_from_Comm = interface_from_Comm;
-    }
+    private final IhmMainCallsDataClientImpl impl_interface_for_ICM;
+    private final CommClientCallsDataClientImpl impl_interface_for_comm;
+    private InterfaceDataCallsIHMMain interface_from_ICM;
+    private InterfaceDataCallsComm interface_from_Comm;
 
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
     }
+    public CommClientCallsDataClientImpl getImplInterfaceForComm(){return impl_interface_for_comm;}
+    public InterfaceDataCallsIHMMain getInterfaceFromICM() {
+        return interface_from_ICM;
+    }
+    public InterfaceDataCallsComm getInterfaceFromComm() {
+        return interface_from_Comm;
+    }
 
-    public void setImplInterfaceForICM(IhmMainCallsDataClientImpl impl_interface_for_ICM) {
-        this.impl_interface_for_ICM = impl_interface_for_ICM;
+    public DataClientCore() {
+        this.profileSaver = new ProfileSaver();
+        this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl(this);
+        this.impl_interface_for_comm = new CommClientCallsDataClientImpl(this);
+    }
+
+    public void setInterfaceFromICM(InterfaceDataCallsIHMMain interface_from_ICM) {
+        this.interface_from_ICM = interface_from_ICM;
+    }
+
+    public void setInterfaceFromComm(InterfaceDataCallsComm interface_from_Comm) {
+        this.interface_from_Comm = interface_from_Comm;
     }
 
     public UserFull getUser() {

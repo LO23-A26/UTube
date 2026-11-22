@@ -10,6 +10,7 @@ import java.util.Set;
 /**
  * Interface for communication server calls to the data server.
  * Handles user registration, index updates, and connected client management.
+ * @version 2.0
  */
 public interface InterfaceCommServerCallsDataServer {
 
@@ -18,15 +19,35 @@ public interface InterfaceCommServerCallsDataServer {
      *
      * @param new_user The lightweight profile of the new user to register.
      * @param new_videos The set of lightweight videos associated with the new user.
-     * @return An object containing lists of users and videos.
+     * @return An ArrayList containing at index 0 the List<UserLight> (user index)
+     *         and at index 1 the List<VideoLight> (video index).
      */
+    public Index registerUserAndGetIndexStructure(UserLight new_user, Set<VideoLight> new_videos);
+
+    /**
+     * @deprecated an index structure have been added please switch to the registerUserAndGetIndexStructure function
+     */
+    @Deprecated(since="2.0", forRemoval=true)
     public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
+
     /**
      * Removes a user from the server's records based on their unique ID.
      *
      * @param user_id The UUID of the user to be removed.
      */
     public void removeUser(UUID user_id);
+
+    /**
+     * Removes a user and purges their videos (convenience overload matching sequence diagram).
+     *
+     * @param user_profile The profile of the user to disconnect.
+     * @param video_list Ignored as videos are managed internally by the Data Server.
+     */
+    default void removeUser(UserLight user_profile, List<VideoLight> video_list) {
+        if (user_profile != null && user_profile.getUuid() != null) {
+            removeUser(user_profile.getUuid());
+        }
+    }
 
     /**
      * Deletes a specific video index from the server.
