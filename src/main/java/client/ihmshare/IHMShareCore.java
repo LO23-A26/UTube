@@ -2,7 +2,7 @@ package client.ihmshare;
 
 import client.ihmmain.IHMMainManager;
 import common.dataclasses.VideoLight;
-import common.interfaces.comm.InterfaceIHMShare_calls_Comm;
+import common.interfaces.comm.InterfaceIHMShareCallsComm;
 import common.interfaces.data.InterfaceIhmShareCallsDataClient;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class IHMShareCore {
 
-    private InterfaceIHMShare_calls_Comm interface_from_communication;
+    private InterfaceIHMShareCallsComm interface_from_communication;
     private InterfaceIhmShareCallsDataClient interface_from_data;
     // TODO: interface_from_ihm_main, once IHM-Main publishes its interface for IHM-Share in common
     // (needed to open the window 08a "Gérer les accès")
@@ -204,9 +204,9 @@ public class IHMShareCore {
     /**
      * Set the interface used by IHM Share to call the Communication component
      *
-     * @param I (InterfaceIHMShare_calls_Comm) interface to the Communication component
+     * @param I (InterfaceIHMShareCallsComm) interface to the Communication component
      */
-    public void setInterfaceFromCommunication(InterfaceIHMShare_calls_Comm I) {
+    public void setInterfaceFromCommunication(InterfaceIHMShareCallsComm I) {
         this.interface_from_communication = I;
     }
 
@@ -222,9 +222,9 @@ public class IHMShareCore {
     /**
      * Get the interface used by IHM Share to call the Communication component
      *
-     * @return (InterfaceIHMShare_calls_Comm) interface to the Communication component, null if not plugged yet
+     * @return (InterfaceIHMShareCallsComm) interface to the Communication component, null if not plugged yet
      */
-    public InterfaceIHMShare_calls_Comm getInterfaceFromCommunication() {
+    public InterfaceIHMShareCallsComm getInterfaceFromCommunication() {
         return this.interface_from_communication;
     }
 
