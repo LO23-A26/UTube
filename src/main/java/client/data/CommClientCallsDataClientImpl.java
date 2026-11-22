@@ -6,9 +6,11 @@ import common.dataclasses.VideoLight;
 import common.dataclasses.VideoFull;
 import common.dataclasses.Comment;
 import common.dataclasses.Rating;
+import common.exceptions.AccessDeniedException;
 import common.interfaces.data.InterfaceCommClientCallsDataClient;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -21,19 +23,35 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
 
     private final DataClientCore data_client_core;
 
-    public CommClientCallsDataClientImpl(DataClientCore data_client_core) {
-        this.data_client_core = data_client_core;
-    }
+    public CommClientCallsDataClientImpl(DataClientCore data_client_core) { this.data_client_core = data_client_core; }
 
     /**
      * Gives details access for a specific video to a requester.
      *
      * @param requester_profile The profile of the user requesting access.
      * @param video_id The UUID of the video.
-     * @return VideoHeavy object containing heavy video details, or null by default.
+     * @return The full video with its metadata, ratings and comments.
+     * @throws AccessDeniedException If the requester is not allowed or the video is unknown.
      */
-    public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id){
-        return new VideoFull();
+    public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id) throws AccessDeniedException {
+        if (!checkAccess(requester_profile)) {
+            throw new AccessDeniedException("Access denied to video " + video_id);
+        }
+        Map<UUID, VideoFull> uploaded_videos = data_client_core.getUser().getUploadedVideos();
+        if (uploaded_videos == null || !uploaded_videos.containsKey(video_id)) {
+            throw new AccessDeniedException("Unknown video " + video_id);
+        }
+        return uploaded_videos.get(video_id);
+    }
+
+    /**
+     * Checks whether a user may access a video. Everybody is allowed in V2.
+     *
+     * @param requester_profile The profile of the user requesting access.
+     * @return true if the access is authorized.
+     */
+    private boolean checkAccess(UserLight requester_profile) {
+        return true;
     }
 
     /**
@@ -92,14 +110,22 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @param video_info The lightweight video information object.
      */
-    public void addRemoteVideo(VideoLight video_info){}
+    public void addRemoteVideo(VideoLight video_info){
+        if (data_client_core != null) {
+            data_client_core.addRemoteVideoToLocalIndex(video_info);
+        }
+    }
 
     /**
      * Removes a video from a user's collection.
      *
      * @param video_id The UUID of the video to remove.
      */
-    public void removeVideoFromUser(UUID video_id){}
+    public void removeVideoFromUser(UUID video_id){
+        if (video_id != null && this.data_client_core != null){
+            this.data_client_core.removeRemoteVideoFromLocalIndex(video_id);
+        }
+    }
 
     /**
      * Asks for the requester's ID.
@@ -108,7 +134,11 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      */
     @Override 
     public UUID askRequesterId(){
-        return data_client_core.getUser().getSharedInfo().getUuid();
+        if (data_client_core == null) {
+            System.err.println("askRequesterId : DataClientCore non branché");
+            return null;
+        }
+        return data_client_core.getCurrentUserId();
     }
 
     /**
@@ -183,5 +213,17 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @param video_id The UUID of the video to remove.
      */
+
     public void removeSharedVideo(UUID video_id){}
+
+    /**
+     * Gets the Data client core used by this implementation.
+     *
+     * @return The Data client core.
+     */
+    public DataClientCore getDataClientCore() {
+        return data_client_core;
+    }
+
+
 }
