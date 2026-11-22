@@ -13,7 +13,7 @@ import javafx.application.Platform;
  */
 public class CommunicationCallsIHMShareImpl implements InterfaceCommunicationCallsIHMShare {
 
-    private IHMShareCore core;
+    private final IHMShareCore core;
 
     /**
      * Class constructor. Keep a pointer to IHMShareCore object
@@ -47,5 +47,19 @@ public class CommunicationCallsIHMShareImpl implements InterfaceCommunicationCal
     @Override
     public void downloadDone(String video_path) {
         Platform.runLater(() -> core.getDownloadVideo().downloadDone(video_path));
+    }
+
+    /**
+     * Information that the owner refused the download (access denied, error 403)
+     *
+     * @param error (Exception) error sent back by the owner
+     */
+    @Override
+    public void errorAccess(Exception error) {
+        Platform.runLater(() -> {
+            if (core.getDownloadVideo() != null) {
+                core.getDownloadVideo().accessDenied(error);
+            }
+        });
     }
 }

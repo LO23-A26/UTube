@@ -22,4 +22,12 @@ public interface InterfaceCommunicationCallsIHMShare {
     * @param videoPath (str)
     */
    public void downloadDone(String videoPath);
+
+    /**
+     * Information that the owner refused the download (access denied, error 403):
+     * answer of the oldest download asked with askVideo that has not been answered yet
+     *
+     * @param error (Exception) error sent back by the owner
+     */
+    public void errorAccess(Exception error);
 }

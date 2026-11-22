@@ -44,7 +44,8 @@ public class IHMMainCallsIHMShareImpl implements InterfaceIHMMainCallsIHMShare {
      */
     @Override
     public void openDownloads(StackPane container) {
-        core.openScreen(container, DownloadsController.VIEW);
+        DownloadsController controller = core.openScreen(container, DownloadsController.VIEW);
+        core.setControllerDownloads(controller); // refreshed when a download is done
     }
 
     /**

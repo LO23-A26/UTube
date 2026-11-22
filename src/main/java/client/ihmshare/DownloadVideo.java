@@ -3,6 +3,7 @@ package client.ihmshare;
 import common.dataclasses.VideoFull;
 import common.dataclasses.VideoLight;
 import common.interfaces.comm.InterfaceIHMShare_calls_Comm;
+import javafx.scene.control.Alert;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -21,7 +22,8 @@ import java.util.UUID;
  * Must only be used from the JavaFX thread.
  * <p>
  * {@code InterfaceCommunicationCallsIHMShare.downloadDone} only gives the local path of the
- * file, not the video: the answers are matched with the requests in the order of the requests.
+ * file, and {@code errorAccess} only the error, not the video: the answers are matched with
+ * the requests in the order of the requests.
  *
  * @author IHM-Share
  * @version 1.0
@@ -104,6 +106,27 @@ public class DownloadVideo {
         if (downloads != null) {
             downloads.refreshView();
         }
+    }
+
+    /**
+     * Answer of Communication: the owner refused the oldest pending download (error 403).
+     * The request is dropped and the user is informed
+     *
+     * @param error (Exception) error sent back by the owner
+     */
+    public void accessDenied(Exception error) {
+        VideoLight video = pending.pollFirst();
+        if (video == null) {
+            return; // no request in progress: unexpected answer
+        }
+        DisplayVideoController display = core.getControllerDisplayVideo();
+        if (display != null) {
+            display.refreshView(); // the "Télécharger" button is enabled again
+        }
+        Alert alert = new Alert(Alert.AlertType.ERROR,
+                "Le ou la propriétaire de « " + video.getTitle() + " » vous a refusé l'accès à cette vidéo.");
+        alert.setHeaderText("Téléchargement refusé");
+        alert.show();
     }
 
     /**
