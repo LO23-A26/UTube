@@ -74,14 +74,17 @@ public class DownloadsController extends ShareController {
         }
         // TODO: no method in InterfaceIhmShareCallsDataClient to delete a downloaded video yet,
         // the local file is deleted here until Data provides one
-        VideoFull removed = core.getDownloadVideo().removeDownloaded(video.getVideoId());
-        if (removed != null && removed.getFilePath() != null) {
+        VideoFull local_video = core.getDownloadVideo().getDownloaded(video.getVideoId());
+        if (local_video != null && local_video.getFilePath() != null) {
             try {
-                Files.deleteIfExists(Path.of(removed.getFilePath()));
+                Files.deleteIfExists(Path.of(local_video.getFilePath()));
             } catch (IOException e) {
-                showError("Le fichier local n'a pas pu être supprimé : " + removed.getFilePath());
+                // the file is still there: the video stays in the list
+                showError("Le fichier local n'a pas pu être supprimé : " + local_video.getFilePath());
+                return;
             }
         }
+        core.getDownloadVideo().removeDownloaded(video.getVideoId());
         refreshView();
     }
 }

@@ -43,10 +43,12 @@ public class ManageVideosController extends ShareController {
     public void refreshView() {
         videos_box.getChildren().clear();
         for (VideoLight video : videos) {
+            Button access_button = new Button("Gérer les accès");
+            access_button.setOnAction(event -> manageAccess(video));
             Button delete_button = new Button("Supprimer");
             delete_button.setOnAction(event -> deleteVideo(video));
             videos_box.getChildren().add(videoRow(video.getTitle(), subtitle(video),
-                    () -> core.openVideo(video), delete_button));
+                    () -> core.openVideo(video), access_button, delete_button));
         }
         empty_label.setVisible(videos.isEmpty());
         empty_label.setManaged(videos.isEmpty());
@@ -57,6 +59,13 @@ public class ManageVideosController extends ShareController {
     private void addVideo() {
         AddVideoController add_video = core.changeContent(AddVideoController.VIEW);
         core.setControllerAddVideo(add_video);
+    }
+
+    /** "Gérer les accès": window 08a, provided by IHM-Main. */
+    @SuppressWarnings("unused") // the video will be given to the window 08a
+    private void manageAccess(VideoLight video) {
+        // TODO: open the window 08a through the interface of IHM-Main (not available yet)
+        showError("La gestion des accès est fournie par IHM-Main, qui n'est pas encore branché.");
     }
 
     /** "Supprimer": the video is no longer available for the other users. */
