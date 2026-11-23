@@ -33,7 +33,7 @@ public class HomeController extends Controller {
 
     /** Replaces the displayed cards with the cards of the given videos. */
     private void displayVideos(List<VideoLight> videos) {
-        videos_container.getChildren().setAll(videos.stream().map(HomeController::createVideoCard).toList());
+        videos_container.getChildren().setAll(videos.stream().map(this::createVideoCard).toList());
         empty_label.setVisible(videos.isEmpty());
     }
 
@@ -42,7 +42,7 @@ public class HomeController extends Controller {
      * All cards keep the same height: a title that is too long is truncated with "…"
      * and the tooltip shows it in full.
      */
-    private static VBox createVideoCard(VideoLight video) {
+    private VBox createVideoCard(VideoLight video) {
         Label title = new Label(video.getTitle());
         title.getStyleClass().add("label-strong");
         title.setStyle("-fx-font-size: 15px;");
@@ -61,10 +61,19 @@ public class HomeController extends Controller {
         HBox row = new HBox(8, texts, chevron);
         row.setAlignment(Pos.CENTER_LEFT);
 
-        // Clicking will open the video details (05), handled by IHM-Share
+        // Clicking opens the video details (05), handled by IHM-Share
         VBox card = new VBox(row);
         card.getStyleClass().addAll("card", "clickable");
+        card.setOnMouseClicked(event -> openVideoDetails(video));
         return card;
+    }
+
+    /** Opens the details screen of the clicked video in the content area of the main view. */
+    private void openVideoDetails(VideoLight video) {
+        MainController main_controller = viewManager.getController(MainController.class);
+        if (main_controller != null) {
+            main_controller.openVideoDetails(video);
+        }
     }
 
     /** Tags sorted alphabetically and separated by commas, or "aucun" if there are none. */
