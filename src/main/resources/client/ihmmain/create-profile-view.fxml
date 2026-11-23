@@ -93,7 +93,7 @@
                        styleClass="field-label"
                        labelFor="$birth_date_picker"/>
                 <Label text="(optionnel)" styleClass="text-secondary"/>
-                <DatePicker fx:id="birth_date_picker"/>
+                <DatePicker fx:id="birth_date_picker" promptText="jj/mm/aaaa" maxWidth="Infinity"/>
             </VBox>
         </GridPane>
 

@@ -96,7 +96,9 @@ public class MainController extends Controller {
     /** "Se déconnecter" (log out) button of the header: back to the login screen (mockup 01). */
     @FXML
     private void logout() {
-        // no server logout yet, call the Comm interface here
+        if (viewManager.getIComm() != null) {
+            viewManager.getIComm().closeSession();
+        }
         viewManager.changeView(IHMMainManager.LOGIN_VIEW);
     }
 
