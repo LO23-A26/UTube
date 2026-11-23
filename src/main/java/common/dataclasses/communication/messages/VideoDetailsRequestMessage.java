@@ -6,6 +6,7 @@ import client.communication.CommClientController;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoFull;
 import common.dataclasses.communication.ClientMessage;
+import common.exceptions.AccessDeniedException;
 
 
 public class VideoDetailsRequestMessage implements ClientMessage {
@@ -33,7 +34,14 @@ public class VideoDetailsRequestMessage implements ClientMessage {
             throw new IllegalArgumentException("Requester cannot be null and must have a valid UUID");
         }
 
-        VideoFull details = controller.interfaceCommDataClient.giveDetailsAccess(requester, videoId);
+        VideoFull details;
+        try {
+            details = controller.interfaceCommDataClient.giveDetailsAccess(requester, videoId);
+        } catch (AccessDeniedException e) {
+            // The requester does not have access to the video details
+            // TODO : Handle this case appropriately, e.g., send an error message back to the requester
+            throw new IllegalStateException("Access denied for video with ID: " + videoId, e);
+        }
         if (details == null) {
             throw new IllegalStateException("No details found for video with ID: " + videoId);
         }
