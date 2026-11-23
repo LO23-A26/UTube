@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 
-import client.ihmshare.IHMShareCore
+import client.ihmshare.IHMShareCore;
 
 /**
  * JavaFX entry point of the UTube client: starts the application, builds the
