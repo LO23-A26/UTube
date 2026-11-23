@@ -50,6 +50,7 @@ public class ServerConnection extends Thread {
     public void sendMessage(ServerMessage message) {
         try {
             this.outToServer.writeObject(message);
+            logger.log(INFO, "Message sent to server: " + message.getClass().getSimpleName());
         } catch (IOException ex) {
             logger.log(ERROR, "Message could not be sent", ex);
         }
@@ -64,6 +65,7 @@ public class ServerConnection extends Thread {
                 try {
                     ClientMessage message = (ClientMessage) inFromServer.readObject();
                     message.handle(commClientController);
+                    logger.log(INFO, "Message received from server: " + message.getClass().getSimpleName());
                 } catch (SocketTimeoutException ignored) {
                     // pas de timeout configuré côté client, par sécurité
                 }
