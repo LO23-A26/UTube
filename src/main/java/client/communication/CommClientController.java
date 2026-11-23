@@ -102,6 +102,17 @@ public class CommClientController {
     }
 
     /**
+     * Closes the connection with the server by sending a disconnection request message.
+     */
+    public void closeServerConnection() {
+        if (serverConnection == null) {
+            return;
+        }
+        serverConnection.disconnect();
+        serverConnection = null;
+    }
+
+    /**
      * Starts listening for direct connections from the other clients
      * @return the port on which this client listens for the other clients
      */
