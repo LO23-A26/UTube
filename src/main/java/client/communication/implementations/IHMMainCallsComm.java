@@ -20,10 +20,13 @@ public class IHMMainCallsComm implements InterfaceIHMMainCallsComm {
         this.commClientController = commClientController;
     }
 
+    /**
+     * Closes the current session by closing the server connection.
+     * Called to disconnect a client from the server.
+     */
     @Override
     public void closeSession() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'closeSession'");
+        commClientController.closeServerConnection();
     }
 
     @Override
