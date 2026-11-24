@@ -51,8 +51,8 @@
                 maxWidth="Infinity" onAction="#connect"/>
 
         <HBox>
-            <!-- Screens 02 · Créer un profil / Importer un profil (create / import a profile): not implemented yet -->
-            <Hyperlink text="Créer un profil"/>
+            <!-- Screen 02 · Importer un profil (import a profile): not implemented yet -->
+            <Hyperlink text="Créer un profil" onAction="#createProfile"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Hyperlink text="Importer un profil"/>
         </HBox>

@@ -1,5 +1,7 @@
 package client.communication.implementations;
 
+import java.io.IOException;
+import static java.lang.System.Logger.Level.ERROR;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
@@ -20,47 +22,55 @@ import common.interfaces.comm.InterfaceDataCallsComm;
  */
 public class DataClientCallsComm implements InterfaceDataCallsComm {
 
-    private CommClientController commClientController;
+    private static final System.Logger logger = System.getLogger(DataClientCallsComm.class.getName());
+
+    private final CommClientController commClientController;
 
     // Constructor, takes in the comm client controller
     public DataClientCallsComm(CommClientController commClientController) {
         this.commClientController = commClientController;
     }
 
+    // connects the client to the server and send its profile
     @Override
     public void sendProfileInfo(String ip_address, int port, List<VideoLight> video_list, String pseudo) { // Should send a video Set instead
-        // Create hard coded config for now
+        // listening for the other clients first so that we know the port to announce to the server
+        int listeningPort;
+        try {
+            listeningPort = commClientController.startClientListeningService();
+        } catch (IOException ex) {
+            logger.log(ERROR, "Cannot listen for the other clients: ", ex);
+            return;
+        }
+
         InetAddress server_ip;
         try {
             server_ip = InetAddress.getByName(ip_address);
         } catch (UnknownHostException ex) {
-            System.getLogger(DataClientCallsComm.class.getName()).log(System.Logger.Level.ERROR, (String) "Ip invalide", ex);
+            logger.log(ERROR, "Ip invalide", ex);
             return;
         }
         ServerConfig config = new ServerConfig(server_ip, port);
         
         // creates socket with server and sends UUID
-        commClientController.initialize_server_connexion(config);
-        // Send profile to server
-        ServerMessage message = new ConnectionRequestMessage( //TODO : should be renamed to "send profile to server" or something
+        commClientController.initializeServerConnexion(config);
+        // Send profile to server with the port on which the other clients can reach
+        ServerMessage message = new ConnectionRequestMessage( 
             commClientController.interfaceCommDataClient.getMyProfile().getSharedInfo(),
-            ip_address,
-            port,
+            listeningPort,
             new HashSet<>(video_list)  // Temporary conversion waiting for parameter type to change
         );
-        commClientController.serverConnection.send_message(message); 
+        commClientController.serverConnection.sendMessage(message); 
     }
 
     @Override
     public void sendNewVideo(VideoLight video_info) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'sendNewVideo'");
     }
 
     @Override
     public void giveDetailsRequest(UserLight requester_profile, UserLight owner_profile, UUID video) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'giveDetailsRequest'");
+        commClientController.requestVideoDetailsFromClient(requester_profile, owner_profile, video);
     }
     
 }

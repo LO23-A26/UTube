@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    05 / 05b / 05c Détail vidéo : une seule vue dont l'état dépend de la vidéo.
+      - 05  (vidéo d'un·e autre, non téléchargée) : download_button visible (état par défaut)
+      - 05b (vidéo téléchargée)                   : play_button + downloaded_badge
+      - 05c (ma vidéo partagée)                   : play_button + my_video_badge + manage_access_button
+    Le contrôleur bascule visible/managed des éléments concernés et le texte de availability_label.
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.SVGPath?>
+
+<HBox spacing="28.0" styleClass="content-area" stylesheets="@../../ihmmain/css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="28.0" left="40.0" right="40.0" top="28.0"/>
+    </padding>
+
+    <!-- Colonne gauche : informations de la vidéo -->
+    <VBox prefWidth="500.0" spacing="16.0" HBox.hgrow="ALWAYS">
+        <Button fx:id="back_button" styleClass="back-button" text="‹  Retour"/>
+
+        <Label fx:id="title_label" styleClass="page-title" text="Titre de la vidéo" wrapText="true"/>
+        <Label fx:id="metadata_label" styleClass="small-text" wrapText="true"
+               text="Créateur : [Créateur]  ·  Tags : [tag] [tag]  ·  Partagée le [jj/mm/aaaa]"/>
+
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <Circle fx:id="uploader_avatar_circle" radius="17.0" styleClass="avatar"/>
+            <Label styleClass="secondary-text" text="Partagée par"/>
+            <!-- Ouvre le Détail utilisateur·rice (11, IHM-Main) -->
+            <Hyperlink fx:id="uploader_link" styleClass="author-link" text="Pseudo uploader"/>
+        </HBox>
+
+        <!-- Note moyenne -->
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <HBox fx:id="average_stars_container" alignment="CENTER_LEFT" spacing="2.0">
+                <Label styleClass="star,star-filled" text="★"/>
+                <Label styleClass="star,star-filled" text="★"/>
+                <Label styleClass="star,star-filled" text="★"/>
+                <Label styleClass="star,star-filled" text="★"/>
+                <Label styleClass="star" text="☆"/>
+            </HBox>
+            <Label fx:id="average_rating_label" styleClass="section-title" text="4,2 / 5"/>
+            <Label fx:id="review_count_label" styleClass="small-text" text="· 12 notes · 5 commentaires"/>
+        </HBox>
+
+        <VBox spacing="8.0" styleClass="card">
+            <padding>
+                <Insets bottom="16.0" left="18.0" right="18.0" top="16.0"/>
+            </padding>
+            <Label styleClass="section-title" text="Description"/>
+            <Label fx:id="description_label" styleClass="secondary-text" wrapText="true"
+                   text="[Description de la vidéo saisie par l'uploader au moment du partage.]"/>
+        </VBox>
+
+        <!-- Actions selon l'état de la vidéo -->
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <Button fx:id="download_button" graphicTextGap="10.0" styleClass="primary-button" text="Télécharger">
+                <graphic>
+                    <SVGPath content="M7 0 V10 M3 6 L7 10 L11 6 M0 13 H14" styleClass="icon"/>
+                </graphic>
+            </Button>
+            <Button fx:id="play_button" graphicTextGap="10.0" managed="false" styleClass="primary-button"
+                    text="Jouer" visible="false">
+                <graphic>
+                    <SVGPath content="M0 0 L10 6 L0 12 Z" styleClass="icon-filled"/>
+                </graphic>
+            </Button>
+            <Label fx:id="downloaded_badge" managed="false" styleClass="badge" text="✓  Téléchargée"
+                   visible="false"/>
+            <Label fx:id="my_video_badge" managed="false" styleClass="badge" text="Ma vidéo" visible="false"/>
+            <!-- Ouvre la fenêtre 08a (IHM-Main) -->
+            <Button fx:id="manage_access_button" managed="false" styleClass="large-button" text="Gérer les accès"
+                    visible="false"/>
+        </HBox>
+        <!--
+            05  : « La vidéo sera ensuite disponible dans Mes téléchargements. »
+            05b : « Vidéo disponible hors ligne, aussi dans Mes téléchargements. »
+            05c : « Vidéo stockée sur votre machine, visible par les listes autorisées. »
+        -->
+        <Label fx:id="availability_label" styleClass="hint-text" wrapText="true"
+               text="La vidéo sera ensuite disponible dans Mes téléchargements."/>
+
+        <!-- Téléchargement refusé (droits insuffisants) ou propriétaire déconnecté·e -->
+        <Label fx:id="error_label" managed="false" styleClass="error-label" visible="false" wrapText="true"/>
+    </VBox>
+
+    <!-- Colonne droite : notes et commentaires -->
+    <VBox prefWidth="430.0" minWidth="360.0" spacing="12.0" styleClass="card">
+        <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        </padding>
+
+        <Label styleClass="card-title" text="Notes et commentaires"/>
+
+        <Label styleClass="field-label" text="Ma note"/>
+        <HBox alignment="CENTER_LEFT">
+            <HBox fx:id="my_rating_container" alignment="CENTER_LEFT" spacing="2.0">
+                <Button fx:id="star_1_button" styleClass="star-button" text="☆"/>
+                <Button fx:id="star_2_button" styleClass="star-button" text="☆"/>
+                <Button fx:id="star_3_button" styleClass="star-button" text="☆"/>
+                <Button fx:id="star_4_button" styleClass="star-button" text="☆"/>
+                <Button fx:id="star_5_button" styleClass="star-button" text="☆"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="rate_button" text="Noter"/>
+        </HBox>
+
+        <Label styleClass="field-label" text="Mon commentaire"/>
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <TextField fx:id="comment_field" promptText="Ajouter un commentaire" HBox.hgrow="ALWAYS"/>
+            <Button fx:id="publish_button" styleClass="large-button" text="Publier"/>
+        </HBox>
+
+        <Label maxWidth="Infinity" styleClass="info-box" wrapText="true"
+               text="Note et commentaire sont indépendants : on peut noter sans commenter, et commenter sans noter."/>
+
+        <!-- Erreur renvoyée par le·la propriétaire (ajout, modification ou suppression refusés) -->
+        <Label fx:id="review_error_label" managed="false" styleClass="error-label" visible="false" wrapText="true"/>
+
+        <Separator/>
+
+        <Label styleClass="field-label" text="Avis des utilisateurs"/>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+            <!-- Rempli par le contrôleur avec des ReviewItem ; « Mon avis » en premier -->
+            <VBox fx:id="reviews_container"/>
+        </ScrollPane>
+        <Label fx:id="no_review_label" managed="false" styleClass="hint-text"
+               text="Aucun avis pour le moment." visible="false"/>
+    </VBox>
+</HBox>
