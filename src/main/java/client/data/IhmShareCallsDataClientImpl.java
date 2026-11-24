@@ -89,7 +89,7 @@ public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataCl
      */
     @Override
     public VideoFull getVideo(VideoLight video) {
-        return null;
+        return data_client_core.getUser().getUploadedVideos().get(video.getVideoId());
     }
 
     /**
