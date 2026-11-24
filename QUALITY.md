@@ -12,9 +12,9 @@ L'ensemble des rendus en français seront rédigés en écriture inclusive, la c
 
 La documentation, les commentaires, les variables, les méthodes et les classes devront être en anglais. Les variables, méthodes et classes seront soumises aux conventions suivantes :
 
-- Variable : snake_case (`[a-zA-Z]+(?:_[a-zA-Z]+)*`)
-- Méthode : camelCase
-- Classe : PascalCase
+- Variable : snake_case (`^[a-z][a-z0-9]*(_[a-z0-9]+)*$`)
+- Méthode : camelCase (`^[a-z][a-zA-Z0-9]*$`)
+- Classe : PascalCase (`^[A-Z][a-zA-Z0-9]*$`)
   La [javadoc](https://simonandre.developpez.com/tutoriels/java/presentation-javadoc/) sera imposée pour la rédaction de chaque classe, interface et méthode. Chaque élément doit comporter une description claire de son rôle.
 
 Un commentaire expliquant la méthode/classe et les tags suivants seront obligatoires lorsque cela s'applique :
