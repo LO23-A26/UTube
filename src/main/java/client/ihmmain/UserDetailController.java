@@ -2,7 +2,9 @@ package client.ihmmain;
 
 import common.dataclasses.ContactList;
 import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -10,6 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -26,6 +29,9 @@ public class UserDetailController extends Controller {
 
     private static final int INITIALS_LENGTH = 2;
     private static final int CARD_SPACING = 6;
+    private static final int PROFILE_TIMEOUT_SECONDS = 10;
+    private static final String LOADING_TEXT = "Chargement du profil…";
+    private static final String UNAVAILABLE_TEXT = "Profil indisponible";
 
     @FXML
     private Label avatar_label;
@@ -41,6 +47,27 @@ public class UserDetailController extends Controller {
     private Label empty_label;
 
     private UserFull profile;
+    private UserLight awaited_user;
+    private PauseTransition profile_timeout;
+
+    /**
+     * Displays the selected user's identity while waiting for the profile.
+     *
+     * @param user the user whose profile is expected
+     */
+    public void displayLoading(UserLight user) {
+        awaited_user = user;
+        profile = null;
+        showPseudo(user.getPseudo());
+        identity_label.setText(LOADING_TEXT);
+        videos_container.getChildren().clear();
+        empty_label.setVisible(false);
+        fillListMenu();
+        stopProfileTimeout();
+        profile_timeout = new PauseTransition(Duration.seconds(PROFILE_TIMEOUT_SECONDS));
+        profile_timeout.setOnFinished(event -> showUnavailable());
+        profile_timeout.play();
+    }
 
     /**
      * Stores the selected profile and updates its displayed information.
@@ -48,8 +75,36 @@ public class UserDetailController extends Controller {
      * @param profile the user profile to display
      */
     public void displayProfile(UserFull profile) {
+        if (profile == null) {
+            showUnavailable();
+            return;
+        }
+        if (awaited_user != null && !awaited_user.getUuid().equals(profile.getSharedInfo().getUuid())) {
+            return;
+        }
+        stopProfileTimeout();
         this.profile = profile;
         refreshView();
+    }
+
+    /**
+     * Shows that the expected profile is unavailable while preserving the user's identity.
+     *
+     */
+    private void showUnavailable() {
+        if (awaited_user != null && profile == null) {
+            stopProfileTimeout();
+            identity_label.setText(UNAVAILABLE_TEXT);
+            videos_container.getChildren().clear();
+            empty_label.setVisible(false);
+        }
+    }
+
+    /** Stops the profile timeout if it exists. */
+    private void stopProfileTimeout() {
+        if (profile_timeout != null) {
+            profile_timeout.stop();
+        }
     }
 
     /** Updates the profile header once a profile has been provided. */
@@ -58,13 +113,21 @@ public class UserDetailController extends Controller {
         if (profile == null) {
             return;
         }
-        String pseudo = profile.getSharedInfo().getPseudo();
-        pseudo_label.setText(pseudo);
-        avatar_label.setText(pseudo.substring(0, Math.min(INITIALS_LENGTH, pseudo.length())).toUpperCase());
+        showPseudo(profile.getSharedInfo().getPseudo());
         identity_label.setText(formatIdentity(profile.getFirstName(), profile.getLastName(),
                 profile.getBirthDate(), LocalDate.now()));
         fillListMenu();
         displayVideos(profile.getSharedVideos());
+    }
+
+    /**
+     * Displays the user's pseudo and avatar initials.
+     *
+     * @param pseudo the user's pseudo
+     */
+    private void showPseudo(String pseudo) {
+        pseudo_label.setText(pseudo);
+        avatar_label.setText(pseudo.substring(0, Math.min(INITIALS_LENGTH, pseudo.length())).toUpperCase());
     }
 
     /** Fills the menu with the current user's contact lists or a disabled empty message. */

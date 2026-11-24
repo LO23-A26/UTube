@@ -1,11 +1,8 @@
 package client.ihmmain;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
@@ -42,11 +39,11 @@ public class MainController extends Controller {
 
     /** Redraws the users panel from the users kept by the manager (filled by the Data notifications). */
     void refreshUserList() {
-        List<String> pseudos = new ArrayList<>();
+        List<UserLight> users = new ArrayList<>();
         for (UserLight user : viewManager.getDisplayedUsers()) {
-            if (user.getPseudo() != null) pseudos.add(user.getPseudo());
+            if (user.getPseudo() != null) users.add(user);
         }
-        displayConnectedUsers(pseudos);
+        displayConnectedUsers(users);
     }
 
     /** Replaces the screen displayed in the content area. */
@@ -118,16 +115,17 @@ public class MainController extends Controller {
         viewManager.changeView(IHMMainManager.LOGIN_VIEW);
     }
 
-    private void displayConnectedUsers(List<String> pseudos) {
+    private void displayConnectedUsers(List<UserLight> users) {
         Label group_title = new Label("Connecté·e·s");
         group_title.getStyleClass().add("list-title");
         users_container.getChildren().setAll(group_title);
-        for (String pseudo : pseudos) {
-            users_container.getChildren().add(createUserRow(pseudo));
+        for (UserLight user : users) {
+            users_container.getChildren().add(createUserRow(user));
         }
     }
 
-    private HBox createUserRow(String pseudo) {
+    private HBox createUserRow(UserLight user) {
+        String pseudo = user.getPseudo();
         Label avatar = new Label(pseudo.substring(0, Math.min(2, pseudo.length())).toUpperCase());
         avatar.getStyleClass().add("avatar");
         avatar.setMinSize(32, 32);
@@ -137,7 +135,7 @@ public class MainController extends Controller {
         online.setStyle("-fx-font-style: italic;");
         HBox row = new HBox(avatar, new Label(pseudo), online);
         row.getStyleClass().add("user-row");
-        row.setOnMouseClicked(event -> openUserDetail(pseudo));
+        row.setOnMouseClicked(event -> openUserDetail(user));
         row.setCursor(Cursor.HAND);
         return row;
     }
@@ -145,27 +143,10 @@ public class MainController extends Controller {
     /**
      * Opens the user detail screen for the selected user.
      *
-     * @param pseudo the selected user's pseudo
+     * @param user the selected user
      */
-    private void openUserDetail(String pseudo) {
-        viewManager.showUserDetail(createPlaceholderProfile(pseudo));
-    }
-
-    /**
-     * Creates a placeholder profile with three shared videos.
-     *
-     * @param pseudo the user's pseudo
-     * @return the placeholder profile
-     */
-    private static UserFull createPlaceholderProfile(String pseudo) {
-        // TODO: Replace with getIData().requestRemoteProfile(owner, getIData().getUser().getSharedInfo()) once Data
-        // implements it and Comm can register the IHM-Main callback; the profile will then arrive through displayRemoteProfile.
-        String first_name = pseudo.substring(0, 1).toUpperCase() + pseudo.substring(1);
-        UserFull profile = new UserFull(pseudo, "", first_name, "Martin", LocalDate.of(2004, 5, 12));
-        profile.setSharedVideos(Set.of(
-                new VideoLight(profile.getSharedInfo(), "Présentation UTube", pseudo, Set.of("lo23", "projet")),
-                new VideoLight(profile.getSharedInfo(), "Git : le rebase", pseudo, Set.of("git", "tuto")),
-                new VideoLight(profile.getSharedInfo(), "Recette de crêpes", pseudo, Set.of("cuisine"))));
-        return profile;
+    private void openUserDetail(UserLight user) {
+        viewManager.showUserDetail(user);
+        viewManager.getIData().requestRemoteProfile(user, viewManager.getIData().getUser().getSharedInfo());
     }
 }

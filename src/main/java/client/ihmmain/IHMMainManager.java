@@ -204,13 +204,13 @@ public class IHMMainManager {
     }
 
     /**
-     * Opens the user detail screen and displays the selected profile.
+     * Opens the user detail screen in the waiting state for the selected user.
      *
-     * @param profile the user profile to display
+     * @param user the selected user
      */
-    public void showUserDetail(UserFull profile) {
+    public void showUserDetail(UserLight user) {
         showContent(USER_DETAIL_VIEW);
-        getController(UserDetailController.class).displayProfile(profile);
+        getController(UserDetailController.class).displayLoading(user);
     }
 
     /** Gives access to the already created controller of a screen, to communicate between screens. */
