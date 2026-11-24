@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
 import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -84,6 +85,17 @@ public class MainController extends Controller {
         InterfaceIHMMainCallsIHMShare share_calls = viewManager.getIShare();
         if (share_calls!=null){
             share_calls.openMyShares(content_pane);
+        }
+    }
+
+    /**
+     * Opens the details screen of a video (screen 05, handled by IHM-Share) in the content area.
+     * Does nothing if IHM-Share is not available.
+     */
+    void openVideoDetails(VideoLight video) {
+        InterfaceIHMMainCallsIHMShare share_calls = viewManager.getIShare();
+        if (share_calls != null && video != null) {
+            share_calls.launchVideo(content_pane, video);
         }
     }
 
