@@ -70,14 +70,33 @@ public class UserDetailController extends Controller {
     }
 
     /**
+     * Checks whether the received profile matches the expected user.
+     *
+     * @param awaited_user the user whose profile is expected
+     * @param profile the received profile, or null if unavailable
+     * @return true if the profile is expected
+     */
+    static boolean isAwaitedProfile(UserLight awaited_user, UserFull profile) {
+        if (awaited_user == null) {
+            return false;
+        }
+        if (profile == null) {
+            return true;
+        }
+        if (profile.getSharedInfo() == null) {
+            return false;
+        }
+        return awaited_user.getUuid().equals(profile.getSharedInfo().getUuid());
+    }
+
+    /**
      * Checks whether the view is waiting for the received profile.
      *
      * @param profile the received profile, or null if unavailable
      * @return true if the view is waiting for this profile
      */
     boolean isWaitingForProfile(UserFull profile) {
-        return awaited_user != null && (profile == null || (profile.getSharedInfo() != null
-                && awaited_user.getUuid().equals(profile.getSharedInfo().getUuid())));
+        return isAwaitedProfile(awaited_user, profile);
     }
 
     /**
