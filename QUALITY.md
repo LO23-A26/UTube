@@ -71,4 +71,56 @@ Règles d'écriture :
 ```java
 logger.log(ERROR, "Message could not be sent", ex);
 ```
+
+### SonarQube for IDE
+
+L'extension SonarQube for IDE analyse le code pendant qu'on l'écrit et souligne les problèmes directement dans l'éditeur. 
+Elle est configurée pour faire respecter nos règles de nommage et de documentation.
+Chacun doit installer l'extension et activer les règles manuellement en local.
+
+#### Règles à activer
+
+| Règle | Titre | Format |
+|---|---|---|
+| `java:S116` | Field names should comply with a naming convention | `^[a-z][a-z0-9]*(_[a-z0-9]+)*$` |
+| `java:S117` | Local variable and method parameter names should comply with a naming convention | `^[a-z][a-z0-9]*(_[a-z0-9]+)*$` |
+| `java:S3008` | Static non-final field names should comply with a naming convention | `^[a-z][a-z0-9]*(_[a-z0-9]+)*$` |
+| `java:S1176` | Public types, methods and fields (API) should be documented with Javadoc | — |
+| `java:S106` | Standard outputs should not be used directly to log anything | — |
+
+Les règles de nommage des méthodes (`S100`), des classes (`S101`) et des constantes (`S115`) sont déjà correctes par défaut et ne doivent pas être modifiées.
+
+#### Si vous travaillez dans IntelliJ :
+
+1. Installer l'extension : Settings → Plugins → Marketplace, chercher SonarQube for IDE, l'installer puis redémarrer IntelliJ.
+2. Ouvrir Settings → Tools → SonarQube for IDE → Rules.
+3. Pour chaque règle du tableau, chercher son titre dans le champ de recherche, puis :
+  - cocher la case à droite de la règle pour l'activer
+  - cliquer sur la règle et, si un format (regex) est indiqué, le remplacer dans Options → format, en bas de la description.
+4. Cliquer sur Apply, puis OK. Si rien ne change dans l'éditeur, redémarrer IntelliJ.
+
+#### Si vous travaillez dans VS Code :
+
+1. Installer l'extension : dans l'onglet Extensions, chercher SonarQube for IDE et l'installer.
+2. Ajouter le contenu suivant dans `.vscode/settings.json` :
+
+```json
+{
+    "sonarlint.rules": {
+        "java:S116":  { "level": "on", "parameters": { "format": "^[a-z][a-z0-9]*(_[a-z0-9]+)*$" } },
+        "java:S117":  { "level": "on", "parameters": { "format": "^[a-z][a-z0-9]*(_[a-z0-9]+)*$" } },
+        "java:S3008": { "level": "on", "parameters": { "format": "^[a-z][a-z0-9]*(_[a-z0-9]+)*$" } },
+        "java:S1176": { "level": "on" },
+        "java:S106":  { "level": "on" }
+    }
+}
+```
+
+#### Vérifier que ça fonctionne
+
+- Une variable en camelCase (par exemple `videoId`) est soulignée.
+- Une méthode publique sans javadoc est signalée.
+- Un `System.out.println` est signalé.
+
+Avant d'ouvrir une Pull Request, il faut vérifier qu'il ne reste plus de problème SonarQube dans les fichiers modifiés.
  
