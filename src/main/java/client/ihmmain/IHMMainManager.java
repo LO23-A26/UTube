@@ -118,6 +118,12 @@ public class IHMMainManager {
 
     /** Displays only the received profile fields, never credentials or local collections. */
     void displayRemoteProfile(UserFull profile) {
+        // The user detail view waiting for this profile shows it instead of the dialog
+        UserDetailController user_detail = getController(UserDetailController.class);
+        if (user_detail != null && user_detail.isWaitingForProfile(profile)) {
+            user_detail.displayProfile(profile);
+            return;
+        }
         if (remote_profile_dialog == null) {
             remote_profile_dialog = new Alert(Alert.AlertType.INFORMATION);
             remote_profile_dialog.setTitle("Profil utilisateur");

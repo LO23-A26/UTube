@@ -70,6 +70,17 @@ public class UserDetailController extends Controller {
     }
 
     /**
+     * Checks whether the view is waiting for the received profile.
+     *
+     * @param profile the received profile, or null if unavailable
+     * @return true if the view is waiting for this profile
+     */
+    boolean isWaitingForProfile(UserFull profile) {
+        return awaited_user != null && (profile == null || (profile.getSharedInfo() != null
+                && awaited_user.getUuid().equals(profile.getSharedInfo().getUuid())));
+    }
+
+    /**
      * Stores the selected profile and updates its displayed information.
      *
      * @param profile the user profile to display
@@ -84,6 +95,7 @@ public class UserDetailController extends Controller {
         }
         stopProfileTimeout();
         this.profile = profile;
+        awaited_user = null;
         refreshView();
     }
 
