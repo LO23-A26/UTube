@@ -147,6 +147,8 @@ public class MainController extends Controller {
      */
     private void openUserDetail(UserLight user) {
         viewManager.showUserDetail(user);
+        // No tab of the header matches the user detail screen
+        home_tab.setSelected(false);
         viewManager.getIData().requestRemoteProfile(user, viewManager.getIData().getUser().getSharedInfo());
     }
 }

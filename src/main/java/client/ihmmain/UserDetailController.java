@@ -231,9 +231,9 @@ public class UserDetailController extends Controller {
         return full_name + " · " + age + " ans";
     }
 
-    /** Returns to the home screen in the content area of the main view. */
+    /** Returns to the home screen and reselects the "Accueil" tab. */
     @FXML
     private void goBack() {
-        viewManager.showContent(IHMMainManager.HOME_VIEW);
+        viewManager.getController(MainController.class).backToHome();
     }
 }
