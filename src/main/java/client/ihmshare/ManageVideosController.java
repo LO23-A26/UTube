@@ -2,15 +2,15 @@ package client.ihmshare;
 
 import client.ihmmain.IHMMainManager;
 import common.dataclasses.UserFull;
+import java.util.ArrayList;
+import java.util.List;
+
 import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Controller of the "Mes partages" screen (08): videos shared by the user.
@@ -85,7 +85,11 @@ public class ManageVideosController extends ShareController {
         core.setControllerAddVideo(add_video);
     }
 
-    /** "Supprimer": the video is no longer available for the other users. */
+    /**
+     * "Supprimer": the video is no longer available for the other users.
+     * 
+     * @param video (VideoLight) the video to delete
+     */
     private void deleteVideo(VideoLight video) {
         if (!confirm("Supprimer ce partage ?", "La vidéo ne sera plus disponible pour les autres utilisateur·rice·s.", "Supprimer")) {
             return;
@@ -96,7 +100,13 @@ public class ManageVideosController extends ShareController {
         displayVideos();
     }
 
-    /** "Tags · Créateur" */
+    /**
+     * Formate video details at string
+     * "Tags · Créateur"
+     * 
+     * @param video (VideoLight) the video
+     * @return (String) video details formatted
+     */
     private static String subtitle(VideoLight video) {
         List<String> parts = new ArrayList<>();
         if (video.getTags() != null && !video.getTags().isEmpty()) {
