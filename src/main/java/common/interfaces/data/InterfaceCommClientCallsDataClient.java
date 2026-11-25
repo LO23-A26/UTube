@@ -143,9 +143,9 @@ public interface InterfaceCommClientCallsDataClient {
     /**
      * Removes a user from the system.
      *
-     * @param user_profile The full user profile to remove.
+     * @param userId The full user profile to remove.
      */
-    public void removeUser(UserFull user_profile);
+    public void removeUser(UUID userId);
 
     /**
      * Removes a shared video.

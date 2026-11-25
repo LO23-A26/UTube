@@ -79,6 +79,7 @@ public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataCl
     @Override
     public void addVideo(Path file, String title, String creator, Set<String> tags) {
         data_client_core.addingNewVideo(file, title, creator, tags);
+        data_client_core.getInterfaceFromICM().refreshSharedVideos(data_client_core.getListVideo());
     }
 
     /**
@@ -89,7 +90,7 @@ public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataCl
      */
     @Override
     public VideoFull getVideo(VideoLight video) {
-        return null;
+        return data_client_core.getUser().getUploadedVideos().get(video.getVideoId());
     }
 
     /**

@@ -142,8 +142,8 @@ public class MockCommClientCallsDataClient implements InterfaceCommClientCallsDa
     }
 
     @Override
-    public void removeUser(UserFull user_profile) {
-        System.out.println("[MockCommClientCallsDataClient] removeUser: " + user_profile);
+    public void removeUser(UUID userId) {
+        System.out.println("[MockCommClientCallsDataClient] removeUser: " + userId);
     }
 
     @Override

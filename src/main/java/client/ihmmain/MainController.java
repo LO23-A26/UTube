@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
 import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -87,6 +88,17 @@ public class MainController extends Controller {
         }
     }
 
+    /**
+     * Opens the details screen of a video (screen 05, handled by IHM-Share) in the content area.
+     * Does nothing if IHM-Share is not available.
+     */
+    void openVideoDetails(VideoLight video) {
+        InterfaceIHMMainCallsIHMShare share_calls = viewManager.getIShare();
+        if (share_calls != null && video != null) {
+            share_calls.launchVideo(content_pane, video);
+        }
+    }
+
     /** Users icon of the header and close button of the panel: shows or hides the panel. */
     @FXML
     private void toggleUsersPanel() {
@@ -96,7 +108,9 @@ public class MainController extends Controller {
     /** "Se déconnecter" (log out) button of the header: back to the login screen (mockup 01). */
     @FXML
     private void logout() {
-        // no server logout yet, call the Comm interface here
+        if (viewManager.getIComm() != null) {
+            viewManager.getIComm().closeSession();
+        }
         viewManager.changeView(IHMMainManager.LOGIN_VIEW);
     }
 

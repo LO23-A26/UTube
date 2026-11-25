@@ -12,6 +12,7 @@ import javafx.scene.control.DatePicker;
 import common.dataclasses.UserFull;
 
 import java.io.File;
+import java.time.LocalDate;
 
 /**
  * Controller of the profile creation screen.
@@ -90,7 +91,8 @@ public class CreateProfileController extends Controller {
     private void createProfile() {
         String error = validate(
                 pseudo_field.getText(),
-                password_field.getText()
+                password_field.getText(),
+                birth_date_picker.getValue()
         );
 
         error_label.setText(error);
@@ -141,9 +143,13 @@ public class CreateProfileController extends Controller {
     /**
      * Returns the error message to display, or null if the input is valid.
      */
-    static String validate(String pseudo, String password) {
+    static String validate(String pseudo, String password, LocalDate birth_date) {
         if (pseudo.isBlank() || password.isEmpty()) {
             return "Le pseudo et le mot de passe sont obligatoires.";
+        }
+
+        if (birth_date != null && birth_date.isAfter(LocalDate.now())) {
+            return "La date de naissance ne peut pas être dans le futur.";
         }
 
         return null;
