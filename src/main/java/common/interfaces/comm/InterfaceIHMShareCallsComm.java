@@ -6,7 +6,7 @@ import common.dataclasses.Comment;
 import common.dataclasses.Rating;
 import common.dataclasses.UserLight;
 
-public interface InterfaceIHMShare_calls_Comm {
+public interface InterfaceIHMShareCallsComm {
     void addComment(Comment comment, UserLight owner);
 
     void editComment(Comment comment, UserLight owner);

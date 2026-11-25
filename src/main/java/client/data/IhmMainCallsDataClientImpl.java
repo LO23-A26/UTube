@@ -7,6 +7,7 @@ import common.dataclasses.UserFull;
 import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -20,16 +21,15 @@ import java.util.ArrayList;
  */
 public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClient {
 
-    private DataClientCore data_client_core;
+    private final DataClientCore data_client_core;
 
-    /**
-     * Gets the currently connected user.
-     *
-     * @return The full profile of the connected user, or null if none.
-     */
+    public IhmMainCallsDataClientImpl(DataClientCore data_client_core) {
+        this.data_client_core = data_client_core;
+    }
+
     @Override
-    public UserFull getUser() {
-        return data_client_core == null ? null : data_client_core.getUser();
+    public UserFull getUser(){
+        return data_client_core.getUser();
     }
 
     /**
@@ -58,8 +58,8 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param profile The Data Transfer Object for the user.
      */
     @Override
-    public void saveLocalProfile(UserLight profile){
-        // TODO: call ProfileSaver once the Data team's saveProfile() is merged
+    public void saveLocalProfile(UserFull profile){
+        data_client_core.getProfileSaver().saveProfile(profile);
     }
 
     /**
@@ -68,8 +68,8 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param profile The Data Transfer Object for the user.
      */
     @Override
-    public void updateLocalProfile(UserLight profile){
-        // TODO: call ProfileSaver once the Data team's saveProfile() is merged
+    public void updateLocalProfile(UserFull profile){
+        data_client_core.getProfileSaver().saveProfile(profile);
     }
 
     /**
@@ -91,21 +91,38 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param port         The port number.
      */
     @Override
-    public void requestConnection(String pseudo, String password, String ip_address, int port) {
-        Set<UserFull> profiles = data_client_core.getProfileSaver().restoreProfile();
-        if (profiles == null || profiles.isEmpty()) {
-            System.out.println("requestConnection - Error while restoring profiles.");
-            return;
-        }
-        for (UserFull u : profiles) {
-            if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
-                data_client_core.setUser(u);
-                List<VideoLight> video_list = new ArrayList<>(u.getSharedVideos());
-                data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
-                return;
+    public boolean requestConnection(String pseudo, String password, String ip_address, int port) {
+        boolean found = false;
+        List <VideoLight> video_list = null;
+        try{
+            for (UserFull u : data_client_core.getProfileSaver().restoreProfile()) {
+                if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
+                    found = true;
+                    video_list = new ArrayList<VideoLight>();
+                    if(u.getSharedVideos()!=null){
+                        video_list.addAll(u.getSharedVideos());
+                    }
+                    data_client_core.setUser(u);
+                    data_client_core.getListVideo().addAll(video_list);
+                }
             }
+        }catch(RuntimeException e){
+            throw new AuthentificationFailed("Error while restoring profiles.");
         }
-        System.out.println("requestConnection - Information don't match.");
+
+        if (found) {
+            try{
+                data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
+            }catch(RuntimeException e){
+                throw new AuthentificationFailed(e.getMessage());
+            }
+
+            return true;
+        }
+        else {
+            throw new AuthentificationFailed("Information don't match.");
+        }
+
     }
 
     /**
@@ -222,8 +239,5 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
     public DataClientCore getDataClientCore() {
         return data_client_core;
     }
-
-    public void setDataClientCore(DataClientCore data_client_core) {
-        this.data_client_core = data_client_core;
-    }
 }
+

@@ -2,7 +2,7 @@ package client.ihmshare;
 
 import common.dataclasses.VideoFull;
 import common.dataclasses.VideoLight;
-import common.interfaces.comm.InterfaceIHMShare_calls_Comm;
+import common.interfaces.comm.InterfaceIHMShareCallsComm;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class DownloadVideo {
      * @return (Request) result of the request
      */
     public Request download(VideoLight video) {
-        InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
+        InterfaceIHMShareCallsComm comm = core.getInterfaceFromCommunication();
         if (video == null || comm == null || video.getOwner() == null) {
             return Request.UNAVAILABLE;
         }

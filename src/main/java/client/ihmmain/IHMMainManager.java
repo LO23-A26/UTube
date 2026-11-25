@@ -1,220 +1,243 @@
 package client.ihmmain;
 
-import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
-import common.interfaces.data.InterfaceIhmMainCallsDataClient;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
+import common.interfaces.IHMMain.InterfaceCommCallsIHMMain;
+import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
+import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
+import common.interfaces.comm.InterfaceIHMMainCallsComm;
+import common.interfaces.data.InterfaceIhmMainCallsDataClient;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 
 /**
- * View manager (ViewManager, fig. 6.4), shared by IHM-Main and IHM-Share.
- * <p>
- * Two display levels:
- * <ul>
- *   <li>{@link #changeView} replaces the whole window: offline screens (01, 02, 03) and the
- *       connected layout {@link #MAIN_VIEW} (header + central area);</li>
- *   <li>{@link #changeContent} and {@link #openTab} only replace the central area of the
- *       connected layout, so the header and the users panel stay visible, as required by the
- *       design document for both IHM-Main and IHM-Share screens.</li>
- * </ul>
- * The "Retour" button relies on the history of the central area ({@link #goBack()}, {@link #backTo}).
- * IHM-Share views are loaded by this same manager: their controllers also extend {@link Controller}.
+ * View manager of IHM Main: loads the FXML screens, switches the displayed screen
+ * and gives each {@link Controller} access to the interfaces of the other modules
+ * (Data for now; Comm and IHM-Share will follow when their interfaces are merged
+ * into this branch).
  */
 public class IHMMainManager {
 
     public static final String LOGIN_VIEW = "/client/ihmmain/login-view.fxml";
     public static final String MAIN_VIEW = "/client/ihmmain/main-view.fxml";
+    public static final String HOME_VIEW = "/client/ihmmain/home-view.fxml";
+    public static final String PROFILE_VIEW = "/client/ihmmain/profile-view.fxml";
+    public static final String CREATE_PROFILE_VIEW = "/client/ihmmain/create-profile-view.fxml";
     public static final String STYLESHEET = "/assets/styles/utube.css";
 
-    /**
-     * A view displayed in the central area, kept as is so that going back restores its state.
-     * A null root stands for the home content of the layout.
-     */
-    private record ContentEntry(String fxml_path, Parent root, Controller controller) {
-    }
 
-    /**
-     * Controller instances, indexed by their class: the login controller is retrieved with
-     * {@code controllers.get(LoginController.class)}.
+    /** Controller instances are stored in a map whose KEY is the TYPE of the
+     * subclass. So, to get the login controller, the key to use is:
+     * key = LoginController.class
+     * and to get the LoginController instance, just call:
+     * controllers.get(LoginController.class)
      */
     private final Map<Class<? extends Controller>, Controller> controllers = new HashMap<>();
-    private final InterfaceIhmMainCallsDataClient data_calls;
+    private InterfaceIhmMainCallsDataClient data_calls;
+    private InterfaceIHMMainCallsComm comm_calls;
     private InterfaceIHMMainCallsIHMShare share_calls;
     private Scene primary_scene;
+    /** Controller of the main view (header and users panel) while it is displayed, null otherwise. */
+    private MainController main_controller;
 
-    /** Central content shown when the connected layout is opened (home screen 04). */
-    private Node home_content;
-    private ContentEntry current_content;
-    /** Previous central views, most recent first. */
-    private final Deque<ContentEntry> history = new ArrayDeque<>();
+    private final InterfaceDataCallsIHMMain data_notifications = new DataCallsIHMMainImpl(this);
+    private final InterfaceCommCallsIHMMain comm_notifications = new CommCallsIHMMainImpl(this);
+    // UI state only. Data and COM retain responsibility for storage and network indexes.
+    // Both maps are filled by the notifications of Data/COM and only touched on the JavaFX thread.
+    private final Map<UUID, UserLight> displayed_users = new LinkedHashMap<>();
+    private final Map<UUID, VideoLight> displayed_videos = new LinkedHashMap<>();
+    private Alert remote_profile_dialog;
 
-    public IHMMainManager(InterfaceIhmMainCallsDataClient data_calls) {
+    public InterfaceDataCallsIHMMain getInterfaceForData() { return data_notifications; }
+    public InterfaceCommCallsIHMMain getInterfaceForComm() { return comm_notifications; }
+
+    List<UserLight> getDisplayedUsers() { return List.copyOf(displayed_users.values()); }
+
+    List<VideoLight> getDisplayedVideos() { return List.copyOf(displayed_videos.values()); }
+
+    void addUsers(Collection<UserLight> users) {
+        for (UserLight user : users) {
+            if (user != null && user.getUuid() != null) displayed_users.put(user.getUuid(), user);
+        }
+        refreshUsers();
+    }
+
+    void removeUser(UUID id) {
+        displayed_users.remove(id);
+        refreshUsers();
+    }
+
+    /** Redraws the users panel of the main view, if it is displayed. */
+    void refreshUsers() {
+        if (main_controller != null) main_controller.refreshUserList();
+    }
+
+    void addVideos(Collection<VideoLight> videos) {
+        for (VideoLight video : videos) {
+            if (video != null && video.getVideoId() != null) displayed_videos.put(video.getVideoId(), video);
+        }
+        refreshVideos();
+    }
+
+    void replaceVideos(Collection<VideoLight> videos) {
+        displayed_videos.clear();
+        addVideos(videos);
+    }
+
+    void removeVideo(UUID id) {
+        displayed_videos.remove(id);
+        refreshVideos();
+    }
+
+    void removeUserVideos(UUID userId) {
+        displayed_videos.values().removeIf(video -> video.getOwner() != null
+                && userId.equals(video.getOwner().getUuid()));
+        refreshVideos();
+    }
+
+    private void refreshVideos() {
+        HomeController home = getController(HomeController.class);
+        if (main_controller != null && home != null) home.refreshView();
+    }
+
+    /** Displays only the received profile fields, never credentials or local collections. */
+    void displayRemoteProfile(UserFull profile) {
+        if (remote_profile_dialog == null) {
+            remote_profile_dialog = new Alert(Alert.AlertType.INFORMATION);
+            remote_profile_dialog.setTitle("Profil utilisateur");
+            if (primary_scene != null && primary_scene.getWindow() != null) {
+                remote_profile_dialog.initOwner(primary_scene.getWindow());
+            }
+        }
+        if (profile == null || profile.getSharedInfo() == null) {
+            remote_profile_dialog.setHeaderText("Profil indisponible");
+            remote_profile_dialog.setContentText("Le profil demandé n'a pas été fourni.");
+        } else {
+            remote_profile_dialog.setHeaderText(profile.getSharedInfo().getPseudo());
+            remote_profile_dialog.setContentText("Prénom : " + profileField(profile.getFirstName())
+                    + "\nNom : " + profileField(profile.getLastName())
+                    + "\nDate de naissance : " + profileField(profile.getBirthDate()));
+        }
+        remote_profile_dialog.show();
+    }
+
+    private static String profileField(Object value) {
+        return value == null || value.toString().isBlank() ? "Non renseigné" : value.toString();
+    }
+
+    public void setIData(InterfaceIhmMainCallsDataClient data_calls) {
         this.data_calls = data_calls;
     }
 
-    public InterfaceIhmMainCallsDataClient getInterfaceCallsData() {
+    public void setIComm(InterfaceIHMMainCallsComm comm_calls) {
+        this.comm_calls = comm_calls;
+    }
+
+    public void setIShare(InterfaceIHMMainCallsIHMShare share_calls) {
+        this.share_calls = share_calls;
+    }
+
+    public InterfaceIhmMainCallsDataClient getIData() {
         return data_calls;
     }
 
-    public InterfaceIHMMainCallsIHMShare getInterfaceCallsShare() {
-        return share_calls;
+    public InterfaceIHMMainCallsComm getIComm() {
+        return comm_calls;
     }
 
-    public void setInterfaceCallsShare(InterfaceIHMMainCallsIHMShare share_calls) {
-        this.share_calls = share_calls;
+    public InterfaceIHMMainCallsIHMShare getIShare() {
+        return share_calls;
     }
 
     /** Builds the main window and displays the login screen. */
     public void start(Stage stage) {
-        primary_scene = new Scene(loadView(LOGIN_VIEW), 1280, 800);
+        LoadedView view = loadView(LOGIN_VIEW);
+        primary_scene = new Scene(view.root(), 1280, 800);
         primary_scene.getStylesheets().add(IHMMainManager.class.getResource(STYLESHEET).toExternalForm());
         stage.setTitle("UTube");
         stage.setScene(primary_scene);
         stage.show();
+        view.controller().refreshView();
     }
 
-    /** Replaces the whole window with the view {@code fxml_path}; the history is cleared. */
-    public void changeView(String fxml_path) {
-        Parent root = loadView(fxml_path);
-        history.clear();
-        current_content = null;
-        home_content = root instanceof BorderPane layout ? layout.getCenter() : null;
-        primary_scene.setRoot(root);
+    /** Replaces the displayed screen with the one given by {@code fxmlPath}. */
+    public void changeView(String fxmlPath) {
+        LoadedView view = loadView(fxmlPath);
+        primary_scene.setRoot(view.root());
+        if (view.controller() instanceof LoginController) {
+            displayed_users.clear();
+            displayed_videos.clear();
+            if (remote_profile_dialog != null) remote_profile_dialog.close();
+        }
+        main_controller = view.controller() instanceof MainController main ? main : null;
+        view.controller().refreshView();
     }
 
     /**
-     * Displays a view in the central area of the connected layout and keeps the current one
-     * in the history for the "Retour" button.
-     *
-     * @param fxml_path path of the FXML file of the view
-     * @return the controller of the displayed view, to give it its data
+     * Displays the {@code fxml_path} screen in the content area of the main view:
+     * the header and the users panel stay in place. Loads the main view first if
+     * it is not displayed (for example right after login).
      */
-    public <C extends Controller> C changeContent(String fxml_path) {
-        history.push(current_content != null ? current_content : new ContentEntry(null, null, null));
-        return showContent(fxml_path);
-    }
-
-    /**
-     * Header tab (Téléchargements, Partages, Amis): displays the view in the central area
-     * and clears the history, these screens having no "Retour" button.
-     *
-     * @param fxml_path path of the FXML file of the view
-     * @return the controller of the displayed view
-     */
-    public <C extends Controller> C openTab(String fxml_path) {
-        history.clear();
-        return showContent(fxml_path);
-    }
-
-    /** "Accueil" tab: displays the original content of the connected layout again. */
-    public void showHome() {
-        history.clear();
-        current_content = null;
-        layout().setCenter(home_content);
-    }
-
-    /** "Retour" button: displays the previous view again (or the home screen if there is none). */
-    public void goBack() {
-        if (history.isEmpty()) {
-            showHome();
-        } else {
-            restore(history.pop());
+    public void showContent(String fxml_path) {
+        if (main_controller == null) {
+            changeView(MAIN_VIEW);
         }
+        LoadedView view = loadView(fxml_path);
+        main_controller.setContent(view.root());
+        view.controller().refreshView();
     }
 
-    /**
-     * Goes back to a given view (e.g. 09 Ajouter un partage → 08 Mes partages).
-     * If the view is in the history, it is restored with its state; otherwise it is loaded
-     * again as a tab.
-     *
-     * @param fxml_path path of the FXML file of the view
-     * @return the controller of the displayed view
-     */
-    public <C extends Controller> C backTo(String fxml_path) {
-        boolean in_history = history.stream().anyMatch(entry -> fxml_path.equals(entry.fxml_path()));
-        if (!in_history) {
-            return openTab(fxml_path);
+    /** Gives access to the already created controller of a screen, to communicate between screens. */
+    public <C extends Controller> C getController(Class<C> type) { //for a type C that is a subtype of Controller, this method takes a Class<C> as parameter and returns a C
+        return type.cast(controllers.get(type)); //cast checked at runtime by Class.cast, no unchecked warning
+    }
+
+    /** Loaded view and its controller, to call refreshView() without depending on a shared field. */
+    private record LoadedView(Parent root, Controller controller) {
+    }
+
+    private LoadedView loadView(String fxmlPath) {
+        URL location = IHMMainManager.class.getResource(fxmlPath);
+        if (location == null) {
+            throw new IllegalArgumentException("Vue introuvable : " + fxmlPath);
         }
-        ContentEntry target = history.pop();
-        while (!fxml_path.equals(target.fxml_path())) {
-            target = history.pop();
-        }
-        restore(target);
-        return cast(target.controller());
-    }
-
-    /** Gives access to the controller of an already loaded view, to communicate between views. */
-    @SuppressWarnings("unchecked") // the map only stores instances of their own key class
-    public <C extends Controller> C getController(Class<C> type) {
-        return (C) controllers.get(type);
-    }
-
-    private <C extends Controller> C showContent(String fxml_path) {
-        FXMLLoader loader = loader(fxml_path);
-        Parent root = load(loader);
-        Controller controller = register(loader);
-        current_content = new ContentEntry(fxml_path, root, controller);
-        layout().setCenter(root);
-        controller.refreshView();
-        return cast(controller);
-    }
-
-    private void restore(ContentEntry entry) {
-        if (entry.root() == null) {
-            showHome();
-            return;
-        }
-        current_content = entry;
-        layout().setCenter(entry.root());
-        entry.controller().refreshView();
-    }
-
-    private BorderPane layout() {
-        if (!(primary_scene.getRoot() instanceof BorderPane layout)) {
-            throw new IllegalStateException("The central area only exists in the connected layout " + MAIN_VIEW);
-        }
-        return layout;
-    }
-
-    private Parent loadView(String fxml_path) {
-        FXMLLoader loader = loader(fxml_path);
-        Parent root = load(loader);
-        register(loader).refreshView();
-        return root;
-    }
-
-    private static FXMLLoader loader(String fxml_path) {
-        return new FXMLLoader(IHMMainManager.class.getResource(fxml_path));
-    }
-
-    private static Parent load(FXMLLoader loader) {
+        FXMLLoader loader = new FXMLLoader(location);
+        loader.setControllerFactory(this::createController);
+        Parent root;
         try {
-            return loader.load();
+            root = loader.load();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-    }
-
-    /** Gives the manager to the new controller and keeps it (the previous instance is replaced). */
-    private Controller register(FXMLLoader loader) {
         Controller controller = loader.getController();
-        controller.setViewManager(this);
-        controllers.put(controller.getClass(), controller);
-        return controller;
+        controllers.put(controller.getClass(), controller); //For now, the controller of the new view replaces the previous one of the same type in controllers.
+        return new LoadedView(root, controller);
     }
 
-    @SuppressWarnings("unchecked")
-    private static <C extends Controller> C cast(Controller controller) {
-        return (C) controller;
+    /** Creates the controller declared in the FXML and gives it the manager before its initialize(). */
+    private Object createController(Class<?> type) {
+        try {
+            Object controller = type.getDeclaredConstructor().newInstance();
+            if (controller instanceof Controller c) {
+                c.setViewManager(this);
+            }
+            return controller;
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Impossible de créer le contrôleur " + type.getName(), e);
+        }
     }
 }

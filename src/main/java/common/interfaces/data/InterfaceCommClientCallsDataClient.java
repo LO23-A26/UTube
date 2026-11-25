@@ -1,6 +1,7 @@
 package common.interfaces.data;
 
 import common.dataclasses.*;
+import common.exceptions.AccessDeniedException;
 import java.util.UUID;
 import java.util.List;
 
@@ -15,9 +16,10 @@ public interface InterfaceCommClientCallsDataClient {
      *
      * @param requester_profile The profile of the user requesting access.
      * @param video_id The UUID of the video.
-     * @return VideoHeavy object containing heavy video details, or null by default.
+     * @return The full video with its metadata, ratings and comments.
+     * @throws AccessDeniedException If the requester is not allowed or the video is unknown.
      */
-    public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id);
+    public VideoFull giveDetailsAccess(UserLight requester_profile, UUID video_id) throws AccessDeniedException;
 
     /**
      * Adds a comment to a video.
@@ -114,7 +116,7 @@ public interface InterfaceCommClientCallsDataClient {
      * @param new_user The lightweight user profile.
      * @param new_video The lightweight video information.
      */
-    public void saveNewUser(UserLight new_user, VideoLight new_video);
+    public void saveNewUser(UserLight new_user, List<VideoLight> new_video);
 
     /**
      * Saves a full index of users and videos.
@@ -141,9 +143,9 @@ public interface InterfaceCommClientCallsDataClient {
     /**
      * Removes a user from the system.
      *
-     * @param user_profile The full user profile to remove.
+     * @param userId The full user profile to remove.
      */
-    public void removeUser(UserFull user_profile);
+    public void removeUser(UUID userId);
 
     /**
      * Removes a shared video.

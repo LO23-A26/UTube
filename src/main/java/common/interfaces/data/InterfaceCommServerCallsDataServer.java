@@ -10,6 +10,7 @@ import java.util.Set;
 /**
  * Interface for communication server calls to the data server.
  * Handles user registration, index updates, and connected client management.
+ * @version 2.0
  */
 public interface InterfaceCommServerCallsDataServer {
 
@@ -18,9 +19,17 @@ public interface InterfaceCommServerCallsDataServer {
      *
      * @param new_user The lightweight profile of the new user to register.
      * @param new_videos The set of lightweight videos associated with the new user.
-     * @return An object containing lists of users and videos.
+     * @return An ArrayList containing at index 0 the List<UserLight> (user index)
+     *         and at index 1 the List<VideoLight> (video index).
      */
+    public Index registerUserAndGetIndexStructure(UserLight new_user, Set<VideoLight> new_videos);
+
+    /**
+     * @deprecated an index structure have been added please switch to the registerUserAndGetIndexStructure function
+     */
+    @Deprecated(since="2.0", forRemoval=true)
     public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos);
+
     /**
      * Removes a user from the server's records based on their unique ID.
      *
@@ -29,19 +38,40 @@ public interface InterfaceCommServerCallsDataServer {
     public void removeUser(UUID user_id);
 
     /**
-     * Deletes a specific video index from the server.
+     * Removes a user and purges their videos (convenience overload matching sequence diagram).
      *
-     * @param video_id The UUID of the video index to delete.
+     * @param user_profile The profile of the user to disconnect.
+     * @param video_list Ignored as videos are managed internally by the Data Server.
      */
-    public void deleteIndex(UUID video_id);
+    default void removeUser(UserLight user_profile, List<VideoLight> video_list) {
+        if (user_profile != null && user_profile.getUuid() != null) {
+            removeUser(user_profile.getUuid());
+        }
+    }
+
+
 
     /**
-     * Updates an existing video index with new information.
+     * Supprime une vidéo de l'index du serveur.
+     *
+     * @param video_id UUID de la vidéo à supprimer
+     */
+    void removeVideo(UUID video_id);
+    @Deprecated(since = "2.0", forRemoval = true)
+    default void deleteIndex(UUID video_id) {
+        removeVideo(video_id);
+    }
+
+    /**
+     * Adds a new video or Updates an existing one in index with new information.
      *
      * @param video_info The lightweight video object containing the updated data.
      */
-    public void updateIndex(VideoLight video_info);
-
+    public void addOrUpdateVideo(VideoLight video_info);
+    @Deprecated(since = "2.0", forRemoval = true)
+    default void updateIndex(VideoLight video_info) {
+        addOrUpdateVideo(video_info);
+    }
     /**
      * Retrieves the list of all currently connected clients.
      *

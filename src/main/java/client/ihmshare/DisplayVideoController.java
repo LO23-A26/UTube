@@ -17,7 +17,7 @@ import common.dataclasses.Rating;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoFull;
 import common.dataclasses.VideoLight;
-import common.interfaces.comm.InterfaceIHMShare_calls_Comm;
+import common.interfaces.comm.InterfaceIHMShareCallsComm;
 import common.interfaces.data.InterfaceIhmShareCallsDataClient;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -342,8 +342,8 @@ public class DisplayVideoController extends ShareController {
     /** "Noter" (sequences "Ajout note" and "Modification note"). */
     @FXML
     private void rateVideo() {
-        UserLight me = getCurrentUser();
-        InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
+        UserLight me = currentUser();
+        InterfaceIHMShareCallsComm comm = communicationCalls();
         if (selected_rating == 0) {
             showError("Choisissez une note entre 1 et 5 étoiles.");
             return;
@@ -365,8 +365,8 @@ public class DisplayVideoController extends ShareController {
     /** "Publier" (sequences "Ajout commentaire" and "Modification commentaire"). */
     @FXML
     private void commentVideo() {
-        UserLight me = getCurrentUser();
-        InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
+        UserLight me = currentUser();
+        InterfaceIHMShareCallsComm comm = communicationCalls();
         String text = comment_field.getText().strip();
         if (text.isEmpty()) {
             return;
@@ -394,8 +394,8 @@ public class DisplayVideoController extends ShareController {
 
     /** "Supprimer" on "Mon avis" (sequences "Suppression commentaire" and "Suppression note"). */
     private void deleteMyReview() {
-        UserLight me = getCurrentUser();
-        InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
+        UserLight me = currentUser();
+        InterfaceIHMShareCallsComm comm = communicationCalls();
         if (me == null || comm == null) {
             showError("La suppression n'est pas disponible pour le moment.");
             return;
@@ -453,12 +453,28 @@ public class DisplayVideoController extends ShareController {
         return data == null ? null : data.getUser();
     }
 
+    /** Resolve Comm reflectively to avoid compiling against a stale core return type. */
+    private InterfaceIHMShareCallsComm communicationCalls() {
+        if (core == null) {
+            return null;
+        }
+        try {
+            Object communication = core.getClass().getMethod("getInterfaceFromCommunication").invoke(core);
+            return communication instanceof InterfaceIHMShareCallsComm
+                    ? (InterfaceIHMShareCallsComm) communication : null;
+        } catch (ReflectiveOperationException | LinkageError e) {
+            return null;
+        }
+    }
+
+
     /**
      * Getter for ratings
      * 
      * @return (Map<UUID, Rating>) list of ratings
      */
     private Map<UUID, Rating> getRatings() {
+
         if (video_full == null) {
             return new HashMap<>();
         }

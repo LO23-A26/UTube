@@ -1,9 +1,12 @@
 package client.ihmshare;
 
+import client.ihmmain.IHMMainManager;
+import common.dataclasses.UserFull;
 import java.util.ArrayList;
 import java.util.List;
 
 import common.dataclasses.VideoLight;
+import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -36,11 +39,17 @@ public class ManageVideosController extends ShareController {
      */
     public void setVideos(List<VideoLight> videos) {
         this.videos = new ArrayList<>(videos);
-        refreshView();
+        displayVideos();
     }
 
     @Override
     public void refreshView() {
+        loadSharedVideos();
+        displayVideos();
+    }
+
+    /** Draws one row per video of the current list, without reading Data again. */
+    private void displayVideos() {
         videos_box.getChildren().clear();
         for (VideoLight video : videos) {
             Button delete_button = new Button("Supprimer");
@@ -50,6 +59,23 @@ public class ManageVideosController extends ShareController {
         }
         empty_label.setVisible(videos.isEmpty());
         empty_label.setManaged(videos.isEmpty());
+    }
+
+    /**
+     * Reads the videos shared by the user from Data, so that a video added in 09 appears
+     * when coming back to this screen. Keeps the current list if Data is not available.
+     * <p>
+     * TODO: goes through the Data interface of IHM-Main because InterfaceIhmShareCallsDataClient
+     * has no method to list the shared videos yet; use it once Data provides one.
+     */
+    private void loadSharedVideos() {
+        IHMMainManager view_manager = core == null ? null : core.getViewManager();
+        InterfaceIhmMainCallsDataClient data = view_manager == null ? null : view_manager.getIData();
+        UserFull user = data == null ? null : data.getUser();
+        if (user == null || user.getSharedVideos() == null) {
+            return;
+        }
+        videos = new ArrayList<>(user.getSharedVideos());
     }
 
     /** "Ajouter un partage": opens the screen 09. */
@@ -71,7 +97,7 @@ public class ManageVideosController extends ShareController {
         // TODO: the sequence "Suppression vidéo" goes through IHM-Main (askDelete + deleteLocalVideo),
         // an interface from IHM-Share is needed to trigger it from here
         videos.remove(video);
-        refreshView();
+        displayVideos();
     }
 
     /**
