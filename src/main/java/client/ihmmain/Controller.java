@@ -11,6 +11,11 @@ public abstract class Controller {
         this.viewManager = viewManager;
     }
 
-    /** Called by the {@link IHMMainManager} right after the view is displayed. */
-    public abstract void refreshView();
+    /**
+     * Not used by IHM-Main: its controllers initialize their view in {@code initialize()}.
+     * Kept only because IHM-Share's ShareController overrides it and IHMShareCore calls it.
+     * To delete once IHM-Share declares it in ShareController.
+     */
+    public void refreshView() {
+    }
 }

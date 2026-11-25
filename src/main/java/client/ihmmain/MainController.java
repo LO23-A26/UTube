@@ -33,12 +33,6 @@ public class MainController extends Controller {
     @FXML 
     private TextField search_field;
 
-    /** Called by the manager when the main view is displayed: draws the users panel. */
-    @Override
-    public void refreshView() {
-        refreshUserList();
-    }
-
     /** Redraws the users panel from the users kept by the manager (filled by the Data notifications). */
     void refreshUserList() {
         List<String> pseudos = new ArrayList<>();
@@ -52,8 +46,10 @@ public class MainController extends Controller {
     void setContent(Parent content) {
         content_pane.getChildren().setAll(content);
     }
-    @FXML 
+    /** Called by the FXMLLoader once the view is loaded (the manager is already set by the controller factory). */
+    @FXML
     private void initialize() {
+        refreshUserList();
         //Emptying the search input reload the complete catalogue
         search_field.textProperty().addListener((obs, old_text, new_text) -> {
             if (new_text.isBlank() && !old_text.isBlank()) viewManager.clearSearch();

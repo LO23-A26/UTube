@@ -194,7 +194,6 @@ public class IHMMainManager {
         stage.setTitle("UTube");
         stage.setScene(primary_scene);
         stage.show();
-        view.controller().refreshView();
     }
 
     /** Replaces the displayed screen with the one given by {@code fxmlPath}. */
@@ -208,7 +207,6 @@ public class IHMMainManager {
             if (remote_profile_dialog != null) remote_profile_dialog.close();
         }
         main_controller = view.controller() instanceof MainController main ? main : null;
-        view.controller().refreshView();
     }
 
     /**
@@ -222,7 +220,6 @@ public class IHMMainManager {
         }
         LoadedView view = loadView(fxml_path);
         main_controller.setContent(view.root());
-        view.controller().refreshView();
     }
 
     /** Gives access to the already created controller of a screen, to communicate between screens. */
@@ -230,7 +227,7 @@ public class IHMMainManager {
         return type.cast(controllers.get(type)); //cast checked at runtime by Class.cast, no unchecked warning
     }
 
-    /** Loaded view and its controller, to call refreshView() without depending on a shared field. */
+    /** Loaded view and its controller, returned together by loadView(). */
     private record LoadedView(Parent root, Controller controller) {
     }
 

@@ -42,11 +42,6 @@ public class CreateProfileController extends Controller {
 
     private String avatar_path;
 
-    @Override
-    public void refreshView() {
-        error_label.setVisible(false);
-    }
-
     /**
      * Opens a file chooser to select the user's avatar.
      */

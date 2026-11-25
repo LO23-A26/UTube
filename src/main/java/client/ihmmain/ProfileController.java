@@ -48,11 +48,9 @@ public class ProfileController extends Controller {
 
     private String avatar_path;
 
-    @Override
-    public void refreshView() {
-        error_label.setVisible(false);
-        password_field.clear();
-
+    /** Called by the FXMLLoader once the view is loaded: fills the fields with the local profile. */
+    @FXML
+    private void initialize() {
         InterfaceIhmMainCallsDataClient data = viewManager.getIData();
         profile = data == null ? null : data.getUser();
         if (profile == null) {

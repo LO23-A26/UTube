@@ -21,6 +21,6 @@
         <Label fx:id="empty_label" text="Aucune vidéo disponible pour le moment." styleClass="text-secondary"
                visible="false" managed="${empty_label.visible}"/>
         <Label fx:id="no_results_label" text="Aucune vidéo trouvée pour la recherche correspondante" styleClass="text-secondary"
-               visible="false" managed="${empty_label.visible}"/>
+               visible="false" managed="${no_results_label.visible}"/>
     </VBox>
 </ScrollPane>

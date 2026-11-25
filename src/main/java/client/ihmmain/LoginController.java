@@ -28,11 +28,6 @@ public class LoginController extends Controller {
     private Button connectButton;
     private boolean connecting;
 
-    @Override
-    public void refreshView() {
-        errorLabel.setVisible(false);
-    }
-
     @FXML
     private void connect() {
         if (connecting) return;

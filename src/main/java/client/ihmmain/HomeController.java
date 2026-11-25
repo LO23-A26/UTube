@@ -28,20 +28,27 @@ public class HomeController extends Controller {
     @FXML 
     private Label no_results_label;
 
-    @Override
-    public void refreshView() {
+    /**
+     * Called by the FXMLLoader once the view is loaded: displays the full catalog.
+     * Does not go through viewManager.refreshVideos(): this controller is not registered
+     * in the manager yet, so the manager would refresh the previous HomeController.
+     * An active search is applied by searchVideos() right after showContent().
+     */
+    @FXML
+    private void initialize() {
         displayVideos(viewManager.getDisplayedVideos());
     }
 
-    /** Replaces the displayed cards with the cards of the given videos. */
+    /** Replaces the displayed cards with the cards of the given videos (full catalog, no search). */
     void displayVideos(List<VideoLight> videos) {
-        videos_container.getChildren().setAll(videos.stream().map(this::createVideoCard).toList());
-        empty_label.setVisible(videos.isEmpty());
+        displayResults(videos, null);
     }
 
     void displayResults(List<VideoLight> videos, SearchQuery query){
         videos_container.getChildren().setAll(videos.stream().map(this::createVideoCard).toList());
-        no_results_label.setVisible(videos.isEmpty());
+        boolean searching = query != null;
+        empty_label.setVisible(!searching && videos.isEmpty());
+        no_results_label.setVisible(searching && videos.isEmpty());
     }
 
     /**
