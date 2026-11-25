@@ -109,7 +109,7 @@ public class UserDetailController extends Controller {
             showUnavailable();
             return;
         }
-        if (awaited_user != null && !awaited_user.getUuid().equals(profile.getSharedInfo().getUuid())) {
+        if (awaited_user != null && !isAwaitedProfile(awaited_user, profile)) {
             return;
         }
         stopProfileTimeout();
@@ -120,7 +120,6 @@ public class UserDetailController extends Controller {
 
     /**
      * Shows that the expected profile is unavailable while preserving the user's identity.
-     *
      */
     private void showUnavailable() {
         if (awaited_user != null && profile == null) {

@@ -12,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Checks the formatting of the user's full name and age in the profile header.
+ * Checks the formatting of the user's identity, the presence of the view FXML on the classpath and
+ * the detection of the awaited profile.
  *
  * @author Santiago Avellaneda Rodriguez
  * @version 1.0
