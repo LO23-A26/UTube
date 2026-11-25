@@ -127,7 +127,7 @@ public class DataClientCore {
 					+ " » enregistrée en local mais pas annoncée aux autres utilisateurs. "
 					+ "Elle sera envoyée à la prochaine connexion.");
 		}
-
+        list_video.add(video.getSharedInfo());
 }
 
     VideoFull createVideo(Path file, String title, String creator, Set<String> tags) {
@@ -214,6 +214,16 @@ public class DataClientCore {
             }
         }
 
+    }
+
+    public UserLight getConnectedUserLight(UUID user_id) {
+        UserLight result = null;
+        for(UserLight userL : connected_user) {
+            if(userL.getUuid().equals(user_id)) {
+                result = userL;
+            }
+        }
+        return result;
     }
 
 

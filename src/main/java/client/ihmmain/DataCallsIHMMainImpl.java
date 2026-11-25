@@ -43,12 +43,11 @@ public final class DataCallsIHMMainImpl implements InterfaceDataCallsIHMMain {
         });
     }
 
-    @Override public void refreshUserList(UserLight user) { // user is the disconnected user
-        UUID id = user == null ? null : user.getUuid();
-        if (id == null) return;
+    @Override public void refreshUserList(UUID userId) { // user is the disconnected user
+        if (userId == null) return;
         Platform.runLater(() -> {
-            manager.removeUser(id);
-            manager.removeUserVideos(id);
+            manager.removeUser(userId);
+            manager.removeUserVideos(userId);
         });
     }
 

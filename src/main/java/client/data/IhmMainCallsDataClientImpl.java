@@ -103,6 +103,7 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
                         video_list.addAll(u.getSharedVideos());
                     }
                     data_client_core.setUser(u);
+                    data_client_core.getListVideo().addAll(video_list);
                 }
             }
         }catch(RuntimeException e){
