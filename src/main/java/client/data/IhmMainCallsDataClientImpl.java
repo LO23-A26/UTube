@@ -50,17 +50,18 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      */
     @Override
     public void exportProfileData(String destination_path) {
-
+        data_client_core.getProfileSaver().exportProfile(destination_path, data_client_core.getUser());
     }
 
-    /**
+/**
      * Imports profile data from a specified path.
      *
      * @param source_path The string path from where data should be imported.
      */
     @Override
     public void importProfileData(String source_path) {
-
+        UserFull user = data_client_core.getProfileSaver().importProfile(source_path);
+        data_client_core.setUser(user);
     }
 
     /**
