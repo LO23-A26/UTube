@@ -58,6 +58,9 @@ public class VideoPlayerController extends ShareController {
         play_icon.setVisible(!playing);
     }
 
+    /**
+     * Toggle the video playing
+     */
     @FXML
     private void togglePlay() {
         playing = !playing;
