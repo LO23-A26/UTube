@@ -286,8 +286,6 @@ public class DisplayVideoController extends ShareController {
         if (mine) {
             title.getChildren().add(action("Modifier", this::editMyReview));
             title.getChildren().add(action("Supprimer", this::deleteMyReview));
-        } else if (getState() == State.OWNER) {
-            title.getChildren().add(action("Supprimer", () -> deleteReview(author)));
         }
 
         Label text;
@@ -415,28 +413,6 @@ public class DisplayVideoController extends ShareController {
         }
         selected_rating = 0;
         comment_field.clear();
-        refreshView();
-    }
-
-    /**
-     * "Supprimer" on the review of someone else: only for the owner (05c, use case 4.2.6bis).
-     * @param author (UUID) the UUID of the review author
-     */
-    private void deleteReview(UUID author) {
-        InterfaceIhmShareCallsDataClient data = core.getInterfaceFromData();
-        if (data == null) {
-            showError("La suppression n'est pas disponible pour le moment.");
-            return;
-        }
-        if (!confirm("Supprimer ce commentaire ?", "La note et le commentaire de cette personne seront retirés de la vidéo.", "Supprimer")) {
-            return;
-        }
-        if (comments().remove(author) != null) {
-            data.deleteComment(video.getVideoId(), author);
-        }
-        if (getRatings().remove(author) != null) {
-            data.deleteRating(video.getVideoId(), author);
-        }
         refreshView();
     }
 
