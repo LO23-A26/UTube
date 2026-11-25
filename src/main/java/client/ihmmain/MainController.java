@@ -9,6 +9,7 @@ import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -29,6 +30,8 @@ public class MainController extends Controller {
     private VBox users_panel;
     @FXML
     private VBox users_container;
+    @FXML 
+    private TextField search_field;
 
     /** Called by the manager when the main view is displayed: draws the users panel. */
     @Override
@@ -49,10 +52,24 @@ public class MainController extends Controller {
     void setContent(Parent content) {
         content_pane.getChildren().setAll(content);
     }
-
+    @FXML 
+    private void initialize() {
+        //Emptying the search input reload the complete catalogue
+        search_field.textProperty().addListener((obs, old_text, new_text) -> {
+            if (new_text.isBlank() && !old_text.isBlank()) viewManager.clearSearch();
+        });
+    }
+    /** Lauch the research based on the text in the search input */
+    @FXML 
+    private void search() {
+        viewManager.searchVideos(search_field.getText());
+        home_tab.setSelected(true);
+    }
     /** "Accueil" (home) tab of the header. */
     @FXML
     private void showHome() {
+        // Back to the full catalog: clearing the field triggers the listener, which ends the search
+        search_field.clear();
         viewManager.showContent(IHMMainManager.HOME_VIEW);
         // A ToggleButton is deselected when it is clicked again
         home_tab.setSelected(true);
@@ -68,6 +85,7 @@ public class MainController extends Controller {
 
     /** Back to the home screen from a screen without a tab (Mon profil...): also reselects the "Accueil" tab. */
     void backToHome() {
+        search_field.clear();
         viewManager.showContent(IHMMainManager.HOME_VIEW);
         home_tab.setSelected(true);
     }

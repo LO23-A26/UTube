@@ -37,7 +37,7 @@
                 <ImageView>
                     <Image url="@../../assets/icons/recherche.png"/>
                 </ImageView>
-                <TextField promptText="Rechercher (titre, créateur, tags)" HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="search_field" onAction="#search" promptText="Rechercher (titre, créateur, tags)" HBox.hgrow="ALWAYS"/>
             </HBox>
 
             <HBox styleClass="nav">

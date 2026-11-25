@@ -1,7 +1,6 @@
 package common.interfaces.IHMMain;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import common.dataclasses.UserFull;
@@ -59,6 +58,6 @@ public interface InterfaceDataCallsIHMMain {
      *
      * @param videos set of currently shared videos
      */
-    public void refreshSharedVideos(Set<VideoLight> videos);
+    public void refreshSharedVideos(List<VideoLight> videos);
 
 }

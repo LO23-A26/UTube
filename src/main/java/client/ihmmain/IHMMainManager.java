@@ -61,6 +61,7 @@ public class IHMMainManager {
     private final Map<UUID, UserLight> displayed_users = new LinkedHashMap<>();
     private final Map<UUID, VideoLight> displayed_videos = new LinkedHashMap<>();
     private Alert remote_profile_dialog;
+    private SearchQuery current_search;
 
     public InterfaceDataCallsIHMMain getInterfaceForData() { return data_notifications; }
     public InterfaceCommCallsIHMMain getInterfaceForComm() { return comm_notifications; }
@@ -69,6 +70,19 @@ public class IHMMainManager {
 
     List<VideoLight> getDisplayedVideos() { return List.copyOf(displayed_videos.values()); }
 
+    void searchVideos(String raw) {
+        SearchQuery query = SearchQuery.parse(raw);
+        current_search = query.isEmpty() ? null : query;
+        showContent(HOME_VIEW);
+        refreshVideos();
+    }
+
+    void clearSearch(){
+        if (current_search != null) {
+            current_search = null;
+            refreshVideos();
+        }
+    }
     void addUsers(Collection<UserLight> users) {
         for (UserLight user : users) {
             if (user != null && user.getUuid() != null) displayed_users.put(user.getUuid(), user);
@@ -111,7 +125,16 @@ public class IHMMainManager {
 
     private void refreshVideos() {
         HomeController home = getController(HomeController.class);
-        if (main_controller != null && home != null) home.refreshView();
+        if (main_controller != null && home != null) {
+            if (current_search == null) home.displayVideos(getDisplayedVideos());
+            else home.displayResults(runSearch(current_search),current_search);
+        }
+    }
+
+    private List<VideoLight> runSearch(SearchQuery q){
+        if (data_calls==null) return List.of();
+        List<VideoLight> results = data_calls.searchSharedVideos(q.text(),q.author(),q.tags());
+        return results == null? List.of() : List.copyOf(results);
     }
 
     /** Displays only the received profile fields, never credentials or local collections. */
@@ -181,6 +204,7 @@ public class IHMMainManager {
         if (view.controller() instanceof LoginController) {
             displayed_users.clear();
             displayed_videos.clear();
+            current_search=null;
             if (remote_profile_dialog != null) remote_profile_dialog.close();
         }
         main_controller = view.controller() instanceof MainController main ? main : null;

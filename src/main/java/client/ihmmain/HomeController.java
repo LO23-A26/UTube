@@ -1,5 +1,8 @@
 package client.ihmmain;
 
+import java.util.List;
+import java.util.Set;
+
 import common.dataclasses.VideoLight;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -12,9 +15,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
-import java.util.List;
-import java.util.Set;
-
 /**
  * Controller of the home screen (mockup 04): videos available for download,
  * displayed in the content area of the main view.
@@ -25,6 +25,8 @@ public class HomeController extends Controller {
     private TilePane videos_container;
     @FXML
     private Label empty_label;
+    @FXML 
+    private Label no_results_label;
 
     @Override
     public void refreshView() {
@@ -32,9 +34,14 @@ public class HomeController extends Controller {
     }
 
     /** Replaces the displayed cards with the cards of the given videos. */
-    private void displayVideos(List<VideoLight> videos) {
+    void displayVideos(List<VideoLight> videos) {
         videos_container.getChildren().setAll(videos.stream().map(this::createVideoCard).toList());
         empty_label.setVisible(videos.isEmpty());
+    }
+
+    void displayResults(List<VideoLight> videos, SearchQuery query){
+        videos_container.getChildren().setAll(videos.stream().map(this::createVideoCard).toList());
+        no_results_label.setVisible(videos.isEmpty());
     }
 
     /**

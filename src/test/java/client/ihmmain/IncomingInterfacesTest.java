@@ -1,17 +1,5 @@
 package client.ihmmain;
 
-import common.dataclasses.UserFull;
-import common.dataclasses.UserLight;
-import common.dataclasses.VideoLight;
-import common.interfaces.data.InterfaceIhmMainCallsDataClient;
-import javafx.application.Platform;
-import javafx.scene.control.DialogPane;
-import javafx.scene.layout.TilePane;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import java.lang.reflect.Proxy;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,7 +9,21 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
+import common.interfaces.data.InterfaceIhmMainCallsDataClient;
+import javafx.application.Platform;
+import javafx.scene.control.DialogPane;
+import javafx.scene.layout.TilePane;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 class IncomingInterfacesTest {
     @BeforeAll static void toolkit() throws Exception { LoginConnectionTest.startToolkit(); }
@@ -86,7 +88,7 @@ class IncomingInterfacesTest {
             return null;
         });
         // refreshSharedVideos carries the whole catalog: it replaces the displayed videos.
-        manager.getInterfaceForData().refreshSharedVideos(Set.of(first));
+        manager.getInterfaceForData().refreshSharedVideos(List.of(first));
         fx(() -> { assertEquals(List.of(first), manager.getDisplayedVideos()); return null; });
         // refreshFullDisplay only adds: an empty index removes nothing.
         manager.getInterfaceForData().refreshFullDisplay(List.of(), List.of());

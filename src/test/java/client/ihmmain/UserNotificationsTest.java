@@ -1,5 +1,19 @@
 package client.ihmmain;
 
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import javafx.application.Platform;
@@ -7,18 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserNotificationsTest {
     @BeforeAll static void toolkit() throws Exception { LoginConnectionTest.startToolkit(); }
@@ -44,7 +46,7 @@ class UserNotificationsTest {
         //callbacks.refreshUserList(new UserLight("bob"));
         callbacks.refreshUserList(null); // no user to remove: nothing to refresh
         callbacks.displayNewVideo(null);
-        callbacks.refreshSharedVideos(Set.of());
+        callbacks.refreshSharedVideos(List.of());
         fx(() -> {
             assertEquals(3, calls.get());
             assertTrue(allOnFx.get());
