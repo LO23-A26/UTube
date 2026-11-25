@@ -63,28 +63,62 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      *
      * @param comment The comment object to be added.
      */
-    public void addComment(Comment comment){}
+    public void addComment(Comment comment){
+        VideoFull videoFull = data_client_core.getVideoById(comment.getVideoId());
+        if(videoFull != null){
+            videoFull.addComment(comment);
+        }else{
+            throw new AddCommentFailed("Can't find the video");
+        }
+    }
 
     /**
      * Edits an existing comment.
      *
      * @param comment The comment object containing updated data.
      */
-    public void editComment(Comment comment){}
+    public void editComment(Comment comment){
+        VideoFull videoFull = data_client_core.getVideoById(comment.getVideoId());
+        if(videoFull != null){
+            Comment old_comment = videoFull.editComment(comment);
+            if(old_comment == null){
+                throw new EditCommentFailed("Can't find the comment");
+            }
+        }else{
+            throw new EditCommentFailed("Can't find the video");
+        }
+    }
 
     /**
      * Adds a rating to a video.
      *
      * @param rating The rating object to be added.
      */
-    public void addRating(Rating rating){}
+    public void addRating(Rating rating){
+        VideoFull videoFull = data_client_core.getVideoById(rating.getVideoId());
+        if(videoFull != null){
+            videoFull.addRating(rating);
+        }else{
+            throw new AddRatingFailed("Can't find the video");
+        }
+    }
 
     /**
      * Edits an existing rating.
      *
      * @param rating The rating object containing updated data.
      */
-    public void editRating(Rating rating){}
+    public void editRating(Rating rating){
+        VideoFull videoFull = data_client_core.getVideoById(rating.getVideoId());
+        if(videoFull != null){
+            Rating old_rating = videoFull.editRating(rating);
+            if(old_rating == null){
+                throw new EditRatingFailed("Can't find the comment");
+            }
+        }else{
+            throw new EditRatingFailed("Can't find the video");
+        }
+    }
 
     /**
      * Deletes a comment from a video based on video ID and author ID.
@@ -92,7 +126,17 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_id The UUID of the video.
      * @param author_uid The UUID of the comment's author.
      */
-    public void deleteComment(UUID video_id, UUID author_uid){}
+    public void deleteComment(UUID video_id, UUID author_uid){
+        VideoFull videoFull = data_client_core.getVideoById(video_id);
+        if(videoFull != null){
+            Comment comment = videoFull.deleteComment(author_uid);
+            if(comment == null){
+                throw new DelCommentFailed("Can't find the comment");
+            }
+        }else{
+            throw new DelCommentFailed("Can't find the video");
+        }
+    }
 
     /**
      * Deletes a rating from a video.
@@ -100,7 +144,17 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_id The UUID of the video.
      * @param author_uid The UUID of the rating's author.
      */
-    public void deleteRating(UUID video_id, UUID author_uid){}
+    public void deleteRating(UUID video_id, UUID author_uid){
+        VideoFull videoFull = data_client_core.getVideoById(video_id);
+        if(videoFull != null){
+            Rating rating = videoFull.deleteRating(author_uid);
+            if(rating == null){
+                throw new DelRatingFailed("Can't find the rating");
+            }
+        }else{
+            throw new DelRatingFailed("Can't find the video");
+        }
+    }
 
     /**
      * Marks a video as shared.

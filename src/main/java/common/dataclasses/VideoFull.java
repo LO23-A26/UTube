@@ -2,7 +2,6 @@ package common.dataclasses;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -98,5 +97,29 @@ public class VideoFull implements Serializable {
 
     public void setComments(Map<UUID, Comment> comments) {
         this.comments = comments;
+    }
+
+    public void addComment(Comment comment){
+        this.comments.put(comment.getAuthor().getUuid(),comment);
+    }
+
+    public void addRating(Rating rating){
+        this.ratings.put(rating.getAuthor().getUuid(),rating);
+    }
+
+    public Comment deleteComment(UUID author_id){
+        return this.comments.remove(author_id);
+    }
+
+    public Rating deleteRating(UUID author_id){
+        return this.ratings.remove(author_id);
+    }
+
+    public Comment editComment(Comment comment){
+        return this.comments.replace(comment.getAuthor().getUuid(), comment);
+    }
+
+    public Rating editRating(Rating rating){
+        return this.ratings.replace(rating.getAuthor().getUuid(), rating);
     }
 }

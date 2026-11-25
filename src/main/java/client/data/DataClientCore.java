@@ -99,6 +99,15 @@ public class DataClientCore {
     //###############################################################
 
 
+    /**
+     * get a video by id
+     *
+     * @param video_id to retrieve
+     * @return the videofull
+     */
+    public VideoFull getVideoById(UUID video_id){
+        return this.user.getUploadedVideos().getOrDefault(video_id,null);
+    }
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {return impl_interface_for_ICM;}
 
     public CommClientCallsDataClientImpl getImplInterfaceForComm(){return impl_interface_for_comm;}
@@ -106,7 +115,7 @@ public class DataClientCore {
     public InterfaceDataCallsIHMMain getInterfaceFromICM() {return interface_from_ICM;}
 
     public InterfaceDataCallsComm getInterfaceFromComm() {return interface_from_Comm;}
-    
+
     public IhmShareCallsDataClientImpl getImplInterfaceForICS() {return impl_interface_for_ICS;}
 
     public CommClientCallsDataClientImpl getImplInterfaceForCC() {return impl_interface_for_comm;}
@@ -221,9 +230,8 @@ public class DataClientCore {
         Map<UUID, Rating> empty_ratings = new HashMap<>();
         Map<UUID, Comment> empty_comments = new HashMap<>();
 
-        VideoFull video = new VideoFull(info, file_path, format, empty_ratings, empty_comments);
-        return video;
-    }
+        return new VideoFull(info, file_path, format, empty_ratings, empty_comments);
+	}
 
     boolean announceVideo(VideoLight video_info) {
         if (interface_from_Comm == null) {

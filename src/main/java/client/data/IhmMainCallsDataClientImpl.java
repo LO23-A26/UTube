@@ -29,18 +29,10 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
     }
 
 
-    //ISSUE 30 : réglée par la classe Authentification Failed.
-
-    //################################################ ISSUE 75 IhmMain veut faire une interface pour Connected User, ça peut leur être pratique
-
-
-
-    //###########################
-
 
     @Override
-    public UserFull getUser(){
-        return data_client_core.getUser();
+    public UserLight getUser(){
+        return data_client_core.getUser().getSharedInfo();
     }
 
     /**
@@ -104,36 +96,25 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      */
     @Override
     public boolean requestConnection(String pseudo, String password, String ip_address, int port) {
+        if (data_client_core.getProfileSaver().restoreProfile() == null || data_client_core.getProfileSaver().restoreProfile().isEmpty()){
+            throw new AuthentificationFailed("requestConnection - Error while restoring profiles.");
+        }
         boolean found = false;
         List <VideoLight> video_list = null;
-        try{
-            for (UserFull u : data_client_core.getProfileSaver().restoreProfile()) {
-                if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
-                    found = true;
-                    video_list = new ArrayList<VideoLight>();
-                    if(u.getSharedVideos()!=null){
-                        video_list.addAll(u.getSharedVideos());
-                    }
-                    data_client_core.setUser(u);
-                }
+        for (UserFull u : data_client_core.getProfileSaver().restoreProfile()) {
+            if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
+                found = true;
+                data_client_core.setUser(u);
+                video_list = new ArrayList<>(u.getSharedVideos());
             }
-        }catch(RuntimeException e){
-            throw new AuthentificationFailed("Error while restoring profiles.");
         }
-
         if (found) {
-            try{
-                data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
-            }catch(RuntimeException e){
-                throw new AuthentificationFailed(e.getMessage());
-            }
-
+            data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
             return true;
         }
         else {
-            throw new AuthentificationFailed("Information don't match.");
+            throw new AuthentificationFailed("requestConnection - Information don't match.");
         }
-
     }
 
     /**
@@ -258,5 +239,6 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
     public DataClientCore getDataClientCore() {
         return data_client_core;
     }
+
 }
 
