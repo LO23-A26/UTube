@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Panneau utilisateur·rice·s (colonne de 240 px à droite, commun à tous les écrans connectés) -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxWidth="240.0" minWidth="240.0" prefWidth="240.0" spacing="12.0" styleClass="users-panel"
+      stylesheets="@../../css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="28.0" left="20.0" right="20.0" top="28.0"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <Label styleClass="section-title" text="Utilisateurs connectés"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="close_panel_button" styleClass="icon-button" text="✕"/>
+    </HBox>
+
+    <!-- Rempli par le contrôleur avec un UserPanelGroup par liste de contacts (Amis, listes personnalisées, Bloqués) -->
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+        <VBox fx:id="contact_groups_container" spacing="16.0"/>
+    </ScrollPane>
+
+    <Hyperlink fx:id="manage_servers_link" text="Gérer les serveurs"/>
+</VBox>

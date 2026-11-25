@@ -1,32 +1,40 @@
 package common.dataclasses.communication.messages;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import client.communication.CommClientController;
+import client.communication.RemoteClient;
+import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.ClientMessage;
 
 /**
- * Sent to a new user when they connect to the server, containing the full index of users and videos.
+ * Sent to a new user when they connect to the server, containing the full index of users and videos,
+ * and the clients already connected, so that this one can contact them directly
  */
 public class SendFullIndexMessage implements ClientMessage {
-    private final ArrayList<Object> index;
+    private final Index index;
+    private final List<RemoteClient> peers;
 
-    public SendFullIndexMessage(ArrayList<Object> index) {
+    public SendFullIndexMessage(Index index, List<RemoteClient> peers) {
         this.index = index;
+        this.peers = peers;
     }
 
     /**
-     * Handles the message by giving the full index to the Data client.
-     * The index built by the Data server is [List of UserLight, List of VideoLight].
+     * Handles the message by remembering where the other clients listen, then giving the full index to the Data client.
      * @param controller The client controller.
      */
     @Override
     public void handle(CommClientController controller) {
-        List<UserLight> users = (List<UserLight>) index.get(0);
-        List<VideoLight> videos = (List<VideoLight>) index.get(1);
+        for (RemoteClient peer : peers) {
+            controller.clientConnectionsManager.addClient(peer);
+        }
+
+        System.getLogger(SendFullIndexMessage.class.getName()).log(System.Logger.Level.DEBUG,
+                "Received the address of " + peers.size() + " connected client(s)");
+        List<UserLight> users = index.getUserList();
+        List<VideoLight> videos = index.getVideoList();
         controller.interfaceCommDataClient.saveFullIndex(users, videos);
     }
 }

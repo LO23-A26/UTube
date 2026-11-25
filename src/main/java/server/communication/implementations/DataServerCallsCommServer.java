@@ -12,7 +12,8 @@ import server.communication.CommServerController;
  */
 public class DataServerCallsCommServer implements InterfaceDataServerCallsCommServer {
 
-    private CommServerController commServerController;
+    @SuppressWarnings("unused")
+    private final CommServerController commServerController;
 
     // Constructor, takes in the comm server controller
     public DataServerCallsCommServer(CommServerController commServerController) {

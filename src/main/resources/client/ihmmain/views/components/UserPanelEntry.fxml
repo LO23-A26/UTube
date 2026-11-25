@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Ligne du panneau utilisateur·rice·s : un clic ouvre le Détail utilisateur·rice (11) -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.shape.Circle?>
+
+<HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="user-entry" stylesheets="@../../css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="10.0" top="10.0"/>
+    </padding>
+    <Circle fx:id="avatar_circle" radius="16.0" styleClass="avatar"/>
+    <Label fx:id="pseudo_label" text="Pseudo"/>
+    <Label fx:id="online_label" styleClass="online-text" text="(en ligne)"/>
+</HBox>

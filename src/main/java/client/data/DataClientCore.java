@@ -28,10 +28,10 @@ public class DataClientCore {
     private Set<UserLight> connected_user;
     private ProfileSaver profileSaver;
     private ContactList contact_lists;
-    private IhmMainCallsDataClientImpl impl_interface_for_ICM;
+    private final IhmMainCallsDataClientImpl impl_interface_for_ICM;
+    private final CommClientCallsDataClientImpl impl_interface_for_comm;
     private InterfaceDataCallsIHMMain interface_from_ICM;
     private InterfaceDataCallsComm interface_from_Comm;
-    private CommClientCallsDataClientImpl impl_interface_for_CC;
     private IhmShareCallsDataClientImpl impl_interface_for_ICS;
 
     public DataClientCore() {
@@ -39,18 +39,15 @@ public class DataClientCore {
         this.connected_user = new HashSet<>();
         this.profileSaver = new ProfileSaver();
 
-        this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl();
-        this.impl_interface_for_ICM.setDataClientCore(this);
-        this.impl_interface_for_CC = new CommClientCallsDataClientImpl();
-        this.impl_interface_for_CC.setDataClientCore(this);
-        this.impl_interface_for_ICS = new IhmShareCallsDataClientImpl();
-        this.impl_interface_for_ICS.setDataClientCore(this);
+        this.impl_interface_for_ICS = new IhmShareCallsDataClientImpl(this);
+        this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl(this);
+        this.impl_interface_for_comm = new CommClientCallsDataClientImpl(this);
     }
 
     public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
         return impl_interface_for_ICM;
     }
-
+    public CommClientCallsDataClientImpl getImplInterfaceForComm(){return impl_interface_for_comm;}
     public InterfaceDataCallsIHMMain getInterfaceFromICM() {
         return interface_from_ICM;
     }
@@ -69,10 +66,6 @@ public class DataClientCore {
 
     public void setImplInterfaceForICS(IhmShareCallsDataClientImpl impl_interface_for_ICS) {
         this.impl_interface_for_ICS = impl_interface_for_ICS;
-    }
-
-    public void setImplInterfaceForICM(IhmMainCallsDataClientImpl impl_interface_for_ICM) {
-        this.impl_interface_for_ICM = impl_interface_for_ICM;
     }
 
     public void setInterfaceFromICM(InterfaceDataCallsIHMMain interface_from_ICM) {

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 02 Créer un profil : profil local, champs Pseudo et Mot de passe obligatoires -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<StackPane prefHeight="800.0" prefWidth="1280.0" styleClass="offline-background"
+           stylesheets="@../css/utube.css"
+           xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox maxHeight="-Infinity" maxWidth="620.0" spacing="18.0" styleClass="card">
+        <padding>
+            <Insets bottom="24.0" left="36.0" right="36.0" top="36.0"/>
+        </padding>
+
+        <fx:include source="components/Logo.fxml"/>
+        <Label styleClass="page-title" text="Créer un profil"/>
+
+        <HBox alignment="CENTER_LEFT" spacing="14.0">
+            <Circle fx:id="avatar_circle" radius="33.0" styleClass="avatar"/>
+            <Button fx:id="choose_avatar_button" text="Choisir un avatar"/>
+        </HBox>
+
+        <GridPane hgap="14.0" vgap="14.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50.0"/>
+                <ColumnConstraints percentWidth="50.0"/>
+            </columnConstraints>
+
+            <VBox spacing="8.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label styleClass="field-label" text="Pseudo"/>
+                <TextField fx:id="pseudo_field"/>
+            </VBox>
+            <VBox spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <Label styleClass="field-label" text="Mot de passe"/>
+                <PasswordField fx:id="password_field"/>
+            </VBox>
+
+            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <Label styleClass="field-label" text="Nom"/>
+                <Label styleClass="optional-label" text="(optionnel)"/>
+                <TextField fx:id="last_name_field"/>
+            </VBox>
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <Label styleClass="field-label" text="Prénom"/>
+                <Label styleClass="optional-label" text="(optionnel)"/>
+                <TextField fx:id="first_name_field"/>
+            </VBox>
+
+            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                <Label styleClass="field-label" text="Date de naissance"/>
+                <Label styleClass="optional-label" text="(optionnel)"/>
+                <DatePicker fx:id="birth_date_picker" maxWidth="Infinity" promptText="jj/mm/aaaa"/>
+            </VBox>
+        </GridPane>
+
+        <!-- Champs obligatoires manquants, pseudo déjà utilisé... -->
+        <Label fx:id="error_label" managed="false" styleClass="error-label" visible="false" wrapText="true"/>
+
+        <HBox alignment="CENTER_RIGHT" spacing="12.0">
+            <Button fx:id="cancel_button" cancelButton="true" styleClass="large-button" text="Annuler"/>
+            <Button fx:id="create_profile_button" defaultButton="true" styleClass="primary-button"
+                    text="Créer le profil"/>
+        </HBox>
+    </VBox>
+</StackPane>
