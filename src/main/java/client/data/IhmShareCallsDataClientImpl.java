@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.List;
 import java.util.UUID;
 
+import static java.lang.System.Logger.Level.INFO;
+
 /**
  * Implementation of the IHM Share calls Dataclient interface.
  *
@@ -34,7 +36,7 @@ public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataCl
     public void sendDetailsRequest(UUID video_id) {
         UserLight owner_profile = findOwner(video_id);
         if (owner_profile == null) {
-            System.out.println("sendDetailsRequest - Unknown video.");
+            DataClientCore.getLogger().log(INFO,"sendDetailsRequest - Unknown video.");
             return;
         }
         UserLight requester_profile = data_client_core.getUser().getSharedInfo();

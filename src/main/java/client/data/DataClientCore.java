@@ -22,22 +22,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.UUID;
 
-import common.interfaces.IHMMain.InterfaceDataCallsIHMMain;
-import common.interfaces.comm.InterfaceDataCallsComm;
-
-import java.util.Set;
+import static java.lang.System.Logger.Level.ERROR;
 
 /**
  * @author Lucas Dompnier, Jean Van Gysel
  * @version 2.0
  */
 public class DataClientCore {
+
+    private static final System.Logger logger = System.getLogger(DataClientCore.class.getName());
 
     private UserFull user;
     private Index index_local;
@@ -120,16 +117,16 @@ public class DataClientCore {
 
     public CommClientCallsDataClientImpl getImplInterfaceForCC() {return impl_interface_for_comm;}
 
-    public void setImplInterfaceForICS(IhmShareCallsDataClientImpl impl_interface_for_ICS) {
-        this.impl_interface_for_ICS = impl_interface_for_ICS;
+    public void setImplInterfaceForICS(IhmShareCallsDataClientImpl impl_interface_for_ics) {
+        this.impl_interface_for_ICS = impl_interface_for_ics;
     }
 
-    public void setInterfaceFromICM(InterfaceDataCallsIHMMain interface_from_ICM) {
-        this.interface_from_ICM = interface_from_ICM;
+    public void setInterfaceFromICM(InterfaceDataCallsIHMMain interface_from_icm) {
+        this.interface_from_ICM = interface_from_icm;
     }
 
-    public void setInterfaceFromComm(InterfaceDataCallsComm interface_from_Comm) {
-        this.interface_from_Comm = interface_from_Comm;
+    public void setInterfaceFromComm(InterfaceDataCallsComm interface_from_comm) {
+        this.interface_from_Comm = interface_from_comm;
     }
 
     public UserFull getUser() {
@@ -163,8 +160,8 @@ public class DataClientCore {
         return profileSaver;
     }
 
-    public void setProfileSaver(ProfileSaver profileSaver) {
-        this.profileSaver = profileSaver;
+    public void setProfileSaver(ProfileSaver profile_saver) {
+        this.profileSaver = profile_saver;
     }
 
     public ContactList getContactLists() {
@@ -177,7 +174,7 @@ public class DataClientCore {
 
     UUID getCurrentUserId() {
         if (user == null) {
-            System.err.println("getCurrentUserId : aucun utilisateur connecté");
+            logger.log(ERROR,"getCurrentUserId : aucun utilisateur connecté");
             return null;
         }
         return user.getSharedInfo().getUuid();
@@ -193,7 +190,7 @@ public class DataClientCore {
         boolean announced = announceVideo(video.getSharedInfo());
         if (!announced) {
             // Si problème dans l'annonce, la vidéo est conservée, pas de retour en arrière
-            System.err.println("addingNewVideo : « " + video.getSharedInfo().getTitle()
+            logger.log(ERROR,"addingNewVideo : « " + video.getSharedInfo().getTitle()
                     + " » enregistrée en local mais pas annoncée aux autres utilisateurs. "
                     + "Elle sera envoyée à la prochaine connexion.");
         }
@@ -241,7 +238,7 @@ public class DataClientCore {
             interface_from_Comm.sendNewVideo(video_info);
             return true;
         } catch (RuntimeException e) {
-            System.err.println("announceVideo :" + e.getMessage());
+            logger.log(ERROR,"announceVideo :" + e.getMessage());
             return false;
         }
     }
@@ -390,5 +387,9 @@ public class DataClientCore {
         }
 
         return matching_videos;
+    }
+
+    public static System.Logger getLogger() {
+        return logger;
     }
 }

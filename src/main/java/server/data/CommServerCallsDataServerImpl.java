@@ -38,7 +38,7 @@ public class CommServerCallsDataServerImpl implements InterfaceCommServerCallsDa
     /**
      * Last version of the registerUserAndGetIndex function
      * @param new_user :
-     * @param new_videos
+     * @param new_videos :
      */
     @Override
     public ArrayList<Object> registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
@@ -70,7 +70,7 @@ public class CommServerCallsDataServerImpl implements InterfaceCommServerCallsDa
     @Override
     public void removeUser(UserLight user_profile, List<VideoLight> video_list) {
         if (data_server_core != null) {
-            data_server_core.removeUser(user_profile, video_list);
+            data_server_core.removeUser(user_profile);
         }
     }
 

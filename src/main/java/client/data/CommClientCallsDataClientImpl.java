@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.lang.System.Logger.Level.ERROR;
+
 /**
  * Implementation of the Comm Client calls Dataclient interface
  *
@@ -64,9 +66,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param comment The comment object to be added.
      */
     public void addComment(Comment comment){
-        VideoFull videoFull = data_client_core.getVideoById(comment.getVideoId());
-        if(videoFull != null){
-            videoFull.addComment(comment);
+        VideoFull video_full = data_client_core.getVideoById(comment.getVideoId());
+        if(video_full != null){
+            video_full.addComment(comment);
         }else{
             throw new AddCommentFailed("Can't find the video");
         }
@@ -78,9 +80,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param comment The comment object containing updated data.
      */
     public void editComment(Comment comment){
-        VideoFull videoFull = data_client_core.getVideoById(comment.getVideoId());
-        if(videoFull != null){
-            Comment old_comment = videoFull.editComment(comment);
+        VideoFull video_full = data_client_core.getVideoById(comment.getVideoId());
+        if(video_full != null){
+            Comment old_comment = video_full.editComment(comment);
             if(old_comment == null){
                 throw new EditCommentFailed("Can't find the comment");
             }
@@ -95,9 +97,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param rating The rating object to be added.
      */
     public void addRating(Rating rating){
-        VideoFull videoFull = data_client_core.getVideoById(rating.getVideoId());
-        if(videoFull != null){
-            videoFull.addRating(rating);
+        VideoFull video_full = data_client_core.getVideoById(rating.getVideoId());
+        if(video_full != null){
+            video_full.addRating(rating);
         }else{
             throw new AddRatingFailed("Can't find the video");
         }
@@ -109,9 +111,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param rating The rating object containing updated data.
      */
     public void editRating(Rating rating){
-        VideoFull videoFull = data_client_core.getVideoById(rating.getVideoId());
-        if(videoFull != null){
-            Rating old_rating = videoFull.editRating(rating);
+        VideoFull video_full = data_client_core.getVideoById(rating.getVideoId());
+        if(video_full != null){
+            Rating old_rating = video_full.editRating(rating);
             if(old_rating == null){
                 throw new EditRatingFailed("Can't find the comment");
             }
@@ -127,9 +129,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param author_uid The UUID of the comment's author.
      */
     public void deleteComment(UUID video_id, UUID author_uid){
-        VideoFull videoFull = data_client_core.getVideoById(video_id);
-        if(videoFull != null){
-            Comment comment = videoFull.deleteComment(author_uid);
+        VideoFull video_full = data_client_core.getVideoById(video_id);
+        if(video_full != null){
+            Comment comment = video_full.deleteComment(author_uid);
             if(comment == null){
                 throw new DelCommentFailed("Can't find the comment");
             }
@@ -145,9 +147,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param author_uid The UUID of the rating's author.
      */
     public void deleteRating(UUID video_id, UUID author_uid){
-        VideoFull videoFull = data_client_core.getVideoById(video_id);
-        if(videoFull != null){
-            Rating rating = videoFull.deleteRating(author_uid);
+        VideoFull video_full = data_client_core.getVideoById(video_id);
+        if(video_full != null){
+            Rating rating = video_full.deleteRating(author_uid);
             if(rating == null){
                 throw new DelRatingFailed("Can't find the rating");
             }
@@ -192,7 +194,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      */
     public UUID askRequesterId(){
         if (data_client_core == null) {
-            System.err.println("askRequesterId : DataClientCore non branché");
+            DataClientCore.getLogger().log(ERROR,"askRequesterId : DataClientCore non branché");
             return null;
         }
         return data_client_core.getCurrentUserId();
@@ -273,9 +275,9 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @return int representing the location of the separatory in the array
      */
     public int findSeparatory(byte[] byte_array){
-        int start = 0;
+        int start;
         int start_separatory = 0;
-        boolean check = false;
+        boolean check;
         for (int i = 0 ; i < byte_array.length ; i++){
             if (byte_array[i] == -128){
                 start = i;
@@ -339,7 +341,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         }
 
         // New path for the mp4
-        String outputFilePath = ProfileSaver.user_dir + deserialized_video.getSharedInfo().getTitle() + "." + deserialized_video.getVideoFormat();
+        String output_file_path = ProfileSaver.user_dir + deserialized_video.getSharedInfo().getTitle() + "." + deserialized_video.getVideoFormat();
 
         // Creation of the corresponding VideoLight object with new UUID and new owner
         VideoLight saved_video = new VideoLight(
@@ -353,7 +355,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         // Creation of new VideoFull object from deserialized one and VideoLight new object
         VideoFull saved_video_full = new VideoFull(
                 saved_video,
-                outputFilePath,
+                output_file_path,
                 deserialized_video.getVideoFormat(),
                 deserialized_video.getRatings(),
                 deserialized_video.getComments()
@@ -364,7 +366,7 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
         // Deserialization and saving of the mp4
         FileOutputStream fos;
         try {
-            fos = new FileOutputStream(outputFilePath);
+            fos = new FileOutputStream(output_file_path);
         }
         catch (FileNotFoundException e){
             throw new RuntimeException(e);

@@ -10,7 +10,6 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -24,6 +23,9 @@ import java.util.zip.ZipOutputStream;
 import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 
+import static java.lang.System.Logger.Level.ERROR;
+import static java.lang.System.Logger.Level.INFO;
+
 /**
  * Class that save client data on user's computer
  *
@@ -36,26 +38,26 @@ public class ProfileSaver {
     static final String profile_dir = user_dir + "\\profile";
 
     /**
-     * Convert a zipfile that contains a profile into a usable UserFull
+     * Convert a zip file that contains a profile into a usable UserFull
      *
-     * @param source_path the zipfile that contains the profile
+     * @param source_path the zip file that contains the profile
      * @return the user retrieved
      */
     public UserFull importProfile(String source_path) {
         String user_profile_directory = profile_dir + "\\";
         UserFull user;
-        ZipFile zipFile;
+        ZipFile zip_file;
         try {
             // unzip the file
             unzip(source_path,user_profile_directory);
 
             // get the name of the folder unzipped
-            zipFile = new ZipFile(source_path);
-            List<String> zip_folders = zipFile.stream()
+            zip_file = new ZipFile(source_path);
+            List<String> zip_folders = zip_file.stream()
                     .filter(ZipEntry::isDirectory)
                     .map(ZipEntry::getName)
                     .toList();
-            zipFile.close();
+            zip_file.close();
 
             // restore the user
             user = restoreUniqueProfile(user_profile_directory + zip_folders.getFirst());
@@ -66,19 +68,19 @@ public class ProfileSaver {
     }
 
     // Method to unzip files
-    public static void unzip(String zipFile, String destFolder) throws IOException {
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+    public static void unzip(String zip_file, String dest_folder) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zip_file))) {
             ZipEntry entry;
             byte[] buffer = new byte[1024];
             // loop through zip entry
             while ((entry = zis.getNextEntry()) != null) {
-                File newFile = new File(destFolder + File.separator + entry.getName());
+                File new_file = new File(dest_folder + File.separator + entry.getName());
 
                 if (entry.isDirectory()) {
-                    newFile.mkdirs();
+                    new_file.mkdirs();
                 } else {
-                    new File(newFile.getParent()).mkdirs();
-                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                    new File(new_file.getParent()).mkdirs();
+                    try (FileOutputStream fos = new FileOutputStream(new_file)) {
                         int length;
                         while ((length = zis.read(buffer)) > 0) {
                             fos.write(buffer, 0, length);
@@ -99,68 +101,68 @@ public class ProfileSaver {
         saveProfile(user);
 
         String user_profile_directory = profile_dir + "\\" + user.getSharedInfo().getUuid();
-        String zipFile = destination_path + "\\exported_profile_" + user.getSharedInfo().getUuid() + ".zip";
+        String zip_file = destination_path + "\\exported_profile_" + user.getSharedInfo().getUuid() + ".zip";
 
         try {
-            zipFolder(user_profile_directory, zipFile);
-            System.out.println("Folder successfully zipped!");
+            zipFolder(user_profile_directory, zip_file);
+            DataClientCore.getLogger().log(INFO,"Folder successfully zipped!");
         } catch (IOException e) {
-            e.printStackTrace();
+            DataClientCore.getLogger().log(ERROR,"Folder can't be zipped!");
         }
     }
 
     /**
      * Method to zip a folder and its contents
-     * @param sourceFolderPath Path of the source folder
-     * @param zipFilePath Path of the destination ZIP file
+     * @param source_folder_path Path of the source folder
+     * @param zip_file_path Path of the destination ZIP file
      * @throws IOException If an I/O error occurs
      */
-    public static void zipFolder(String sourceFolderPath, String zipFilePath) throws IOException {
-        FileOutputStream fos = new FileOutputStream(zipFilePath);
-        ZipOutputStream zipOut = new ZipOutputStream(fos);
-        File sourceFolder = new File(sourceFolderPath);
+    public static void zipFolder(String source_folder_path, String zip_file_path) throws IOException {
+        FileOutputStream fos = new FileOutputStream(zip_file_path);
+        ZipOutputStream zip_out = new ZipOutputStream(fos);
+        File source_folder = new File(source_folder_path);
 
-        zipFiles(sourceFolder, sourceFolder.getName(), zipOut);
+        zipFiles(source_folder, source_folder.getName(), zip_out);
 
-        zipOut.close();
+        zip_out.close();
         fos.close();
     }
 
 
     /**
      * Recursive method to add files and directories to the ZIP file
-     * @param fileToZip The file or directory to be added
-     * @param fileName The name of the file or directory
-     * @param zipOut The ZipOutputStream to write to
+     * @param file_to_zip The file or directory to be added
+     * @param file_name The name of the file or directory
+     * @param zip_out The ZipOutputStream to write to
      * @throws IOException If an I/O error occurs
      */
-    private static void zipFiles(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
-        if (fileToZip.isHidden()) {
+    private static void zipFiles(File file_to_zip, String file_name, ZipOutputStream zip_out) throws IOException {
+        if (file_to_zip.isHidden()) {
             return;
         }
-        if (fileToZip.isDirectory()) {
-            if (fileName.endsWith("/")) {
-                zipOut.putNextEntry(new ZipEntry(fileName));
-                zipOut.closeEntry();
+        if (file_to_zip.isDirectory()) {
+            if (file_name.endsWith("/")) {
+                zip_out.putNextEntry(new ZipEntry(file_name));
+                zip_out.closeEntry();
             } else {
-                zipOut.putNextEntry(new ZipEntry(fileName + "/"));
-                zipOut.closeEntry();
+                zip_out.putNextEntry(new ZipEntry(file_name + "/"));
+                zip_out.closeEntry();
             }
-            File[] children = fileToZip.listFiles();
+            File[] children = file_to_zip.listFiles();
             if (children != null) {
                 for (File childFile : children) {
-                    zipFiles(childFile, fileName + "/" + childFile.getName(), zipOut);
+                    zipFiles(childFile, file_name + "/" + childFile.getName(), zip_out);
                 }
             }
             return;
         }
-        try (FileInputStream fis = new FileInputStream(fileToZip)) {
-            ZipEntry zipEntry = new ZipEntry(fileName);
-            zipOut.putNextEntry(zipEntry);
+        try (FileInputStream fis = new FileInputStream(file_to_zip)) {
+            ZipEntry zip_entry = new ZipEntry(file_name);
+            zip_out.putNextEntry(zip_entry);
             byte[] bytes = new byte[1024];
             int length;
             while ((length = fis.read(bytes)) >= 0) {
-                zipOut.write(bytes, 0, length);
+                zip_out.write(bytes, 0, length);
             }
         }
     }
@@ -185,25 +187,25 @@ public class ProfileSaver {
         // Creating the base directory if not exists
         String base_directory = user_dir;
         if (createDirectory(base_directory)) {
-            System.out.println("Directory created successfully at: " + base_directory);
+            DataClientCore.getLogger().log(INFO,"Directory created successfully at: " + base_directory);
         } else {
-            System.out.println("Failed to create directory. It may already exist at: " + base_directory);
+            DataClientCore.getLogger().log(INFO,"Failed to create directory. It may already exist at: " + base_directory);
         }
 
         // Creating the profile directory if not exists
         String profile_directory = profile_dir;
         if (createDirectory(profile_directory)) {
-            System.out.println("Profile directory created successfully at: " + profile_directory);
+            DataClientCore.getLogger().log(INFO,"Profile directory created successfully at: " + profile_directory);
         } else {
-            System.out.println("Failed to create profile directory. It may already exist at: " + profile_directory);
+            DataClientCore.getLogger().log(INFO,"Failed to create profile directory. It may already exist at: " + profile_directory);
         }
 
         // Creating the user profile directory if not exists
         String user_profile_directory = profile_dir + "\\" + user.getSharedInfo().getUuid();
         if (createDirectory(user_profile_directory)) {
-            System.out.println("Profile directory created successfully at: " + user_profile_directory);
+            DataClientCore.getLogger().log(INFO,"Profile directory created successfully at: " + user_profile_directory);
         } else {
-            System.out.println("Failed to create profile directory. It may already exist at: " + user_profile_directory);
+            DataClientCore.getLogger().log(INFO,"Failed to create profile directory. It may already exist at: " + user_profile_directory);
         }
 
         // Copy the avatar to the directory
@@ -266,11 +268,11 @@ public class ProfileSaver {
 
             // Delete the file or empty directory
             if(subfile.delete()){
-                System.out.println(subfile.getName() + "successfully deleted");
+                DataClientCore.getLogger().log(INFO,subfile.getName() + "successfully deleted");
             }
         }
         if(file.delete()){
-            System.out.println(file.getName() + "successfully deleted");
+            DataClientCore.getLogger().log(INFO,file.getName() + "successfully deleted");
         }
     }
 
@@ -339,16 +341,16 @@ public class ProfileSaver {
 
         String base_directory = user_dir;
         if (createDirectory(base_directory)) {
-            System.out.println("UTube home directory created successfully at: " + base_directory);
+            DataClientCore.getLogger().log(INFO,"UTube home directory created successfully at: " + base_directory);
         } else {
-            System.out.println("Failed to create UTube home directory. It may already exist at: " + base_directory);
+            DataClientCore.getLogger().log(INFO,"Failed to create UTube home directory. It may already exist at: " + base_directory);
         }
 
         String profile_directory = profile_dir;
         if (createDirectory(profile_directory)) {
-            System.out.println("Profile directory created successfully at: " + profile_directory);
+            DataClientCore.getLogger().log(INFO,"Profile directory created successfully at: " + profile_directory);
         } else {
-            System.out.println("Failed to create profile directory. It may already exist at: " + profile_directory);
+            DataClientCore.getLogger().log(INFO,"Failed to create profile directory. It may already exist at: " + profile_directory);
         }
 
         Set<UserFull> users;

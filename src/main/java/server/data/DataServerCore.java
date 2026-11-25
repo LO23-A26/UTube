@@ -5,7 +5,6 @@ import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -24,7 +23,6 @@ public class DataServerCore {
 
     public DataServerCore() {
         this.index = new Index();
-        this.impl_interface_for_CS = new CommServerCallsDataServerImpl(this);
     }
 
     public Index registerUserAndGetIndex(UserLight new_user, Set<VideoLight> new_videos) {
@@ -90,7 +88,7 @@ public class DataServerCore {
         index.setVideoList(video_list);
     }
 
-    public void removeUser(UserLight user_profile, List<VideoLight> video_list) {
+    public void removeUser(UserLight user_profile) {
         if (user_profile != null && user_profile.getUuid() != null) {
             removeUser(user_profile.getUuid());
         }
@@ -108,8 +106,8 @@ public class DataServerCore {
         return impl_interface_for_CS;
     }
 
-    public void setImplInterfaceForCS(CommServerCallsDataServerImpl impl_interface_for_CS) {
-        this.impl_interface_for_CS = impl_interface_for_CS;
+    public void setImplInterfaceForCS(CommServerCallsDataServerImpl impl_interface_for_cs) {
+        this.impl_interface_for_CS = impl_interface_for_cs;
     }
 
     public InterfaceCommServerCallsDataServer getInterfaceForCS() {

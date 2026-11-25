@@ -8,7 +8,6 @@ import common.dataclasses.VideoLight;
 import common.dataclasses.Index;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -82,9 +81,7 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      * @param video_id The UUID of the video to delete.
      */
     @Override
-    public void deleteLocalVideo(UUID video_id) {
-
-    }
+    public void deleteLocalVideo(UUID video_id) { }
 
     /**
      * Requests a connection for a user.
@@ -234,10 +231,6 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
             return data_client_core.searchSharedVideos(title, creator, tags);
         }
         return new ArrayList<>();
-    }
-
-    public DataClientCore getDataClientCore() {
-        return data_client_core;
     }
 
 }
