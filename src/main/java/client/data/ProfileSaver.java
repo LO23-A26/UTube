@@ -44,7 +44,7 @@ public class ProfileSaver {
     public UserFull importProfile(String source_path) {
         String user_profile_directory = profile_dir + "\\";
         UserFull user;
-        ZipFile zipFile = null;
+        ZipFile zipFile;
         try {
             // unzip the file
             unzip(source_path,user_profile_directory);
@@ -147,20 +147,22 @@ public class ProfileSaver {
                 zipOut.closeEntry();
             }
             File[] children = fileToZip.listFiles();
-            for (File childFile : children) {
-                zipFiles(childFile, fileName + "/" + childFile.getName(), zipOut);
+            if (children != null) {
+                for (File childFile : children) {
+                    zipFiles(childFile, fileName + "/" + childFile.getName(), zipOut);
+                }
             }
             return;
         }
-        FileInputStream fis = new FileInputStream(fileToZip);
-        ZipEntry zipEntry = new ZipEntry(fileName);
-        zipOut.putNextEntry(zipEntry);
-        byte[] bytes = new byte[1024];
-        int length;
-        while ((length = fis.read(bytes)) >= 0) {
-            zipOut.write(bytes, 0, length);
+        try (FileInputStream fis = new FileInputStream(fileToZip)) {
+            ZipEntry zipEntry = new ZipEntry(fileName);
+            zipOut.putNextEntry(zipEntry);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = fis.read(bytes)) >= 0) {
+                zipOut.write(bytes, 0, length);
+            }
         }
-        fis.close();
     }
 
     /**
@@ -349,12 +351,10 @@ public class ProfileSaver {
             System.out.println("Failed to create profile directory. It may already exist at: " + profile_directory);
         }
 
-        Set<UserFull> users = new HashSet<>();
+        Set<UserFull> users;
+        users = listDirectory(profile_directory).stream().map(this::restoreUniqueProfile).collect(Collectors.toSet());
 
         // List all the profile files
-        for(String dir_name : listDirectory(profile_directory)){
-            users.add(restoreUniqueProfile(dir_name));
-        }
 
         return users;
     }
