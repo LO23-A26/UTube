@@ -377,7 +377,11 @@ public class CommClientCallsDataClientImpl implements InterfaceCommClientCallsDa
      * @param video_id The UUID of the video to remove.
      */
 
-    public void removeSharedVideo(UUID video_id){}
+    public void removeSharedVideo(UUID video_id){
+        if (this.data_client_core != null) {
+            this.data_client_core.removeRemoteVideoFromLocalIndex(video_id);
+        }
+    }
 
     /**
      * Gets the Data client core used by this implementation.
