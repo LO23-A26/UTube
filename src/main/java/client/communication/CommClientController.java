@@ -12,13 +12,7 @@ import common.interfaces.data.InterfaceCommClientCallsDataClient;
 
 import client.communication.implementations.*;
 
-/**
- * Controller for the communication client, entry point for the communication module.
- * How to use:
- * <ol>
- *   <li>Create an instance of {@code CommClientController}; the constructor requires no interface.</li>
- * </ol>
- */
+
 public class CommClientController {
     public final ClientConnectionsManager clientConnectionsManager; // the other clients, available for a direct connection
     private ClientListeningService clientListeningService;
@@ -133,7 +127,8 @@ public class CommClientController {
      */
     public void requestVideoDownloadFromClient(UUID videoId, UUID clientId) {
         clientConnectionsManager.openConnectionToClient(clientId);
-        clientConnectionsManager.sendToClient(clientId, new DownloadVideoRequestMessage());
+        UUID requester_id = interfaceCommDataClient.askRequesterId();
+        clientConnectionsManager.sendToClient(clientId, new DownloadVideoRequestMessage(videoId, requester_id));
     }
 
     /**
@@ -172,3 +167,4 @@ public class CommClientController {
         this.clientConnectionsManager = new ClientConnectionsManager(this);
     }
 }
+
