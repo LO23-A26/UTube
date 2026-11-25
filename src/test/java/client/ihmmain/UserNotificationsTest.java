@@ -44,7 +44,7 @@ class UserNotificationsTest {
         callbacks.refreshUserList(new UserLight("bob"));
         callbacks.refreshUserList(null); // no user to remove: nothing to refresh
         callbacks.displayNewVideo(null);
-        callbacks.refreshSharedVideos(Set.of());
+        callbacks.refreshSharedVideos(List.of());
         fx(() -> {
             assertEquals(3, calls.get());
             assertTrue(allOnFx.get());

@@ -57,6 +57,6 @@ public interface InterfaceDataCallsIHMMain {
      *
      * @param videos set of currently shared videos
      */
-    public void refreshSharedVideos(Set<VideoLight> videos);
+    public void refreshSharedVideos(List<VideoLight> videos);
 
 }

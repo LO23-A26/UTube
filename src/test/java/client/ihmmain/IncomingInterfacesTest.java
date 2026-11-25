@@ -86,7 +86,7 @@ class IncomingInterfacesTest {
             return null;
         });
         // refreshSharedVideos carries the whole catalog: it replaces the displayed videos.
-        manager.getInterfaceForData().refreshSharedVideos(Set.of(first));
+        manager.getInterfaceForData().refreshSharedVideos(List.of(first));
         fx(() -> { assertEquals(List.of(first), manager.getDisplayedVideos()); return null; });
         // refreshFullDisplay only adds: an empty index removes nothing.
         manager.getInterfaceForData().refreshFullDisplay(List.of(), List.of());

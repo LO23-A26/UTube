@@ -56,7 +56,7 @@ public final class DataCallsIHMMainImpl implements InterfaceDataCallsIHMMain {
         Platform.runLater(() -> manager.addVideos(video == null ? List.of() : List.of(video)));
     }
 
-    @Override public void refreshSharedVideos(Set<VideoLight> videos) { //The set contains all the catalog held by data
+    @Override public void refreshSharedVideos(List<VideoLight> videos) { //The set contains all the catalog held by data
         List<VideoLight> copy = snapshot(videos);
         Platform.runLater(() -> manager.replaceVideos(copy)); //As it replaces all the videos by the current list held by data there's no problem as long as data uses FIFO
     }
