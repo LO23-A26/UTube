@@ -2,7 +2,6 @@ package common.dataclasses;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;

@@ -180,8 +180,7 @@ public class DataClientCore {
         Map<UUID, Rating> empty_ratings = new HashMap<>();
         Map<UUID, Comment> empty_comments = new HashMap<>();
 
-        VideoFull video = new VideoFull(info, file_path, format, empty_ratings, empty_comments);
-        return video;
+        return new VideoFull(info, file_path, format, empty_ratings, empty_comments);
 	}
 	
     boolean announceVideo(VideoLight video_info) {

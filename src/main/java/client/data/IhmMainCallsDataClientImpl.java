@@ -96,10 +96,7 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
             if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
                 found = true;
                 data_client_core.setUser(u);
-                video_list = new ArrayList<VideoLight>();
-                for (VideoLight v : u.getSharedVideos()){
-                    video_list.add(v);
-                }
+                video_list = new ArrayList<>(u.getSharedVideos());
             }
         }
         if (found) {
