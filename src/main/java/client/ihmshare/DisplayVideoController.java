@@ -261,8 +261,6 @@ public class DisplayVideoController extends ShareController {
         if (mine) {
             title.getChildren().add(action("Modifier", this::editMyReview));
             title.getChildren().add(action("Supprimer", this::deleteMyReview));
-        } else if (state() == State.OWNER) {
-            title.getChildren().add(action("Supprimer", () -> deleteReview(author)));
         }
 
         Label text;
