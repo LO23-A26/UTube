@@ -390,28 +390,6 @@ public class DisplayVideoController extends ShareController {
         refreshView();
     }
 
-    /** "Supprimer" on the review of someone else: only for the owner (05c, use case 4.2.6bis). */
-    private void deleteReview(UUID author) {
-        InterfaceIhmShareCallsDataClient data = core.getInterfaceFromData();
-        InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
-        if (data == null) {
-            showError("La suppression n'est pas disponible pour le moment.");
-            return;
-        }
-        if (!confirm("Supprimer ce commentaire ?", "La note et le commentaire de cette personne seront retirés de la vidéo.", "Supprimer")) {
-            return;
-        }
-        if (comments().remove(author) != null) {
-            data.deleteComment(video.getVideoId(), author);
-            comm.deleteComment(video.getVideoId(), author);
-        }
-        if (ratings().remove(author) != null) {
-            data.deleteRating(video.getVideoId(), author);
-            comm.deleteRating(video.getVideoId(), author);
-        }
-        refreshView();
-    }
-
     // ---------- Helpers ----------
 
     State state() {
