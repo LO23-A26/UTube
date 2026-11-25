@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- 09 Ajouter un partage (§8.3) -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ihmshare.AddVideoController"
+            fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" style="-fx-background-color: white;">
+    <VBox spacing="16" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="28" right="40" bottom="28" left="40"/>
+        </padding>
+
+        <Hyperlink text="Retour" styleClass="back" onAction="#cancel">
+            <graphic>
+                <ImageView><Image url="@../../assets/icons/retour.png"/></ImageView>
+            </graphic>
+        </Hyperlink>
+        <Label text="Ajouter un partage" styleClass="page-title"/>
+
+        <HBox spacing="24">
+            <!-- Left: file and video information -->
+            <VBox styleClass="card,large" spacing="10" HBox.hgrow="ALWAYS" minWidth="360">
+                <HBox styleClass="drop-zone">
+                    <Button text="Choisir un fichier vidéo" styleClass="small" onAction="#chooseFile"/>
+                    <Label fx:id="file_label" text="Formats acceptés : MP4 et AVI" styleClass="text-secondary"/>
+                </HBox>
+
+                <Label text="Titre" styleClass="field-label" labelFor="$title_field"/>
+                <TextField fx:id="title_field"/>
+
+                <Label text="Créateur" styleClass="field-label" labelFor="$creator_field"/>
+                <Label text="(optionnel)" styleClass="text-small"/>
+                <TextField fx:id="creator_field"/>
+
+                <Label text="Tags" styleClass="field-label" labelFor="$tags_field"/>
+                <Label text="(optionnel)" styleClass="text-small"/>
+                <TextField fx:id="tags_field" promptText="séparés par des virgules"/>
+
+                <Label text="Description" styleClass="field-label" labelFor="$description_field"/>
+                <TextArea fx:id="description_field" prefRowCount="3" wrapText="true"/>
+            </VBox>
+
+            <!-- Right: access rights per contact list -->
+            <VBox styleClass="card,large" spacing="10" prefWidth="510" minWidth="420">
+                <Label text="Droits d’accès par liste" styleClass="section-title"/>
+                <Label wrapText="true" styleClass="text-small"
+                       text="Par défaut, chaque liste peut télécharger, noter et commenter. Décochez pour restreindre."/>
+                <VBox fx:id="rights_box"/>
+            </VBox>
+        </HBox>
+
+        <Label fx:id="error_label" styleClass="text-small" style="-fx-text-fill: #B3261E;" wrapText="true"/>
+
+        <HBox spacing="12" alignment="CENTER_RIGHT">
+            <Button text="Annuler" onAction="#cancel"/>
+            <Button text="Partager" styleClass="primary" onAction="#checkVideoForm"/>
+        </HBox>
+    </VBox>
+</ScrollPane>

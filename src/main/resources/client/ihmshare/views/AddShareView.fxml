@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    09 Ajouter un partage : nouvelle vidéo et droits d'accès par liste de contacts.
+    Ouvert depuis « Re-partager » (07), le fichier est celui de la vidéo téléchargée.
+    « Partager », « Annuler » et « Retour » ramènent à Mes partages (08).
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="16.0" styleClass="content-area" stylesheets="@../../ihmmain/css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="20.0" left="40.0" right="40.0" top="28.0"/>
+    </padding>
+
+    <Button fx:id="back_button" styleClass="back-button" text="‹  Retour"/>
+    <Label styleClass="page-title" text="Ajouter un partage"/>
+
+    <HBox spacing="24.0" VBox.vgrow="ALWAYS">
+        <!-- Informations de la vidéo -->
+        <VBox prefWidth="426.0" spacing="12.0" styleClass="card">
+            <padding>
+                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="file-drop-zone">
+                <padding>
+                    <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                </padding>
+                <Button fx:id="choose_file_button" text="Choisir un fichier vidéo"/>
+                <!-- Affiche le nom du fichier choisi une fois sélectionné -->
+                <Label fx:id="file_label" styleClass="small-text" text="Formats acceptés : MP4, AVI" wrapText="true"/>
+            </HBox>
+
+            <VBox spacing="8.0">
+                <Label styleClass="field-label" text="Titre"/>
+                <TextField fx:id="title_field"/>
+            </VBox>
+            <VBox spacing="4.0">
+                <Label styleClass="field-label" text="Créateur"/>
+                <Label styleClass="optional-label" text="(optionnel)"/>
+                <TextField fx:id="creator_field"/>
+            </VBox>
+            <VBox spacing="4.0">
+                <Label styleClass="field-label" text="Tags"/>
+                <Label styleClass="optional-label" text="(optionnel)"/>
+                <TextField fx:id="tags_field" promptText="séparés par des virgules"/>
+            </VBox>
+            <VBox spacing="8.0" VBox.vgrow="ALWAYS">
+                <Label styleClass="field-label" text="Description"/>
+                <TextArea fx:id="description_area" prefRowCount="3" wrapText="true" VBox.vgrow="ALWAYS"/>
+            </VBox>
+        </VBox>
+
+        <!-- Droits d'accès par liste de contacts -->
+        <VBox spacing="8.0" styleClass="card" HBox.hgrow="ALWAYS">
+            <padding>
+                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0"/>
+            </padding>
+            <Label styleClass="card-title" text="Droits d'accès par liste"/>
+            <Label styleClass="hint-text" wrapText="true"
+                   text="Par défaut, chaque liste peut télécharger, noter et commenter. Décochez pour restreindre."/>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+                <!-- Rempli par le contrôleur avec un AccessRightsRow par liste de contacts -->
+                <VBox fx:id="access_rows_container"/>
+            </ScrollPane>
+        </VBox>
+    </HBox>
+
+    <HBox alignment="CENTER_RIGHT" spacing="12.0">
+        <!-- Fichier manquant, format non accepté, titre vide... -->
+        <Label fx:id="error_label" managed="false" styleClass="error-label" visible="false" wrapText="true"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="cancel_button" cancelButton="true" styleClass="large-button" text="Annuler"/>
+        <Button fx:id="share_button" defaultButton="true" styleClass="primary-button" text="Partager"/>
+    </HBox>
+</VBox>

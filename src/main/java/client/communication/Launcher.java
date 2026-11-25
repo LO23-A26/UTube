@@ -21,6 +21,6 @@ public class Launcher {
 
         // To test, we should use a mocking framework to implement the external interfaces
         // So for now it just fails
-        clientController.run();
+        //clientController.run();
     }
 }

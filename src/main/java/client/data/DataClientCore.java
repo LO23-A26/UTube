@@ -20,6 +20,9 @@ import common.interfaces.comm.InterfaceDataCallsComm;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,8 +34,8 @@ import common.interfaces.comm.InterfaceDataCallsComm;
 import java.util.Set;
 
 /**
- * @author Lucas Dompnier
- * @version 1.0
+ * @author Lucas Dompnier, Jean Van Gysel
+ * @version 2.0
  */
 public class DataClientCore {
 
@@ -40,39 +43,23 @@ public class DataClientCore {
     private Index index_local;
     private ProfileSaver profileSaver;
     private ContactList contact_lists;
-    private IhmMainCallsDataClientImpl impl_interface_for_ICM;
+    private final IhmMainCallsDataClientImpl impl_interface_for_ICM;
+    private final CommClientCallsDataClientImpl impl_interface_for_comm;
     private InterfaceDataCallsIHMMain interface_from_ICM;
     private InterfaceDataCallsComm interface_from_Comm;
-    private CommClientCallsDataClientImpl impl_interface_for_CC;
     private IhmShareCallsDataClientImpl impl_interface_for_ICS;
-
-
 
     public DataClientCore() {
         this.index_local = new Index();
 
         this.profileSaver = new ProfileSaver();
 
-        this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl();
-        this.impl_interface_for_ICM.setDataClientCore(this);
-        this.impl_interface_for_CC = new CommClientCallsDataClientImpl();
-        this.impl_interface_for_CC.setDataClientCore(this);
-        this.impl_interface_for_ICS = new IhmShareCallsDataClientImpl();
-        this.impl_interface_for_ICS.setDataClientCore(this);
-
+        this.impl_interface_for_ICS = new IhmShareCallsDataClientImpl(this);
+        this.impl_interface_for_ICM = new IhmMainCallsDataClientImpl(this);
+        this.impl_interface_for_comm = new CommClientCallsDataClientImpl(this);
     }
 
-    // ISSUE 30 et 75 IhmMain -> IhmMainCallsDataClientImpl
-    //   Remplacer les 2 Set par un index dans DataClientCore? => attention au passage de Set-> List.
 
-
-    /*
-    ########################################## ISSUE 86
-    ########################################## avec COMM /CcCallsDcImpl
-
-    // Problème de sérialisation de l'avatar tjrs pas traité
-
-     */
     void removeRemoteUserFromLocalIndex(UUID user_id){
         if (user_id != null){
             UserLight user_to_remove = null;
@@ -112,29 +99,20 @@ public class DataClientCore {
     //###############################################################
 
 
-    public IhmMainCallsDataClientImpl getImplInterfaceForICM() {
-        return impl_interface_for_ICM;
-    }
-    public InterfaceDataCallsIHMMain getInterfaceFromICM() {
-        return interface_from_ICM;
-    }
-    public InterfaceDataCallsComm getInterfaceFromComm() {
-        return interface_from_Comm;
-    }
+    public IhmMainCallsDataClientImpl getImplInterfaceForICM() {return impl_interface_for_ICM;}
 
-    public IhmShareCallsDataClientImpl getImplInterfaceForICS() {
-    return impl_interface_for_ICS;
-}
-    public CommClientCallsDataClientImpl getImplInterfaceForCC() { return impl_interface_for_CC; }
+    public CommClientCallsDataClientImpl getImplInterfaceForComm(){return impl_interface_for_comm;}
 
+    public InterfaceDataCallsIHMMain getInterfaceFromICM() {return interface_from_ICM;}
 
+    public InterfaceDataCallsComm getInterfaceFromComm() {return interface_from_Comm;}
+    
+    public IhmShareCallsDataClientImpl getImplInterfaceForICS() {return impl_interface_for_ICS;}
 
-	public void setImplInterfaceForICS(IhmShareCallsDataClientImpl impl_interface_for_ICS) {
-		this.impl_interface_for_ICS = impl_interface_for_ICS;
-	}
+    public CommClientCallsDataClientImpl getImplInterfaceForCC() {return impl_interface_for_comm;}
 
-    public void setImplInterfaceForICM(IhmMainCallsDataClientImpl impl_interface_for_ICM) {
-        this.impl_interface_for_ICM = impl_interface_for_ICM;
+    public void setImplInterfaceForICS(IhmShareCallsDataClientImpl impl_interface_for_ICS) {
+        this.impl_interface_for_ICS = impl_interface_for_ICS;
     }
 
     public void setInterfaceFromICM(InterfaceDataCallsIHMMain interface_from_ICM) {
@@ -184,7 +162,9 @@ public class DataClientCore {
         return contact_lists;
     }
 
-    public void setContactLists(ContactList contact_lists) {this.contact_lists = contact_lists;}
+    public void setContactLists(ContactList contact_lists) {
+        this.contact_lists = contact_lists;
+    }
 
     UUID getCurrentUserId() {
         if (user == null) {
@@ -196,33 +176,33 @@ public class DataClientCore {
 
     void addingNewVideo(Path file, String title, String creator, Set<String> tags) {
 
-        //1. Create a VideoFull object for the video file
-		VideoFull video = createVideo(file, title, creator, tags);
-        //2. Add it to the list + save User's Profile
-		saveLocally(video);
-        //3. Send it to Comm for sharing purposes. If this fail, you'll know
-		boolean announced = announceVideo(video.getSharedInfo());
-		if (!announced) {
-			// Si problème dans l'annonce, la vidéo est conservée, pas de retour en arrière
-			System.err.println("addingNewVideo : « " + video.getSharedInfo().getTitle()
-					+ " » enregistrée en local mais pas annoncée aux autres utilisateurs. "
-					+ "Elle sera envoyée à la prochaine connexion.");
-		}
+        // 1. Create a VideoFull object for the video file
+        VideoFull video = createVideo(file, title, creator, tags);
+        // 2. Add it to the list + save User's Profile
+        saveLocally(video);
+        // 3. Send it to Comm for sharing purposes. If this fail, you'll know
+        boolean announced = announceVideo(video.getSharedInfo());
+        if (!announced) {
+            // Si problème dans l'annonce, la vidéo est conservée, pas de retour en arrière
+            System.err.println("addingNewVideo : « " + video.getSharedInfo().getTitle()
+                    + " » enregistrée en local mais pas annoncée aux autres utilisateurs. "
+                    + "Elle sera envoyée à la prochaine connexion.");
+        }
 
-}
+    }
 
     VideoFull createVideo(Path file, String title, String creator, Set<String> tags) {
-		if (user == null) {
-			throw new IllegalStateException("createVideo : aucun utilisateur connecté");
-		}
-		if (file == null || !Files.isRegularFile(file)) {
-			throw new IllegalArgumentException("createVideo : fichier introuvable : " + file);
-		}
-		if (title == null || title.isBlank()) {
-			throw new IllegalArgumentException("createVideo : titre obligatoire");
-		}
+        if (user == null) {
+            throw new IllegalStateException("createVideo : aucun utilisateur connecté");
+        }
+        if (file == null || !Files.isRegularFile(file)) {
+            throw new IllegalArgumentException("createVideo : fichier introuvable : " + file);
+        }
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("createVideo : titre obligatoire");
+        }
 
-		VideoFormat format = VideoFormat.checkFormatFromPath(file);
+        VideoFormat format = VideoFormat.checkFormatFromPath(file);
 
         Set<String> video_tags = new HashSet<>();
         if (tags != null) {
@@ -243,20 +223,20 @@ public class DataClientCore {
 
         VideoFull video = new VideoFull(info, file_path, format, empty_ratings, empty_comments);
         return video;
-	}
+    }
 
     boolean announceVideo(VideoLight video_info) {
-		if (interface_from_Comm == null) {
-			return false;
-		}
-		try {
-			interface_from_Comm.sendNewVideo(video_info);
-			return true;
-		} catch (RuntimeException e) {
-			System.err.println("announceVideo :" + e.getMessage());
-			return false;
-		}
-	}
+        if (interface_from_Comm == null) {
+            return false;
+        }
+        try {
+            interface_from_Comm.sendNewVideo(video_info);
+            return true;
+        } catch (RuntimeException e) {
+            System.err.println("announceVideo :" + e.getMessage());
+            return false;
+        }
+    }
 
     void saveLocally(VideoFull video) {
         if (user != null) {
@@ -272,18 +252,26 @@ public class DataClientCore {
             }
         }
     }
-    void removeRemoteVideoFromLocalIndex(UUID video_id){
-        if (video_id != null){
+
+    // Rename of removeSharedVideo(video_id : UUID)
+    void removeRemoteVideoFromLocalIndex(UUID video_id) {
+        if (video_id != null && getListVideo() != null) {
+            boolean removed = false;
             for (VideoLight v : getListVideo()) {
                 if (video_id.equals(v.getVideoId())) {
                     getListVideo().remove(v);
+                    removed = true;
                     break;
                 }
+            }
+
+            if (removed && interface_from_ICM != null) {
+                interface_from_ICM.refreshSharedVideos(getListVideo());
             }
         }
     }
 
-
+    // Rename of addSharedVideo(video : VideoLight)
     void addRemoteVideoToLocalIndex(VideoLight video_info) {
         if (video_info != null && video_info.getVideoId() != null) {
             removeRemoteVideoFromLocalIndex(video_info.getVideoId());
@@ -297,6 +285,102 @@ public class DataClientCore {
 
     }
 
+    private String normalizeText(String input) {
+        if (input == null) {
+            return null;
+        }
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{M}", "").toLowerCase().trim();
+    }
 
+    public List<VideoLight> searchSharedVideos(String title, String creator, Set<String> tags) {
+        List<VideoLight> matching_videos = new ArrayList<>();
 
+        if (getListVideo() == null || getListVideo().isEmpty()) {
+            return matching_videos;
+        }
+
+        // Clean and normalize title filter
+        String search_title = null;
+        if (title != null && !title.isBlank()) {
+            search_title = normalizeText(title);
+        }
+
+        // Clean and normalize creator filter
+        String search_creator = null;
+        if (creator != null && !creator.isBlank()) {
+            search_creator = normalizeText(creator);
+        }
+
+        // Clean and normalize tags filter
+        Set<String> search_tags = new HashSet<>();
+        if (tags != null) {
+            for (String tag : tags) {
+                if (tag != null && !tag.isBlank()) {
+                    search_tags.add(normalizeText(tag));
+                }
+            }
+        }
+
+        // If no filter is provided, return all shared videos
+        if (search_title == null && search_creator == null && search_tags.isEmpty()) {
+            matching_videos.addAll(getListVideo());
+            return matching_videos;
+        }
+
+        // Filter videos against search criteria
+        for (VideoLight video : getListVideo()) {
+            if (video == null) {
+                continue;
+            }
+
+            // Check title filter
+            if (search_title != null) {
+                if (video.getTitle() == null) {
+                    continue;
+                }
+                String normalized_title = normalizeText(video.getTitle());
+                if (!normalized_title.contains(search_title)) {
+                    continue;
+                }
+            }
+
+            // Check creator filter
+            if (search_creator != null) {
+                if (video.getCreator() == null) {
+                    continue;
+                }
+                String normalized_creator = normalizeText(video.getCreator());
+                if (!normalized_creator.contains(search_creator)) {
+                    continue;
+                }
+            }
+
+            // Check tags filter: matches if video contains at least one searched tag
+            if (!search_tags.isEmpty()) {
+                if (video.getTags() == null || video.getTags().isEmpty()) {
+                    continue;
+                }
+
+                boolean has_matching_tag = false;
+                for (String video_tag : video.getTags()) {
+                    if (video_tag != null) {
+                        String normalized_video_tag = normalizeText(video_tag);
+                        if (search_tags.contains(normalized_video_tag)) {
+                            has_matching_tag = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!has_matching_tag) {
+                    continue;
+                }
+            }
+
+            matching_videos.add(video);
+        }
+
+        return matching_videos;
+    }
 }

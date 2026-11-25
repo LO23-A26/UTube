@@ -6,6 +6,7 @@ import common.dataclasses.VideoLight;
 import common.interfaces.data.InterfaceIhmShareCallsDataClient;
 
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +19,11 @@ import java.util.UUID;
  */
 public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataClient {
 
-    private DataClientCore data_client_core;
+    private final DataClientCore data_client_core;
+
+    public IhmShareCallsDataClientImpl(DataClientCore data_client_core) {
+        this.data_client_core = data_client_core;
+    }
 
     /**
      * Sends a request for the details of a video to its owner.
@@ -73,20 +78,28 @@ public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataCl
      * @param creator The name of the video's creator.
      * @param tags A set of tags for the video.
      */
-     @Override
-     public void addVideo(Path file, String title, String creator, Set<String> tags) {
+    @Override
+    public void addVideo(Path file, String title, String creator, Set<String> tags) {
         data_client_core.addingNewVideo(file, title, creator, tags);
-     }
+    }
 
     /**
-     * Gets the full video object. Not implemented yet.
+     * Gets the full version of a video stored on this computer.
+     * For now, only the videos uploaded by the user are stored locally.
      *
      * @param video The lightweight video object.
-     * @return null for now.
+     * @return The local VideoFull, or null if the video is not stored on this computer.
      */
     @Override
     public VideoFull getVideo(VideoLight video) {
-        return null;
+        if (video == null || data_client_core.getUser() == null) {
+            return null;
+        }
+        Map<UUID, VideoFull> uploaded_videos = data_client_core.getUser().getUploadedVideos();
+        if (uploaded_videos == null) {
+            return null;
+        }
+        return uploaded_videos.get(video.getVideoId());
     }
 
     /**
@@ -118,12 +131,4 @@ public class IhmShareCallsDataClientImpl implements InterfaceIhmShareCallsDataCl
         return data_client_core;
     }
 
-    /**
-     * Sets the Data client core used by this implementation.
-     *
-     * @param data_client_core The Data client core to use.
-     */
-    public void setDataClientCore(DataClientCore data_client_core) {
-        this.data_client_core = data_client_core;
-    }
 }

@@ -1,10 +1,14 @@
 package common.interfaces.IHMMain;
 
-import common.dataclasses.UserLight;
-import common.dataclasses.VideoLight;
-import common.dataclasses.UserFull;
 import java.util.List;
 import java.util.Set;
+import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
+import common.exceptions.AuthenticationFailed;
+
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoLight;
 
 /**
  * Interface for Data to call IHM Main.
@@ -37,7 +41,7 @@ public interface InterfaceDataCallsIHMMain {
     /**
      * Refreshes the displayed user list.
      *
-     * @param user_profile user profile of the disconnected user
+     * @param user_profile light profile of the disconnected user
      */
     public void refreshUserList(UserLight user_profile);
 

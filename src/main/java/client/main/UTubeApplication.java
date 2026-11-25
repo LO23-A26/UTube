@@ -1,13 +1,19 @@
 package client.main;
 
+import client.communication.CommClientController;
+import client.data.DataClientCore;
 import client.ihmmain.IHMMainManager;
+import client.ihmshare.IHMShareCore;
 import javafx.application.Application;
+import javafx.scene.chart.PieChart;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+
+import client.ihmshare.IHMShareCore;
 
 /**
  * JavaFX entry point of the UTube client: starts the application, builds the
@@ -25,8 +31,26 @@ public class UTubeApplication extends Application {
     public void start(Stage stage) {
         loadFonts();
         IHMMainManager viewManager = new IHMMainManager();
-        // Services remain unwired until the external integration blockers are fixed.
-        // Do not construct a Data facade without its DataClientCore.
+        DataClientCore dataClientCore = new DataClientCore();
+        dataClientCore.setInterfaceFromICM(viewManager.getInterfaceForData());
+        CommClientController commClientController = new CommClientController();
+
+        viewManager.setIData(dataClientCore.getImplInterfaceForICM());
+        viewManager.setIComm(commClientController.getIhmMainCallsComm());
+
+        // Build the IHM-Share module and plug it to the other modules
+        IHMShareCore ihmShareCore = new IHMShareCore();
+        ihmShareCore.setViewManager(viewManager);
+        ihmShareCore.setInterfaceFromData(dataClientCore.getImplInterfaceForICS());
+        ihmShareCore.setInterfaceFromCommunication(commClientController.getIhmShareCallsComm());
+
+        viewManager.setIShare(ihmShareCore.getInterfaceForIHMMain());
+        commClientController.setInterfaceCommIHMShare(ihmShareCore.getInterfaceForCommunication());
+
+        dataClientCore.setInterfaceFromComm(commClientController.getDataCallsComm());
+
+        commClientController.setInterfaceCommDataClient(dataClientCore.getImplInterfaceForComm());
+
         viewManager.start(stage);
     }
 

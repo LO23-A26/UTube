@@ -2,9 +2,11 @@ package common.dataclasses.communication.messages;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Set;
 
 import client.communication.CommClientController;
+import client.communication.RemoteClient;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.ClientMessage;
@@ -38,12 +40,12 @@ public class NewUserNotificationMessage implements ClientMessage {
         try {
             ip = InetAddress.getByName(new_user_ip);
         } catch (UnknownHostException ex) {
-            System.getLogger(NewUserNotificationMessage.class.getName()).log(System.Logger.Level.ERROR, (String) "New client ip adress is invalid, creation failed", ex);
+            System.getLogger(NewUserNotificationMessage.class.getName()).log(System.Logger.Level.ERROR, "New client ip adress is invalid, creation failed", ex);
             return;
         }
         
-        controller.addClient(ip, new_user_port, new_user.getUuid());
-        controller.interfaceCommDataClient.saveNewUser(this.new_user, null); // TODO ABSOLUTLY SEND ALL VIDEOS WHEN INTERFACE IS FIXED
+        controller.clientConnectionsManager.addClient(new RemoteClient(ip, new_user_port, new_user.getUuid()));
+        controller.interfaceCommDataClient.saveNewUser(this.new_user,new ArrayList<>(this.new_user_videos));
 
     }
 }

@@ -8,6 +8,7 @@ import common.dataclasses.VideoLight;
 import common.dataclasses.Index;
 import common.interfaces.data.InterfaceIhmMainCallsDataClient;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -16,12 +17,16 @@ import java.util.ArrayList;
 /**
  * Implementation of the IHM Main calls Dataclient interface
  *
- * @author Lucas Dompnier
- * @version 1.0
+ * @author Lucas Dompnier, Jean Van Gysel
+ * @version 2.0
  */
 public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClient {
 
-    private DataClientCore data_client_core;
+    private final DataClientCore data_client_core;
+
+    public IhmMainCallsDataClientImpl(DataClientCore data_client_core) {
+        this.data_client_core = data_client_core;
+    }
 
 
     //ISSUE 30 : réglée par la classe Authentification Failed.
@@ -98,28 +103,36 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      */
     @Override
     public boolean requestConnection(String pseudo, String password, String ip_address, int port) {
-        if (data_client_core.getProfileSaver().restoreProfile() == null || data_client_core.getProfileSaver().restoreProfile().isEmpty()){
-            throw new AuthentificationFailed("requestConnection - Error while restoring profiles.");
-        }
         boolean found = false;
         List <VideoLight> video_list = null;
-        for (UserFull u : data_client_core.getProfileSaver().restoreProfile()) {
-            if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
-                found = true;
-                data_client_core.setUser(u);
-                video_list = new ArrayList<VideoLight>();
-                for (VideoLight v : u.getSharedVideos()){
-                    video_list.add(v);
+        try{
+            for (UserFull u : data_client_core.getProfileSaver().restoreProfile()) {
+                if (u.getPassword().equals(password) && u.getSharedInfo().getPseudo().equals(pseudo)) {
+                    found = true;
+                    video_list = new ArrayList<VideoLight>();
+                    if(u.getSharedVideos()!=null){
+                        video_list.addAll(u.getSharedVideos());
+                    }
+                    data_client_core.setUser(u);
                 }
             }
+        }catch(RuntimeException e){
+            throw new AuthentificationFailed("Error while restoring profiles.");
         }
+
         if (found) {
-            data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
+            try{
+                data_client_core.getInterfaceFromComm().sendProfileInfo(ip_address, port, video_list, pseudo);
+            }catch(RuntimeException e){
+                throw new AuthentificationFailed(e.getMessage());
+            }
+
             return true;
         }
         else {
-            throw new AuthentificationFailed("requestConnection - Information don't match.");
+            throw new AuthentificationFailed("Information don't match.");
         }
+
     }
 
     /**
@@ -236,15 +249,14 @@ public class IhmMainCallsDataClientImpl implements InterfaceIhmMainCallsDataClie
      */
     @Override
     public List<VideoLight> searchSharedVideos(String title, String creator, Set<String> tags) {
-        return List.of();
+        if (data_client_core != null) {
+            return data_client_core.searchSharedVideos(title, creator, tags);
+        }
+        return new ArrayList<>();
     }
 
     public DataClientCore getDataClientCore() {
         return data_client_core;
-    }
-
-    public void setDataClientCore(DataClientCore data_client_core) {
-        this.data_client_core = data_client_core;
     }
 }
 

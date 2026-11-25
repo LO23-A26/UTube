@@ -14,7 +14,8 @@ import common.interfaces.comm.InterfaceIHMShareCallsComm;
  */
 public class IHMShareCallsComm implements InterfaceIHMShareCallsComm {
 
-    private CommClientController commClientController;
+    @SuppressWarnings("unused")
+    private final CommClientController commClientController;
 
     // Constructor, takes in the comm client controller
     public IHMShareCallsComm(CommClientController commClientController) {

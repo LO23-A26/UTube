@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Groupe du panneau utilisateur·rice·s : une liste de contacts et ses membres -->
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="8.0" stylesheets="@../../css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="group_name_label" styleClass="group-title" text="Liste : Amis"/>
+    <!-- Rempli par le contrôleur avec des UserPanelEntry -->
+    <VBox fx:id="users_container" spacing="4.0"/>
+</VBox>

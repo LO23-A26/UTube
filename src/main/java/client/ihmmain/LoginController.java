@@ -1,6 +1,9 @@
 package client.ihmmain;
 
+import common.interfaces.data.InterfaceIhmMainCallsDataClient;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -21,6 +24,10 @@ public class LoginController extends Controller {
     @FXML
     private Label errorLabel;
 
+    @FXML
+    private Button connectButton;
+    private boolean connecting;
+
     @Override
     public void refreshView() {
         errorLabel.setVisible(false);
@@ -28,14 +35,60 @@ public class LoginController extends Controller {
 
     @FXML
     private void connect() {
-        String error = validate(pseudoField.getText(), passwordField.getText(),
-                ipField.getText(), portField.getText());
-        errorLabel.setText(error);
-        errorLabel.setVisible(error != null);
-        if (error == null) {
-            // no authentication or server connection yet, call the Data/Comm interfaces here once the connection process is defined
-            viewManager.showContent(IHMMainManager.HOME_VIEW);
+        if (connecting) return;
+        String pseudo = pseudoField.getText();
+        String password = passwordField.getText();
+        String ip = ipField.getText();
+        String port = portField.getText();
+        String error = validate(pseudo, password, ip, port);
+        showMessage(error);
+        if (error != null) return;
+        InterfaceIhmMainCallsDataClient data = viewManager.getIData();
+        if (data == null) {
+            showMessage("Le service de connexion est indisponible.");
+            return;
         }
+
+        setConnecting(true);
+        passwordField.clear();
+        Task<Boolean> request = new Task<>() {
+            @Override protected Boolean call() {
+                return data.requestConnection(pseudo.strip(), password, ip.strip(), Integer.parseInt(port.strip()));
+            }
+        };
+        request.setOnSucceeded(event -> {
+            setConnecting(false);
+            if (Boolean.TRUE.equals(request.getValue())) {
+                // Preserve integration/client navigation; Data acceptance is not a network acknowledgement.
+                viewManager.showContent(IHMMainManager.HOME_VIEW);
+            } else {
+                showMessage("La demande de connexion a été refusée.");
+            }
+        });
+        request.setOnFailed(event -> {
+            setConnecting(false);
+            String message = request.getException().getMessage();
+            showMessage(message == null || message.isBlank()
+                    ? "Impossible de se connecter."
+                    : "Impossible de se connecter : " + message);
+        });
+        Thread worker = new Thread(request, "ihm-main-connection");
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    private void setConnecting(boolean value) {
+        connecting = value;
+        connectButton.setDisable(value);
+        pseudoField.setDisable(value);
+        passwordField.setDisable(value);
+        ipField.setDisable(value);
+        portField.setDisable(value);
+    }
+
+    private void showMessage(String message) {
+        errorLabel.setText(message);
+        errorLabel.setVisible(message != null && !message.isBlank());
     }
 
     /** Returns the error message to display, or null if the input is valid. */
@@ -52,5 +105,11 @@ public class LoginController extends Controller {
             return "Le port doit être un nombre.";
         }
         return null;
+    }
+
+    /** On click on Créer un profil */
+    @FXML
+    private void createProfile() {
+        viewManager.changeView(IHMMainManager.CREATE_PROFILE_VIEW);
     }
 }

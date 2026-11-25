@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    11a Ajouter à une liste (menu déroulant ouvert sous le bouton « Ajouter à une liste » de l'écran 11).
+    Une case à cocher par liste : cocher ajoute la personne à la liste, décocher l'en retire.
+    Le menu se ferme au clic en dehors (à afficher dans un Popup avec autoHide).
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="220.0" spacing="4.0" styleClass="dropdown-menu"
+      stylesheets="@../../css/utube.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="10.0" left="14.0" right="14.0" top="10.0"/>
+    </padding>
+
+    <!-- Rempli par le contrôleur avec une CheckBox par liste (Amis, listes personnalisées, Bloqués) -->
+    <VBox fx:id="lists_container" spacing="10.0"/>
+</VBox>
