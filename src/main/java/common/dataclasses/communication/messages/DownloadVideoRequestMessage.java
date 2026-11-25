@@ -8,6 +8,13 @@ import java.util.UUID;
 import client.communication.CommClientController;
 import common.dataclasses.communication.ClientMessage;
 
+/**
+ * Message sent by a client to the client of the owner of a video to download this video.
+ *
+ * @author Myriam
+ * @version 1.0
+ */
+
 
 public class DownloadVideoRequestMessage implements ClientMessage {
     private static final System.Logger logger = System.getLogger(DownloadVideoRequestMessage.class.getName());
@@ -15,6 +22,10 @@ public class DownloadVideoRequestMessage implements ClientMessage {
     private final UUID video_id;
     private final UUID requester_id;
 
+    /**
+     * @param video_id     the video to download
+     * @param requester_id the user who wants to download the video
+     */
 
     public DownloadVideoRequestMessage(UUID video_id, UUID requester_id) {
         this.video_id = video_id;
@@ -23,6 +34,7 @@ public class DownloadVideoRequestMessage implements ClientMessage {
 
     /**
      * Handles the request on the owner's side
+     * @param controller
      */
     @Override
     public void handle(CommClientController controller) {
