@@ -342,8 +342,8 @@ public class DisplayVideoController extends ShareController {
     /** "Noter" (sequences "Ajout note" and "Modification note"). */
     @FXML
     private void rateVideo() {
-        UserLight me = currentUser();
-        InterfaceIHMShareCallsComm comm = communicationCalls();
+        UserLight me = getCurrentUser();
+        InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
         if (selected_rating == 0) {
             showError("Choisissez une note entre 1 et 5 étoiles.");
             return;
@@ -365,8 +365,8 @@ public class DisplayVideoController extends ShareController {
     /** "Publier" (sequences "Ajout commentaire" and "Modification commentaire"). */
     @FXML
     private void commentVideo() {
-        UserLight me = currentUser();
-        InterfaceIHMShareCallsComm comm = communicationCalls();
+        UserLight me = getCurrentUser();
+        InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
         String text = comment_field.getText().strip();
         if (text.isEmpty()) {
             return;
@@ -394,8 +394,8 @@ public class DisplayVideoController extends ShareController {
 
     /** "Supprimer" on "Mon avis" (sequences "Suppression commentaire" and "Suppression note"). */
     private void deleteMyReview() {
-        UserLight me = currentUser();
-        InterfaceIHMShareCallsComm comm = communicationCalls();
+        UserLight me = getCurrentUser();
+        InterfaceIHMShare_calls_Comm comm = core.getInterfaceFromCommunication();
         if (me == null || comm == null) {
             showError("La suppression n'est pas disponible pour le moment.");
             return;
@@ -467,14 +467,7 @@ public class DisplayVideoController extends ShareController {
         }
     }
 
-
-    /**
-     * Getter for ratings
-     * 
-     * @return (Map<UUID, Rating>) list of ratings
-     */
-    private Map<UUID, Rating> getRatings() {
-
+    private Map<UUID, Rating> ratings() {
         if (video_full == null) {
             return new HashMap<>();
         }
