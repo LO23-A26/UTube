@@ -98,7 +98,8 @@ public class RemoteClient implements Serializable {
             objectOutputStream.flush();
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             isConnected = true;
-            objectOutputStream.writeObject(uuid); // tells the other client who we are
+            objectOutputStream.writeObject(clientController.interfaceCommDataClient.askRequesterId()); // tells the other client who we are
+            objectOutputStream.flush();
             startReceiving();
         } catch (IOException ex) {
             isConnected = false;
