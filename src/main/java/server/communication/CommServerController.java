@@ -5,13 +5,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import client.communication.RemoteClient;
-import common.dataclasses.communication.messages.NotifyVideoDeletedMessage;
-import common.dataclasses.communication.messages.NotifyVideoSharedMessage;
 import common.dataclasses.Index;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.messages.NewUserNotificationMessage;
 import common.dataclasses.communication.messages.NotifyDisconnectionMessage;
+import common.dataclasses.communication.messages.NotifyVideoDeletedMessage;
+import common.dataclasses.communication.messages.NotifyVideoSharedMessage;
 import common.dataclasses.communication.messages.SendFullIndexMessage;
 import common.interfaces.comm.InterfaceDataServerCallsCommServer;
 import common.interfaces.data.InterfaceCommServerCallsDataServer;
@@ -84,11 +84,17 @@ public class CommServerController {
         start();
     }
 
-    /**
-     * Stops the server: stops listening for new connections.
-     */
+    /** Stops accepting connections, closes active sockets, and waits for the listener to terminate. */
     public void stop() {
-        newConnectionListeningThread.interrupt();
+        newConnectionListeningThread.requestStop();
+        if (Thread.currentThread() == newConnectionListeningThread) {
+            return;
+        }
+        try {
+            newConnectionListeningThread.join();
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
