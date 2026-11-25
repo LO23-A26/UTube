@@ -14,6 +14,7 @@ import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.dataclasses.communication.ServerMessage;
 import common.dataclasses.communication.messages.ConnectionRequestMessage;
+import common.dataclasses.communication.messages.ShareVideoMessage;
 import common.interfaces.comm.InterfaceDataCallsComm;
 
 /**
@@ -63,9 +64,14 @@ public class DataClientCallsComm implements InterfaceDataCallsComm {
         commClientController.serverConnection.sendMessage(message); 
     }
 
+    /**  
+     * Inform the server of a new uploaded video. 
+     * This will inform the other clients.
+     * @see common.interfaces.comm.InterfaceDataCallsComm#sendNewVideo(common.dataclasses.VideoLight)
+     */
     @Override
     public void sendNewVideo(VideoLight video_info) {
-        throw new UnsupportedOperationException("Unimplemented method 'sendNewVideo'");
+        commClientController.serverConnection.sendMessage(new ShareVideoMessage(video_info));
     }
 
     @Override
