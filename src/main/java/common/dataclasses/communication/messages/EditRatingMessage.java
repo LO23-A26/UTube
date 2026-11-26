@@ -13,6 +13,6 @@ public class EditRatingMessage implements ClientMessage {
 
     @Override
     public void handle(CommClientController controller) {
-        controller.interfaceCommDataClient.addRating(rating);
+        controller.interfaceCommDataClient.editRating(rating);
     } 
 }
