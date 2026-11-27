@@ -7,8 +7,11 @@ import common.dataclasses.Comment;
 import common.dataclasses.Rating;
 import common.dataclasses.UserLight;
 import common.dataclasses.communication.ClientMessage;
+import common.dataclasses.communication.messages.AddCommentMessage;
 import common.dataclasses.communication.messages.AddRatingMessage;
+import common.dataclasses.communication.messages.DeleteCommentMessage;
 import common.dataclasses.communication.messages.DeleteRatingMessage;
+import common.dataclasses.communication.messages.EditCommentMessage;
 import common.dataclasses.communication.messages.EditRatingMessage;
 import common.interfaces.comm.InterfaceIHMShareCallsComm;
 
@@ -28,20 +31,20 @@ public class IHMShareCallsComm implements InterfaceIHMShareCallsComm {
 
     @Override
     public void addComment(Comment comment, UserLight owner) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addComment'");
+        ClientMessage message = new AddCommentMessage(comment);
+        commClientController.clientConnectionsManager.sendToClient(owner.getUuid(), message);   
     }
 
     @Override
     public void editComment(Comment comment, UserLight owner) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'editComment'");
+        ClientMessage message = new EditCommentMessage(comment);
+        commClientController.clientConnectionsManager.sendToClient(owner.getUuid(), message);   
     }
 
     @Override
     public void deleteComment(Comment comment, UserLight owner) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteComment'");
+        ClientMessage message = new DeleteCommentMessage(comment);
+        commClientController.clientConnectionsManager.sendToClient(owner.getUuid(), message);   
     }
 
     @Override
