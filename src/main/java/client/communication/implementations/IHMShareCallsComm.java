@@ -7,6 +7,7 @@ import common.dataclasses.Comment;
 import common.dataclasses.Rating;
 import common.dataclasses.UserLight;
 import common.interfaces.comm.InterfaceIHMShareCallsComm;
+import static java.lang.System.Logger.Level.ERROR;
 
 /**
  * Implementation of the InterfaceCommunicationCallsIHMShare interface.
@@ -14,7 +15,8 @@ import common.interfaces.comm.InterfaceIHMShareCallsComm;
  */
 public class IHMShareCallsComm implements InterfaceIHMShareCallsComm {
 
-    @SuppressWarnings("unused")
+    private static final System.Logger logger = System.getLogger(IHMShareCallsComm.class.getName());
+
     private final CommClientController commClientController;
 
     // Constructor, takes in the comm client controller
@@ -60,8 +62,11 @@ public class IHMShareCallsComm implements InterfaceIHMShareCallsComm {
 
     @Override
     public void askVideo(UUID videoId, UUID ownerId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'askVideo'");
+        if (videoId == null || ownerId == null) {
+            logger.log(ERROR, "Cannot download a video without its id or its owner");
+            return;
+        }
+        commClientController.requestVideoDownloadFromClient(videoId, ownerId);
     }
 
     
