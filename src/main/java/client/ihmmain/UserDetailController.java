@@ -1,14 +1,11 @@
 package client.ihmmain;
 
-import common.dataclasses.ContactList;
 import common.dataclasses.UserFull;
 import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
@@ -16,7 +13,6 @@ import javafx.util.Duration;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,8 +36,6 @@ public class UserDetailController extends Controller {
     @FXML
     private Label identity_label;
     @FXML
-    private MenuButton add_to_list_button;
-    @FXML
     private TilePane videos_container;
     @FXML
     private Label empty_label;
@@ -62,7 +56,6 @@ public class UserDetailController extends Controller {
         identity_label.setText(LOADING_TEXT);
         videos_container.getChildren().clear();
         empty_label.setVisible(false);
-        fillListMenu();
         stopProfileTimeout();
         profile_timeout = new PauseTransition(Duration.seconds(PROFILE_TIMEOUT_SECONDS));
         profile_timeout.setOnFinished(event -> showUnavailable());
@@ -146,7 +139,6 @@ public class UserDetailController extends Controller {
         showPseudo(profile.getSharedInfo().getPseudo());
         identity_label.setText(formatIdentity(profile.getFirstName(), profile.getLastName(),
                 profile.getBirthDate(), LocalDate.now()));
-        fillListMenu();
         displayVideos(profile.getSharedVideos());
     }
 
@@ -158,22 +150,6 @@ public class UserDetailController extends Controller {
     private void showPseudo(String pseudo) {
         pseudo_label.setText(pseudo);
         avatar_label.setText(pseudo.substring(0, Math.min(INITIALS_LENGTH, pseudo.length())).toUpperCase());
-    }
-
-    /** Fills the menu with the current user's contact lists or a disabled empty message. */
-    private void fillListMenu() {
-        add_to_list_button.getItems().clear();
-        List<ContactList> contact_lists = viewManager.getIData().getContactLists();
-        if (contact_lists.isEmpty()) {
-            MenuItem empty_item = new MenuItem("Aucune liste");
-            empty_item.setDisable(true);
-            add_to_list_button.getItems().add(empty_item);
-            return;
-        }
-        for (ContactList list : contact_lists) {
-            // TODO: Choosing a list should call addContactToList(list_id, user_id), but ContactList does not expose its id yet.
-            add_to_list_button.getItems().add(new MenuItem(list.getListName()));
-        }
     }
 
     /**

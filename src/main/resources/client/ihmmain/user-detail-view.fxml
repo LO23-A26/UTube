@@ -2,12 +2,10 @@
 
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -30,8 +28,6 @@
                 <Label fx:id="pseudo_label" styleClass="page-title"/>
                 <Label fx:id="identity_label" styleClass="text-secondary"/>
             </VBox>
-            <Region HBox.hgrow="ALWAYS"/>
-            <MenuButton fx:id="add_to_list_button" text="Ajouter à une liste" styleClass="button,primary"/>
         </HBox>
         <Label text="Vidéos partagées" styleClass="section-title"/>
         <TilePane fx:id="videos_container" hgap="16" vgap="16" prefColumns="4" prefTileWidth="222"/>
