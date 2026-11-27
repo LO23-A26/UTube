@@ -7,6 +7,7 @@ import common.dataclasses.UserLight;
 import common.dataclasses.VideoLight;
 import common.interfaces.IHMShare.InterfaceIHMMainCallsIHMShare;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
@@ -38,11 +39,11 @@ public class MainController extends Controller {
 
     /** Redraws the users panel from the users kept by the manager (filled by the Data notifications). */
     void refreshUserList() {
-        List<String> pseudos = new ArrayList<>();
+        List<UserLight> users = new ArrayList<>();
         for (UserLight user : viewManager.getDisplayedUsers()) {
-            if (user.getPseudo() != null) pseudos.add(user.getPseudo());
+            if (user.getPseudo() != null) users.add(user);
         }
-        displayConnectedUsers(pseudos);
+        displayConnectedUsers(users);
     }
 
     /** Replaces the screen displayed in the content area. */
@@ -114,16 +115,17 @@ public class MainController extends Controller {
         viewManager.changeView(IHMMainManager.LOGIN_VIEW);
     }
 
-    private void displayConnectedUsers(List<String> pseudos) {
+    private void displayConnectedUsers(List<UserLight> users) {
         Label group_title = new Label("Connecté·e·s");
         group_title.getStyleClass().add("list-title");
         users_container.getChildren().setAll(group_title);
-        for (String pseudo : pseudos) {
-            users_container.getChildren().add(createUserRow(pseudo));
+        for (UserLight user : users) {
+            users_container.getChildren().add(createUserRow(user));
         }
     }
 
-    private static HBox createUserRow(String pseudo) {
+    private HBox createUserRow(UserLight user) {
+        String pseudo = user.getPseudo();
         Label avatar = new Label(pseudo.substring(0, Math.min(2, pseudo.length())).toUpperCase());
         avatar.getStyleClass().add("avatar");
         avatar.setMinSize(32, 32);
@@ -133,6 +135,20 @@ public class MainController extends Controller {
         online.setStyle("-fx-font-style: italic;");
         HBox row = new HBox(avatar, new Label(pseudo), online);
         row.getStyleClass().add("user-row");
+        row.setOnMouseClicked(event -> openUserDetail(user));
+        row.setCursor(Cursor.HAND);
         return row;
+    }
+
+    /**
+     * Opens the user detail screen for the selected user.
+     *
+     * @param user the selected user
+     */
+    private void openUserDetail(UserLight user) {
+        viewManager.showUserDetail(user);
+        // No tab of the header matches the user detail screen
+        home_tab.setSelected(false);
+        viewManager.getIData().requestRemoteProfile(user, viewManager.getIData().getUser().getSharedInfo());
     }
 }
