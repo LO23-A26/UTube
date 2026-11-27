@@ -23,7 +23,7 @@ import javafx.scene.layout.VBox;
  * The views are loaded by {@link IHMShareCore} and displayed in the StackPane received from
  * IHM-Main; the core gives each controller a pointer to itself with {@link #setCore}, then
  * calls {@link #refreshView()}. Navigation between screens goes through the core
- * ({@code core.changeContent(...)}, {@code core.goBack()}, {@code core.backTo(...)}).
+ * ({@code core.changeContent(...)}, {@code core.goBackTo()}, {@code core.backTo(...)}).
  *
  * @author IHM-Share
  * @version 1.0
