@@ -1,9 +1,15 @@
 package common.interfaces.data;
 
-import common.dataclasses.*;
-import common.exceptions.AccessDeniedException;
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
+
+import common.dataclasses.Comment;
+import common.dataclasses.Rating;
+import common.dataclasses.UserFull;
+import common.dataclasses.UserLight;
+import common.dataclasses.VideoFull;
+import common.dataclasses.VideoLight;
+import common.exceptions.AccessDeniedException;
 
 /**
  * Interface for communication client calls to the data client.
@@ -41,6 +47,13 @@ public interface InterfaceCommClientCallsDataClient {
      * @param rating The rating object to be added.
      */
     public void addRating(Rating rating);
+
+    /**
+     * Add video to the list of shared ones
+     * 
+     * @param video: the video to add
+     */
+    public void addSharedVideo(VideoLight video);
 
     /**
      * Edits an existing rating.

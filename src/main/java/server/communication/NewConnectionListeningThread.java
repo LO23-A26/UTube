@@ -13,11 +13,14 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NewConnectionListeningThread extends Thread {
 
@@ -27,6 +30,9 @@ public class NewConnectionListeningThread extends Thread {
     private final ConnectionsManager connectionsManager;
     private final CommServerController serverController;
     private Semaphore connectionLimit;
+    private final AtomicBoolean stopping = new AtomicBoolean();
+    private final Set<Socket> acceptedSockets = ConcurrentHashMap.newKeySet();
+    private volatile ServerSocket serverSocket;
 
     private static final int BACKLOG = 1024;
     private static final int MAX_CONNECTIONS = 10_000;
@@ -44,20 +50,54 @@ public class NewConnectionListeningThread extends Thread {
     @Override
     public void run() {
 
-        try (ServerSocket serverSocket = new ServerSocket()) {
-            serverSocket.setReuseAddress(true);
-            serverSocket.bind(new InetSocketAddress(port), BACKLOG);
+        try (ServerSocket listeningSocket = new ServerSocket()) {
+            serverSocket = listeningSocket;
+            if (stopping.get()) {
+                return;
+            }
+            listeningSocket.setReuseAddress(true);
+            listeningSocket.bind(new InetSocketAddress(port), BACKLOG);
 
             try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-                logger.log(INFO, "Listening on {0}", serverSocket.getLocalSocketAddress());
+                logger.log(INFO, "Listening on {0}", listeningSocket.getLocalSocketAddress());
 
-                while (true) {
-                    Socket socket = serverSocket.accept();
-                    createAndStartConnectionThread(socket, executor);
+                try {
+                    while (!stopping.get()) {
+                        Socket socket = listeningSocket.accept();
+                        acceptedSockets.add(socket);
+                        if (stopping.get()) {
+                            closeQuietly(socket);
+                            acceptedSockets.remove(socket);
+                            break;
+                        }
+                        createAndStartConnectionThread(socket, executor);
+                    }
+                } catch (IOException ex) {
+                    if (!stopping.get()) {
+                        logger.log(ERROR, "Unable to accept a client connection", ex);
+                    }
+                } finally {
+                    acceptedSockets.forEach(NewConnectionListeningThread::closeQuietly);
                 }
             }
         } catch (IOException ex) {
-            logger.log(ERROR, "Unable to start listening thread", ex);
+            if (!stopping.get()) {
+                logger.log(ERROR, "Unable to start listening thread", ex);
+            }
+        } finally {
+            serverSocket = null;
+        }
+    }
+
+    public void requestStop() {
+        stopping.set(true);
+        ServerSocket listeningSocket = serverSocket;
+        if (listeningSocket != null) {
+            try {
+                listeningSocket.close();
+            } catch (IOException ex) {
+                logger.log(ERROR, "Unable to close the listening socket", ex);
+            }
         }
     }
 
@@ -80,12 +120,14 @@ public class NewConnectionListeningThread extends Thread {
                     handleNewConnection(socket);
                 } finally {
                     connectionLimit.release();
+                    acceptedSockets.remove(socket);
                 }
             });
         } catch (IOException | RejectedExecutionException startupFailure) {
             logger.log(ERROR, "Unable to start or schedule a client connection", startupFailure);
             connectionLimit.release();
             closeQuietly(socket);
+            acceptedSockets.remove(socket);
         }
     }
 
