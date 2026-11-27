@@ -6,6 +6,10 @@ import client.communication.CommClientController;
 import common.dataclasses.Comment;
 import common.dataclasses.Rating;
 import common.dataclasses.UserLight;
+import common.dataclasses.communication.ClientMessage;
+import common.dataclasses.communication.messages.AddRatingMessage;
+import common.dataclasses.communication.messages.DeleteRatingMessage;
+import common.dataclasses.communication.messages.EditRatingMessage;
 import common.interfaces.comm.InterfaceIHMShareCallsComm;
 
 /**
@@ -42,20 +46,20 @@ public class IHMShareCallsComm implements InterfaceIHMShareCallsComm {
 
     @Override
     public void addRating(Rating rating, UserLight owner) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addRating'");
+        ClientMessage message = new AddRatingMessage(rating);
+        commClientController.clientConnectionsManager.sendToClient(owner.getUuid(), message);
     }
 
     @Override
     public void editRating(Rating rating, UserLight owner) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'editRating'");
+        ClientMessage message = new EditRatingMessage(rating);
+        commClientController.clientConnectionsManager.sendToClient(owner.getUuid(), message);
     }
 
     @Override
     public void deleteRating(Rating rating, UserLight owner) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteRating'");
+        ClientMessage message = new DeleteRatingMessage(rating);
+        commClientController.clientConnectionsManager.sendToClient(owner.getUuid(), message);
     }
 
     @Override
