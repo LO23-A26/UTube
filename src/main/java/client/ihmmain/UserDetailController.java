@@ -199,7 +199,7 @@ public class UserDetailController extends Controller {
      * @param video the video to display
      * @return the video card
      */
-    private static VBox createVideoCard(VideoLight video) {
+    private VBox createVideoCard(VideoLight video) {
         Label title = new Label(video.getTitle());
         title.getStyleClass().add("label-strong");
         title.setStyle("-fx-font-size: 15px;");
@@ -208,8 +208,21 @@ public class UserDetailController extends Controller {
         tags.getStyleClass().add("text-small");
         // TODO: VideoLight has no rating; omit the mockup's "★ x/5" line until the team decides its source.
         VBox card = new VBox(CARD_SPACING, title, tags);
-        card.getStyleClass().add("card");
+        card.getStyleClass().addAll("card", "clickable");
+        card.setOnMouseClicked(event -> openVideoDetails(video));
         return card;
+    }
+
+    /**
+     * Opens the details screen of the clicked video in the content area of the main view.
+     *
+     * @param video the video whose details are opened
+     */
+    private void openVideoDetails(VideoLight video) {
+        MainController main_controller = viewManager.getController(MainController.class);
+        if (main_controller != null) {
+            main_controller.openVideoDetails(video);
+        }
     }
 
     /**
